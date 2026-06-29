@@ -1,45 +1,46 @@
-# Deploy de HML — push em main dispara um rollout no backend App Hosting
-# `ud-site` do projeto juiz-ud-stage.
+# Smoke test pós auto-rollout — push em main dispara o auto-rollout do
+# Firebase App Hosting (configurado no console). Este workflow aguarda o
+# build estabilizar e faz uma checagem HTTP simples na URL de HML.
 #
-# OBS: o App Hosting já tem auto-rollout ligado ao repo. Este workflow é a
-# forma explícita do pipeline e dá rastreabilidade no Actions. Se houver
-# duplicidade, desligar o auto-rollout no console do App Hosting.
+# Removemos a chamada `apphosting:rollouts:create` porque conflitava com
+# o auto-rollout (409 duplicate buildId). Se desejar deploy explícito via
+# CLI, desligue o auto-rollout no console antes.
 
-name: deploy-hml
+name: smoke-hml
 
 on:
   push:
     branches: [main]
 
 concurrency:
-  group: deploy-hml
+  group: smoke-hml
   cancel-in-progress: false
 
 jobs:
-  rollout:
-    name: Rollout em juiz-ud-stage
+  wait-and-check:
+    name: Aguardar auto-rollout e checar HTTP 200
     runs-on: ubuntu-latest
     environment:
       name: hml
       url: https://ud-site--juiz-ud-stage.us-east4.hosted.app
     steps:
-      - uses: actions/checkout@v4
+      - name: Aguardar deploy estabilizar (90s)
+        run: sleep 90
 
-      - id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY_HML }}
-
-      - uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: juiz-ud-stage
-
-      - name: Install firebase-tools
-        run: npm install -g firebase-tools@latest
-
-      - name: Criar rollout no App Hosting
+      - name: Checar homepage retorna 200
         run: |
-          firebase apphosting:rollouts:create ud-site \
-            --project=juiz-ud-stage \
-            --git-branch=main \
-            --force
+          STATUS=$(curl -sI -o /dev/null -w "%{http_code}" https://ud-site--juiz-ud-stage.us-east4.hosted.app/)
+          echo "HTTP $STATUS"
+          test "$STATUS" = "200"
+
+      - name: Checar sitemap
+        run: |
+          STATUS=$(curl -sI -o /dev/null -w "%{http_code}" https://ud-site--juiz-ud-stage.us-east4.hosted.app/sitemap.xml)
+          echo "HTTP $STATUS"
+          test "$STATUS" = "200"
+
+      - name: Checar robots.txt
+        run: |
+          STATUS=$(curl -sI -o /dev/null -w "%{http_code}" https://ud-site--juiz-ud-stage.us-east4.hosted.app/robots.txt)
+          echo "HTTP $STATUS"
+          test "$STATUS" = "200"
