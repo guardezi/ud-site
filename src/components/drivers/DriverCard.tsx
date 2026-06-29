@@ -6,9 +6,9 @@ export function DriverCard({ driver }: { driver: PublicDriverSummary }) {
   return (
     <Link
       href={{ pathname: "/pilotos/[slug]", params: { slug: driver.slug } }}
-      className="group block overflow-hidden rounded border border-rail bg-panel transition-colors hover:border-drift"
+      className="card-ud group block"
     >
-      <div className="relative aspect-square bg-ink">
+      <div className="relative aspect-square bg-shade">
         {driver.fotoUrl ? (
           <Image
             src={driver.fotoUrl}
@@ -24,13 +24,13 @@ export function DriverCard({ driver }: { driver: PublicDriverSummary }) {
           </div>
         )}
         {driver.numero != null && (
-          <span className="absolute left-3 top-3 inline-flex items-center justify-center rounded bg-ink/70 px-2 py-0.5 text-xs font-bold text-drift backdrop-blur">
+          <span className="absolute left-3 top-3 inline-flex items-center justify-center rounded bg-panel/90 px-2.5 py-1 text-sm font-bold text-drift backdrop-blur">
             #{driver.numero}
           </span>
         )}
       </div>
-      <div className="space-y-1 p-3">
-        <h3 className="display text-base text-signal group-hover:text-drift">{driver.apelido}</h3>
+      <div className="space-y-1 p-4">
+        <h3 className="display text-base text-signal group-hover:text-drift transition-colors">{driver.apelido}</h3>
         <p className="text-xs uppercase tracking-wider text-mute">
           {driver.category ?? driver.city ?? "Piloto"}
         </p>

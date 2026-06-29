@@ -7,16 +7,16 @@ export function StageCard({ stage, locale }: { stage: PublicStageHubSummary; loc
   return (
     <Link
       href={{ pathname: "/etapas/[slug]", params: { slug: stage.slug } }}
-      className="group block overflow-hidden rounded border border-rail bg-panel transition-colors hover:border-drift"
+      className="card-ud group block"
     >
-      <div className="relative aspect-[16/9] bg-ink">
+      <div className="relative aspect-[16/9] bg-shade">
         {stage.posterImageUrl ? (
           <Image
             src={stage.posterImageUrl}
             alt={stage.name}
             fill
             sizes="(min-width: 1024px) 33vw, 100vw"
-            className="object-cover transition-transform group-hover:scale-105"
+            className="object-cover"
             unoptimized
           />
         ) : (
@@ -25,9 +25,9 @@ export function StageCard({ stage, locale }: { stage: PublicStageHubSummary; loc
           </div>
         )}
       </div>
-      <div className="space-y-2 p-4">
+      <div className="space-y-2 p-5">
         <p className="eyebrow">{formatDateRange(stage.startDate, stage.endDate, locale)}</p>
-        <h3 className="display text-xl text-signal group-hover:text-drift">{stage.name}</h3>
+        <h3 className="display text-xl text-signal group-hover:text-drift transition-colors">{stage.name}</h3>
       </div>
     </Link>
   );

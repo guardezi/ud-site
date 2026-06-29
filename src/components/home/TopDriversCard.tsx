@@ -8,21 +8,21 @@ export function TopDriversCard({ entries }: { entries: StandingEntry[] }) {
 
   const top = entries.slice(0, 5);
   return (
-    <section className="rounded border border-rail bg-panel/30">
-      <div className="border-b border-rail px-4 py-3">
-        <h2 className="eyebrow text-drift">{t("topDrivers")}</h2>
+    <section className="card-ud">
+      <div className="px-5 py-4 border-b border-rail">
+        <h2 className="eyebrow">{t("topDrivers")}</h2>
       </div>
       <ul className="divide-y divide-rail">
         {top.map((e) => (
-          <li key={`${e.position}-${e.driverId ?? e.driverName}`} className="flex items-center gap-3 px-4 py-3">
-            <span className="data w-6 text-mute">{e.position}.</span>
-            <span className="flex-1 text-signal">{e.driverNickname ?? e.driverName}</span>
+          <li key={`${e.position}-${e.driverId ?? e.driverName}`} className="flex items-center gap-3 px-5 py-3">
+            <span className="data w-8 text-faint font-bold">{e.position}.</span>
+            <span className="flex-1 text-signal font-bold">{e.driverNickname ?? e.driverName}</span>
             <span className="data font-bold text-drift">{e.points}</span>
           </li>
         ))}
       </ul>
-      <div className="border-t border-rail px-4 py-3 text-right">
-        <Link href="/classificacao" className="text-xs uppercase tracking-[0.18em] text-mute hover:text-drift">
+      <div className="px-5 py-3 text-right border-t border-rail">
+        <Link href="/classificacao" className="text-xs uppercase font-bold tracking-[0.12em] text-mute hover:text-drift">
           {t("viewAllStandings")} →
         </Link>
       </div>

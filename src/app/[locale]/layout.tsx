@@ -1,10 +1,9 @@
 import "../globals.css";
 import type { Metadata, Viewport } from "next";
-import { Inter, Oswald } from "next/font/google";
+import { PT_Sans } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import Script from "next/script";
 import { routing } from "@/i18n/routing";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationLd, websiteLd } from "@/lib/seo/jsonld";
@@ -14,12 +13,13 @@ import { SITE_URL } from "@/lib/seo/canonical";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import type { Locale } from "@/i18n/config";
 
-const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
-const oswald = Oswald({
+// PT Sans é a fonte usada no tema WordPress legado. Mantemos pra preservar
+// identidade visual no cutover.
+const ptSans = PT_Sans({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-oswald",
-  weight: ["400", "600", "700"],
+  variable: "--font-pt-sans",
+  weight: ["400", "700"],
 });
 
 export function generateStaticParams() {
@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0b",
+  themeColor: "#313137",
   colorScheme: "dark",
 };
 
@@ -72,7 +72,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className={`${inter.variable} ${oswald.variable}`} data-theme="dark">
+    <html lang={locale} className={ptSans.variable}>
       <head>
         <link rel="preconnect" href="https://storage.googleapis.com" />
         <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
@@ -80,13 +80,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <body className="min-h-screen bg-ink text-signal antialiased">
         <NextIntlClientProvider>
           <PublicHeader />
-          <main id="main">{children}</main>
+          <main id="main" className="pt-20">{children}</main>
           <PublicFooter />
         </NextIntlClientProvider>
         <JsonLd data={[organizationLd(), websiteLd()]} />
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`(function(){try{var t=localStorage.getItem('ud-theme');if(t){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`}
-        </Script>
       </body>
     </html>
   );

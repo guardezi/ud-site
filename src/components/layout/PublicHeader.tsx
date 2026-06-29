@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { PRIMARY_NAV, EXTERNAL_LINKS } from "@/lib/routes";
@@ -8,18 +9,25 @@ export function PublicHeader() {
   const t = useTranslations("nav");
 
   return (
-    <header className="sticky top-0 z-40 border-b border-rail bg-ink/95 backdrop-blur supports-[backdrop-filter]:bg-ink/80">
+    <header className="fixed top-0 left-0 z-40 w-full bg-panel text-signal">
       <div className="mx-auto flex max-w-wide items-center justify-between gap-6 px-4 py-3 lg:px-8">
-        <Link href="/" className="display text-xl text-signal tracking-tight">
-          ULTIMATE <span className="text-drift">DRIFT</span>
+        <Link href="/" aria-label="Ultimate Drift" className="flex shrink-0 items-center">
+          <Image
+            src="/logo.png"
+            alt="Ultimate Drift"
+            width={180}
+            height={48}
+            priority
+            className="h-12 w-auto object-contain"
+          />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-5" aria-label="Primary">
+        <nav className="hidden xl:flex items-center gap-5" aria-label="Primary">
           {PRIMARY_NAV.slice(1).map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-xs uppercase tracking-[0.18em] text-mute hover:text-signal transition-colors"
+              className="text-sm font-bold uppercase tracking-[0.12em] text-signal hover:text-drift transition-colors"
             >
               {t(item.labelKey)}
             </Link>
@@ -31,7 +39,7 @@ export function PublicHeader() {
             href={EXTERNAL_LINKS.tickets}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:inline-flex items-center rounded bg-drift px-3 py-1.5 text-xs uppercase tracking-[0.18em] font-bold text-ink hover:bg-driftDeep transition-colors"
+            className="btn-ud hidden md:inline-flex h-10 px-4 text-sm uppercase"
           >
             {t("ingressos")}
           </a>

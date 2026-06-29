@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Menu, X } from "lucide-react";
@@ -15,25 +16,23 @@ export function MobileNavToggle() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="lg:hidden inline-flex items-center justify-center rounded border border-rail p-1.5 text-mute hover:text-signal"
+        className="xl:hidden inline-flex items-center justify-center rounded border border-rail p-1.5 text-signal hover:text-drift hover:border-drift"
         aria-label="Open menu"
       >
-        <Menu className="size-4" aria-hidden />
+        <Menu className="size-5" aria-hidden />
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-ink/95 backdrop-blur-sm lg:hidden">
+        <div className="fixed inset-0 z-50 bg-panel/98 backdrop-blur-sm xl:hidden">
           <div className="flex items-center justify-between border-b border-rail px-4 py-3">
-            <span className="display text-xl text-signal">
-              ULTIMATE <span className="text-drift">DRIFT</span>
-            </span>
+            <Image src="/logo.png" alt="Ultimate Drift" width={140} height={36} className="h-9 w-auto object-contain" />
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="inline-flex items-center justify-center rounded border border-rail p-1.5 text-mute hover:text-signal"
+              className="inline-flex items-center justify-center rounded border border-rail p-1.5 text-signal hover:text-drift"
               aria-label="Close menu"
             >
-              <X className="size-4" aria-hidden />
+              <X className="size-5" aria-hidden />
             </button>
           </div>
           <nav className="flex flex-col gap-1 px-4 py-6">
@@ -42,7 +41,7 @@ export function MobileNavToggle() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="border-b border-rail py-3 text-sm uppercase tracking-[0.18em] text-signal hover:text-drift"
+                className="border-b border-rail py-3 text-base font-bold uppercase tracking-[0.12em] text-signal hover:text-drift"
               >
                 {t(item.labelKey)}
               </Link>
@@ -51,7 +50,7 @@ export function MobileNavToggle() {
               href={EXTERNAL_LINKS.tickets}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center justify-center rounded bg-drift px-4 py-3 text-sm uppercase tracking-[0.18em] font-bold text-ink"
+              className="btn-ud mt-6"
             >
               {t("ingressos")}
             </a>

@@ -1,29 +1,32 @@
 @import "tailwindcss";
 
-/* Design tokens — paleta motorsport/drift.
-   Mantém coerência com o tema WordPress legado (dark + laranja brand).
-   Refinar valores hex após inspeção visual fina do site atual.            */
+/* Identidade visual do Ultimate Drift — extraída de:
+   wp-content/themes/ultimate-drift/css/bundle.min.css
+   Primary green lime + cinza-escuro motorsport.                            */
 @theme {
-  /* Surface */
-  --color-ink: #0a0a0b;          /* background base */
-  --color-panel: #131316;        /* superfícies elevadas */
-  --color-rail: #1c1c20;         /* divisores, bordas */
+  /* Surface (cinza escuro chumbo, não preto) */
+  --color-ink: #313137;          /* body base — bg principal */
+  --color-panel: #141417;        /* header top bar / overlays escuros */
+  --color-rail: #3f3f3f;         /* divisores, bordas */
+  --color-shade: #1f1f24;        /* surface intermediária */
 
   /* Texto */
-  --color-signal: #f5f5f5;       /* texto principal */
-  --color-mute: #9ca3af;         /* texto secundário */
-  --color-faint: #4b5563;        /* texto deemphased */
+  --color-signal: #ffffff;       /* texto principal — sempre branco */
+  --color-mute: #c5c5c5;         /* texto secundário */
+  --color-faint: #9b9b9b;        /* texto deemphased */
 
   /* Brand */
-  --color-drift: #ff6a00;        /* laranja brand */
-  --color-driftDeep: #cc4d00;    /* hover/pressed */
-  --color-brake: #e11d48;        /* alert/red */
-  --color-caution: #facc15;      /* yellow/warning */
-  --color-ok: #22c55e;            /* success */
+  --color-drift: #54F251;        /* PRIMARY — verde lime neon */
+  --color-driftDeep: #c1f34c;    /* lime mais amarelado (accent) */
+  --color-secondary: #002C04;    /* verde muito escuro (links) */
+  --color-brake: #fe0031;        /* alert/red */
+  --color-accent: #3ac1d1;       /* ciano (acentos) */
+  --color-caution: #ff9101;      /* laranja (warning) */
+  --color-ok: #d0ffb0;            /* verde claro success */
 
-  /* Tipografia */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--font-oswald), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Tipografia — PT Sans é a do WP atual */
+  --font-sans: var(--font-pt-sans), pt-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-pt-sans), pt-sans, ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
 
   /* Containers (Tailwind v4 auto-deriva max-w-narrow/normal/wide) */
@@ -36,26 +39,19 @@
   --foreground: var(--color-signal);
 }
 
-/* Light theme — quase nunca usado em motorsport, mas pronto pra acessibilidade */
-[data-theme="light"] {
-  --color-ink: #f7f7f5;
-  --color-panel: #ffffff;
-  --color-rail: #e5e7eb;
-  --color-signal: #0a0a0b;
-  --color-mute: #4b5563;
-  --color-faint: #9ca3af;
-}
-
 html {
   background: var(--color-ink);
   color: var(--color-signal);
   font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
 body {
   background: var(--color-ink);
+  font-weight: 400;
 }
 
 a {
@@ -63,11 +59,40 @@ a {
   text-decoration: none;
 }
 
-/* Utility primitives */
+/* === Utility primitives matchando o tema WP === */
+
+/* Botão padrão do tema — verde lime + texto preto, used em CTAs */
+.btn-ud {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0 1.25rem;
+  background-color: var(--color-drift);
+  color: #000;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  transition: filter 0.2s ease;
+}
+.btn-ud:hover { filter: brightness(1.08); }
+
+/* Card com radius asymmetric (signature do brand) */
+.card-ud {
+  border-radius: 32px 12px 32px 12px;
+  background: var(--color-shade);
+  transition: transform .3s ease, border-color .3s ease;
+  overflow: hidden;
+}
+.card-ud:hover {
+  transform: translateY(-3px);
+}
+
+/* Eyebrow (label menor uppercase) */
 .eyebrow {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   font-size: 0.7rem;
   color: var(--color-drift);
@@ -80,8 +105,8 @@ a {
 .display {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.05;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
 }
 
 .data {
@@ -96,7 +121,7 @@ a {
   border-radius: 2px;
 }
 
-/* Article body — renderiza markdown convertido (lib/utils/markdown.ts) */
+/* Article body — renderiza markdown convertido */
 .prose-ud {
   max-width: 65ch;
   color: var(--color-signal);
@@ -118,9 +143,13 @@ a {
   margin-bottom: 0.75rem;
 }
 .prose-ud p { margin-bottom: 1.25rem; }
-.prose-ud a { color: var(--color-drift); text-decoration: underline; text-underline-offset: 3px; }
+.prose-ud a {
+  color: var(--color-drift);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .prose-ud a:hover { color: var(--color-driftDeep); }
-.prose-ud img { border-radius: 4px; margin: 1.5rem 0; }
+.prose-ud img { border-radius: 8px; margin: 1.5rem 0; }
 .prose-ud ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
 .prose-ud ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
 .prose-ud li { margin-bottom: 0.5rem; }
