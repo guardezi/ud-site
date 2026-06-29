@@ -1,0 +1,57 @@
+    <main class="main">
+<section class="contato">
+    <div class="wrapper">
+        <a href="javascript:history.back()" class="ui__title" data-animate="slide-bottom">
+            <svg class="ui__icon" width="15" height="27" viewBox="0 0 15 27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5208 26.7703C13.8818 27.1025 14.4396 27.0692 14.7678 26.7039C15.096 26.3386 15.0632 25.774 14.7022 25.4419L2.00202 13.8182C1.67385 13.5193 1.67385 13.0875 2.00202 12.7886L14.7022 1.5634C15.0632 1.23129 15.096 0.666705 14.8006 0.301387C14.4725 -0.0639308 13.9146 -0.0971413 13.5536 0.201755L0.853422 11.4602C-0.262355 12.4565 -0.295172 14.1171 0.820606 15.1466L13.5208 26.7703Z" fill="#54F251"/></svg>
+            <h1 class="">
+                Contato            </h1>
+        </a>
+        <div class="contact__content">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md-6" data-animate="slide-left">
+                    <div class="contact-intro">
+                        <h2 class="contact-title">Entre em contato</h2>
+                        <p class="contact-description">
+                            Preencha o formulário abaixo ou entre em contato por e-mail. Estamos à disposição para tirar dúvidas. Fale com a nossa equipe para mais informações ou parcerias.
+                        </p>
+                    </div>
+                    
+                      <form class="contact-form" id="contact-form"  method="POST">
+                    
+                        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE" />
+                        <input type="hidden" name="subject" value="New Contact Form Submission from Web3Forms" />
+                        <input type="hidden" name="from_name" value="My Website" />
+                    
+                        <div class="form-group-container">
+                          <div class="form-group">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input id="nome" name="nome" class="form-input" placeholder="Digite seu nome" type="text" required />
+                          </div>
+                          <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input id="email" name="email" class="form-input" placeholder="Digite seu email" type="email" required />
+                          </div>
+							            <div div class="form-group">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input id="telefone" name="telefone" class="form-input" placeholder="Ex: (XX) XXXX-XXXX" required type="text" />
+                          </div>
+                          <div class="form-group">
+                            <label for="mensagem" class="form-label">Mensagem</label>
+                            <textarea class="form-textarea" id="mensagem" name="mensagem" placeholder="Digite sua mensagem" required></textarea>
+                          </div>
+                        </div>
+                        <button class="form-submit" type="submit">Enviar</button>
+                      </form>
+                </div>
+                <div class="col-md-5" data-animate="slide-right">
+                    <img src="/theme/svg/ud-logo.svg" alt="Logotipo da Ultimate drift" class="contact__logo">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+</main>

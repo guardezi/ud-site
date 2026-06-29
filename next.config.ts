@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: { bodySizeLimit: "2mb" },
   },
+  // Garante que os snapshots HTML do WP (lidos em runtime pelos
+  // Server Components) sejam incluídos no bundle deployado.
+  outputFileTracingIncludes: {
+    "/**/*": ["./src/wp-snapshot/**/*.html"],
+  },
   async headers() {
     return [
       {
