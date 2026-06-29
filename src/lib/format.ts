@@ -27,21 +27,40 @@ function toDate(v: DateLike): Date | null {
   return null;
 }
 
-export function formatDate(date: DateLike, locale: string, opts?: Intl.DateTimeFormatOptions): string {
-  const d = toDate(date);
-  if (!d) return "";
-  return new Intl.DateTimeFormat(locale, opts ?? { day: "2-digit", month: "short", year: "numeric" }).format(d);
+function safeLocale(locale: string | undefined | null): string {
+  if (!locale || typeof locale !== "string") return "pt-BR";
+  // Aceita formatos válidos pt-BR ou pt_BR
+  try {
+    new Intl.DateTimeFormat(locale);
+    return locale;
+  } catch {
+    return "pt-BR";
+  }
 }
 
-export function formatDateRange(start: DateLike, end: DateLike, locale: string): string {
+function fmt(locale: string | undefined | null, opts: Intl.DateTimeFormatOptions, d: Date): string {
+  try {
+    return new Intl.DateTimeFormat(safeLocale(locale), opts).format(d);
+  } catch {
+    return new Intl.DateTimeFormat("pt-BR", opts).format(d);
+  }
+}
+
+export function formatDate(date: DateLike, locale: string | undefined | null, opts?: Intl.DateTimeFormatOptions): string {
+  const d = toDate(date);
+  if (!d) return "";
+  return fmt(locale, opts ?? { day: "2-digit", month: "short", year: "numeric" }, d);
+}
+
+export function formatDateRange(start: DateLike, end: DateLike, locale: string | undefined | null): string {
   const s = toDate(start);
   const e = toDate(end);
   if (!s && !e) return "";
   if (s && e) {
     const sameMonth = s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear();
     if (sameMonth) {
-      const day = (d: Date) => new Intl.DateTimeFormat(locale, { day: "2-digit" }).format(d);
-      const monthYear = new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(e);
+      const day = (d: Date) => fmt(locale, { day: "2-digit" }, d);
+      const monthYear = fmt(locale, { month: "short", year: "numeric" }, e);
       return `${day(s)}–${day(e)} ${monthYear}`;
     }
     return `${formatDate(s, locale)} → ${formatDate(e, locale)}`;
