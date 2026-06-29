@@ -59,6 +59,21 @@ a {
   text-decoration: none;
 }
 
+/* Override do tema WP: animações dependem de JS do tema que NÃO carregamos.
+   Sem isso, todos os elementos com data-animate ficam opacity:0 invisíveis. */
+[data-animate] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  pointer-events: auto !important;
+}
+
+/* Page-loader do WP fica fixed full-screen com z-index 9999.
+   Sem o JS pra fechá-lo, esconde permanentemente. */
+#page-loader {
+  display: none !important;
+}
+
 /* === Utility primitives matchando o tema WP === */
 
 /* Botão padrão do tema — verde lime + texto preto, used em CTAs */
