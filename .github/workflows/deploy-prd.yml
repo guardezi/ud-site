@@ -5,12 +5,6 @@
 #   - Required reviewers (lista de quem pode aprovar)
 #   - Deployment branches: Only tags matching v*
 #
-# Pré-requisitos no repo:
-#   secrets.GCP_SA_KEY_PRD — JSON da Service Account de ultimate-drift-production com:
-#     - Firebase App Hosting Admin
-#     - Cloud Build Editor
-#     - Service Usage Consumer
-#
 # Setup one-shot do backend PRD (rode uma vez localmente):
 #   firebase apphosting:backends:create \
 #     --project=ultimate-drift-production \
@@ -23,14 +17,14 @@
 #     --environment=production
 #   # Faz o App Hosting carregar apphosting.production.yaml automaticamente.
 
-name: deploy-prd-ud-site
+name: deploy-prd
 
 on:
   push:
     tags: ["v*"]
 
 concurrency:
-  group: deploy-prd-ud-site
+  group: deploy-prd
   cancel-in-progress: false
 
 jobs:

@@ -1,28 +1,18 @@
 # Deploy de HML — push em main dispara um rollout no backend App Hosting
 # `ud-site` do projeto juiz-ud-stage.
 #
-# Pré-requisitos no repo (Settings → Secrets and variables → Actions):
-#   secrets.GCP_SA_KEY_HML  — JSON da Service Account de juiz-ud-stage com:
-#     - Firebase App Hosting Admin
-#     - Cloud Build Editor
-#     - Service Usage Consumer
-#
-# Setup one-shot do backend HML:
-#   firebase apphosting:backends:create --project=juiz-ud-stage --location=us-east4
-#   # No prompt: nome `ud-site`, repo GitHub, root branch `main`,
-#   # AUTO-ROLLOUT DESATIVADO (esse workflow controla os deploys).
+# OBS: o App Hosting já tem auto-rollout ligado ao repo. Este workflow é a
+# forma explícita do pipeline e dá rastreabilidade no Actions. Se houver
+# duplicidade, desligar o auto-rollout no console do App Hosting.
 
-name: deploy-hml-ud-site
+name: deploy-hml
 
 on:
   push:
     branches: [main]
-    paths:
-      - "ud-site/**"
-      - ".github/workflows/deploy-hml.yml"
 
 concurrency:
-  group: deploy-hml-ud-site
+  group: deploy-hml
   cancel-in-progress: false
 
 jobs:

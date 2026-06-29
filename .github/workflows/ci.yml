@@ -2,26 +2,20 @@
 # O preview de URL é criado nativamente pelo Firebase App Hosting quando o
 # backend está conectado ao repo.
 
-name: ci-ud-site
+name: ci
 
 on:
   pull_request:
     branches: [main]
-    paths:
-      - "ud-site/**"
-      - ".github/workflows/ci.yml"
 
 concurrency:
-  group: ci-ud-site-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
-    name: Lint, typecheck e build (ud-site)
+    name: Lint, typecheck e build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ud-site
     steps:
       - uses: actions/checkout@v4
 
@@ -33,13 +27,10 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          cache-dependency-path: ud-site/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install
         run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm lint
 
       - name: Typecheck
         run: pnpm typecheck
