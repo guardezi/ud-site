@@ -60,10 +60,22 @@ a {
 }
 
 /* Override do tema WP: animações dependem de JS do tema que NÃO carregamos.
-   Sem isso, todos os elementos com data-animate ficam opacity:0 invisíveis. */
-[data-animate] {
+   Sem isso, todos os elementos com data-animate ficam opacity:0 invisíveis
+   E com transform: translate(...) pra fora da viewport. Cobre todas as
+   variantes explicitamente pra ganhar specificity sobre o seletor atributo. */
+[data-animate],
+[data-animate="fade"],
+[data-animate="slide-top"],
+[data-animate="slide-bottom"],
+[data-animate="slide-left"],
+[data-animate="slide-right"],
+[data-animate="slide-diagonal-top-left"],
+[data-animate="slide-diagonal-top-right"],
+[data-animate="slide-diagonal-bottom-left"],
+[data-animate="slide-diagonal-bottom-right"] {
   opacity: 1 !important;
   transform: none !important;
+  -webkit-transform: none !important;
   transition: none !important;
   pointer-events: auto !important;
 }
