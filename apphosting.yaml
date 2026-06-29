@@ -46,9 +46,16 @@ env:
       - BUILD
       - RUNTIME
 
-  # Secret pra HMAC entre backoffice → /api/revalidate.
-  # firebase apphosting:secrets:set REVALIDATE_SECRET --project juiz-ud-stage
-  # - variable: REVALIDATE_SECRET
-  #   secret: REVALIDATE_SECRET
-  #   availability:
-  #     - RUNTIME
+  # HMAC entre backoffice (server action) → ud-site /api/revalidate.
+  # Mesmo valor precisa ser gravado no ud-backoffice quando o módulo content/ for criado.
+  - variable: REVALIDATE_SECRET
+    secret: REVALIDATE_SECRET
+    availability:
+      - RUNTIME
+
+  # IndexNow key — usada pelo backoffice ao publicar; site serve /<KEY>.txt pra verificação.
+  - variable: INDEXNOW_KEY
+    secret: INDEXNOW_KEY
+    availability:
+      - BUILD
+      - RUNTIME

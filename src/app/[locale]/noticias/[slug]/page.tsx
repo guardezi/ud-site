@@ -10,6 +10,7 @@ import { canonical } from "@/lib/seo/canonical";
 import { buildMetadata } from "@/lib/seo/meta";
 import { renderMarkdown } from "@/lib/utils/markdown";
 import { formatDate } from "@/lib/format";
+import { toIso } from "@/lib/firestore-utils";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 3600;
@@ -33,8 +34,8 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
     description: article.seo.description ?? article.excerpt,
     image: article.coverImageHighUrl ?? article.coverImageUrl ?? undefined,
     type: "article",
-    publishedTime: article.publishedAt?.toISOString(),
-    modifiedTime: article.updatedAt?.toISOString(),
+    publishedTime: toIso(article.publishedAt) ?? undefined,
+    modifiedTime: toIso(article.updatedAt) ?? undefined,
   });
 }
 
@@ -48,8 +49,8 @@ export default async function NoticiaPage({ params }: { params: PageParams }) {
   const ld = articleLd({
     headline: article.title,
     url: canonical("/noticias/[slug]", locale, { slug }),
-    datePublished: article.publishedAt?.toISOString() ?? new Date().toISOString(),
-    dateModified: article.updatedAt?.toISOString(),
+    datePublished: toIso(article.publishedAt) ?? new Date().toISOString(),
+    dateModified: toIso(article.updatedAt) ?? undefined,
     authorName: article.author ?? undefined,
     image: article.coverImageHighUrl ?? article.coverImageUrl ?? null,
     description: article.excerpt,

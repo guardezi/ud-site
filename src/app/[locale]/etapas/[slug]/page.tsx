@@ -11,6 +11,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { sportsEventLd } from "@/lib/seo/jsonld";
 import { canonical } from "@/lib/seo/canonical";
 import { formatDateRange } from "@/lib/format";
+import { toIso } from "@/lib/firestore-utils";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/config";
 
@@ -49,8 +50,8 @@ export default async function StagePage({ params }: { params: PageParams }) {
   const ld = sportsEventLd({
     name: stage.name,
     url: canonical("/etapas/[slug]", locale, { slug }),
-    startDate: stage.startDate?.toISOString() ?? new Date().toISOString(),
-    endDate: stage.endDate?.toISOString(),
+    startDate: toIso(stage.startDate) ?? new Date().toISOString(),
+    endDate: toIso(stage.endDate) ?? undefined,
     locationName: circuit?.name ?? stage.name,
     locationAddress: circuit ? { city: circuit.city, country: circuit.country } : undefined,
     image: stage.posterImageHighUrl ?? stage.posterImageUrl,

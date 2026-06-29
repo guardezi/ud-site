@@ -1,19 +1,43 @@
 import "server-only";
 
 export function tsToDate(v: unknown): Date | null {
-  if (!v) return null;
-  if (v instanceof Date) return v;
-  if (typeof v === "object" && v && "toDate" in v && typeof (v as { toDate: () => Date }).toDate === "function") {
-    return (v as { toDate: () => Date }).toDate();
-  }
+  if (v == null) return null;
+  if (v instanceof Date) return Number.isNaN(v.getTime()) ? null : v;
   if (typeof v === "string") {
     const d = new Date(v);
     return Number.isNaN(d.getTime()) ? null : d;
   }
   if (typeof v === "number") {
-    return new Date(v);
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    // Firestore Timestamp com método toDate()
+    if (typeof o.toDate === "function") {
+      try {
+        const d = (o.toDate as () => Date)();
+        return d instanceof Date && !Number.isNaN(d.getTime()) ? d : null;
+      } catch {
+        return null;
+      }
+    }
+    // Timestamp serializado: { seconds, nanoseconds } ou { _seconds, _nanoseconds }
+    const seconds = typeof o.seconds === "number" ? o.seconds : typeof o._seconds === "number" ? o._seconds : null;
+    const nanos = typeof o.nanoseconds === "number" ? o.nanoseconds : typeof o._nanoseconds === "number" ? o._nanoseconds : 0;
+    if (seconds != null) {
+      const ms = seconds * 1000 + Math.floor(nanos / 1_000_000);
+      const d = new Date(ms);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
   }
   return null;
+}
+
+/** Converte qualquer shape conhecido pra ISO string. Null-safe. */
+export function toIso(v: unknown): string | null {
+  const d = tsToDate(v);
+  return d ? d.toISOString() : null;
 }
 
 export function num(v: unknown): number | null {
