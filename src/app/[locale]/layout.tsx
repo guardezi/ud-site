@@ -70,11 +70,20 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <head>
         <link rel="preconnect" href="https://storage.googleapis.com" />
         <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
+        {/* Bootstrap 5.3 — grid system usado pelo bundle.min.css */}
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossOrigin="anonymous"
+        />
+        {/* CSS legado do tema WordPress — preserva markup .header/.footer/.index__/.nav__ */}
+        <link rel="stylesheet" href="/theme/css/bundle.min.css" />
       </head>
-      <body className="min-h-screen bg-ink text-signal antialiased">
+      <body className="min-h-screen text-signal antialiased">
         <NextIntlClientProvider>
           <PublicHeader />
-          <main id="main" className="pt-20">{children}</main>
+          <main id="main" className="main">{children}</main>
           <PublicFooter />
         </NextIntlClientProvider>
         <JsonLd data={[organizationLd(), websiteLd()]} />

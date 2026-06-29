@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+        
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, shrink-to-fit=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="description" content="Acompanhe o Ultimate - Campeonato Brasileiro de Drift. Resultados, pilotos, etapas, vídeos e tudo sobre a principal competição de drift do Brasil.">
+    <meta name="keywords" content="Drift, Ultimate, Campeonato Brasileiro de Drift, pilotos de drift, competições, carros de drift, etapas de drift">
+    <meta name="author" content="Ultimate - Campeonato Brasileiro de Drift">
+
+    <!-- favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/favicon-16x16.png">
+    <link rel="mask-icon" href="svg/safari-pinned-tab.svg" color="#da2128">
+    <link rel="shortcut icon" href="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/favicon.ico">
+    
+    
+    <!-- preconnect -->
+    <link rel="preload" as="image" href="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/index-1.jpg" imagesrcset="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/index-xs-1.jpg 567w, https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/index-sm-1.jpg 820w, https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/index-md-1.jpg 1080w, https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/index-1.jpg 1920w" imagesizes="100vw">
+    <link rel="preload" href="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/font/pt-sans-regular.woff2" as="font" crossorigin>
+    <link rel="preload" href="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/font/pt-sans-bold.woff2" as="font" crossorigin>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <meta name='robots' content='max-image-preview:large' />
+	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
+	<link rel='dns-prefetch' href='//translate.google.com' />
+<link rel='dns-prefetch' href='//cdnjs.cloudflare.com' />
+<link rel='dns-prefetch' href='//cdn.jsdelivr.net' />
+<script type="text/javascript">
+/* <![CDATA[ */
+window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/www.ultimatedrift.com.br\/wp-includes\/js\/wp-emoji-release.min.js?ver=6.8.5"}};
+/*! This file is auto-generated */
+!function(s,n){var o,i,e;function c(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function p(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data),a=(e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0),new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data));return t.every(function(e,t){return e===a[t]})}function u(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);for(var n=e.getImageData(16,16,1,1),a=0;a<n.data.length;a++)if(0!==n.data[a])return!1;return!0}function f(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\udedf")}return!1}function g(e,t,n,a){var r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):s.createElement("canvas"),o=r.getContext("2d",{willReadFrequently:!0}),i=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(function(e){i[e]=t(o,e,n,a)}),i}function t(e){var t=s.createElement("script");t.src=e,t.defer=!0,s.head.appendChild(t)}"undefined"!=typeof Promise&&(o="wpEmojiSettingsSupports",i=["flag","emoji"],n.supports={everything:!0,everythingExceptFlag:!0},e=new Promise(function(e){s.addEventListener("DOMContentLoaded",e,{once:!0})}),new Promise(function(t){var n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+g.toString()+"("+[JSON.stringify(i),f.toString(),p.toString(),u.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"}),r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=function(e){c(n=e.data),r.terminate(),t(n)})}catch(e){}c(n=g(i,f,p,u))}t(n)}).then(function(e){for(var t in e)n.supports[t]=e[t],n.supports.everything=n.supports.everything&&n.supports[t],"flag"!==t&&(n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&n.supports[t]);n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&!n.supports.flag,n.DOMReady=!1,n.readyCallback=function(){n.DOMReady=!0}}).then(function(){return e}).then(function(){var e;n.supports.everything||(n.readyCallback(),(e=n.source||{}).concatemoji?t(e.concatemoji):e.wpemoji&&e.twemoji&&(t(e.twemoji),t(e.wpemoji)))}))}((window,document),window._wpemojiSettings);
+/* ]]> */
+</script>
+<style id='wp-emoji-styles-inline-css' type='text/css'>
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://www.ultimatedrift.com.br/wp-includes/css/dist/block-library/style.min.css?ver=6.8.5' type='text/css' media='all' />
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel='stylesheet' id='meu-tema-style-css' href='https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/style.css?ver=1777561473' type='text/css' media='all' />
+<link rel='stylesheet' id='swiper-js-css' href='https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='fancybox-style-css' href='https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.css' type='text/css' media='all' />
+<link rel='stylesheet' id='sweetalert-css' href='https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css' type='text/css' media='all' />
+<script type="text/javascript" src="https://www.ultimatedrift.com.br/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://www.ultimatedrift.com.br/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
+<link rel="https://api.w.org/" href="https://www.ultimatedrift.com.br/wp-json/" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.ultimatedrift.com.br/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 6.8.5" />
+<!-- Analytics by WP Statistics - https://wp-statistics.com -->
+ 
+    <title>Ultimate Drift - Campeonato Brasileiro de Drift</title>
+</head>
+<body data-rsssl=1>
+<div id="page-loader">
+    <svg width="582" height="228" viewBox="0 0 682 328" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.87092 292.7L104.371 251.7L183.124 0.445312H84.1399C84.1399 0.445312 1.59592 254.668 0.817922 269.611C0.618638 273.531 1.04841 277.457 2.09092 281.241C3.12035 285.273 4.73053 289.133 6.87092 292.7Z" fill="white"/><path d="M678.416 36.5171L574.121 81.4541L524.239 241.717C516.777 263.933 501.602 271.917 484.921 271.917H366.616L405.665 153.974L263.828 215.034L246.089 271.917H131.702L22.7241 318.832C29.5611 325.532 45.2902 327.8 57.8452 327.8H250.472C260.922 327.801 271.162 324.872 280.031 319.345C288.899 313.817 296.039 305.913 300.64 296.531L289.216 327.799H546.104C574.783 327.799 603.942 330.636 620.829 271.916C620.829 271.916 679.995 68.6401 680.446 62.3051C681.755 57.8911 682.491 51.6541 681.616 47.6171C680.805 43.9111 680.172 39.8821 678.416 36.5171Z" fill="#878382"/><path d="M418.394 115.539L437.816 56.875H554.662L658.706 12.085L657.468 11.006C651.942 6.19103 643.574 2.57203 638.242 1.28603C634.895 0.388938 631.44 -0.0441116 627.975 -0.000974298H330.911L275.711 176.966L418.394 115.539Z" fill="white"/></svg>
+  <div class="preloader__progress"></div>
+</div>
+
+<header class="header">
+    <div class="header__top">
+        <div class="wrapper">
+            <div class="header__top-box">
+                <div class="header__top-left">
+                    <a href="http://portal.drift.siliconvillage.cafe" class="header__top-live" target="_blank">
+                        <svg class="ui__icon" width="33" height="33" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.74003 4.72355C6.02072 5.00424 6.02072 5.45932 5.74003 5.74001C2.55888 8.92116 2.55888 14.0788 5.74003 17.26C6.02072 17.5407 6.02072 17.9957 5.74003 18.2764C5.45934 18.5571 5.00425 18.5571 4.72356 18.2764C0.981037 14.5339 0.981037 8.46607 4.72356 4.72355C5.00425 4.44286 5.45934 4.44286 5.74003 4.72355ZM18.2764 4.72355C22.019 8.46607 22.019 14.5339 18.2764 18.2764C17.9958 18.5571 17.5407 18.5571 17.26 18.2764C16.9793 17.9957 16.9793 17.5407 17.26 17.26C20.4411 14.0788 20.4411 8.92116 17.26 5.74001C16.9793 5.45932 16.9793 5.00424 17.26 4.72355C17.5407 4.44286 17.9958 4.44286 18.2764 4.72355ZM8.4506 7.43412C8.73129 7.71481 8.73129 8.1699 8.4506 8.45059C6.76647 10.1347 6.76647 12.8652 8.4506 14.5494C8.73129 14.8301 8.73129 15.2852 8.4506 15.5659C8.16991 15.8465 7.71483 15.8465 7.43414 15.5659C5.18862 13.3203 5.18862 9.67964 7.43414 7.43412C7.71483 7.15343 8.16991 7.15343 8.4506 7.43412ZM15.5659 7.43412C17.8114 9.67964 17.8114 13.3203 15.5659 15.5659C15.2852 15.8465 14.8301 15.8465 14.5494 15.5659C14.2687 15.2852 14.2687 14.8301 14.5494 14.5494C16.2335 12.8652 16.2335 10.1347 14.5494 8.45059C14.2687 8.1699 14.2687 7.71481 14.5494 7.43412C14.8301 7.15343 15.2852 7.15343 15.5659 7.43412ZM11.5 10.0625C12.2939 10.0625 12.9375 10.7061 12.9375 11.5C12.9375 12.2939 12.2939 12.9375 11.5 12.9375C10.7061 12.9375 10.0625 12.2939 10.0625 11.5C10.0625 10.7061 10.7061 10.0625 11.5 10.0625Z" fill="#54F251"/></svg>
+                        <span class="ui__display--md-none">
+                            Acompanhe em tempo real
+                        </span>
+                        <span class="ui__display--none ui__display--md-block">Ao vivo</span>
+                    </a>
+                </div>
+                <div class="header__top-right">
+                    <div id="google_translate_element" style="display: none;"></div>
+                    <div class="switch-container">
+                        <label class="switch" title="Translate" for="toggle-translate">
+                            <input type="checkbox" id="toggle-translate">
+                            <span class="slider"></span>
+                        </label>
+                        <img src="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/svg/eua-flag.svg" alt="Imagem do botão para mudar linguagem do site" width="40" height="29" loading="lazy">
+                    </div>
+                    <div class="header__social ui__display--lg-none">
+                        <span class="header__top-right-label">Nos siga</span>
+                        <div class="header__social-items">
+                            <a href="https://www.instagram.com/ultimatedriftbr/" title="Visitar Instagram" class="header__social header__instagram">
+                                <svg width="32" height="30" viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.951215 4.46735C0 6.21754 0 8.50867 0 13.0909V16.9091C0 21.4913 0 23.7825 0.951215 25.5326C1.78793 27.0721 3.12303 28.3238 4.76518 29.1082C6.63204 30 9.07591 30 13.9636 30H18.0364C22.9241 30 25.368 30 27.2348 29.1082C28.8769 28.3238 30.2121 27.0721 31.0487 25.5326C32 23.7825 32 21.4913 32 16.9091V13.0909C32 8.50867 32 6.21754 31.0487 4.46735C30.2121 2.92784 28.8769 1.67618 27.2348 0.891764C25.368 0 22.9241 0 18.0364 0H13.9636C9.07591 0 6.63204 0 4.76518 0.891764C3.12303 1.67618 1.78793 2.92784 0.951215 4.46735ZM18.0364 2.72727H13.9636C11.4718 2.72727 9.77782 2.7294 8.46848 2.82968C7.19308 2.92737 6.54086 3.10444 6.08588 3.32178C4.99111 3.84473 4.10105 4.67917 3.54323 5.70551C3.3114 6.13205 3.12253 6.74351 3.01833 7.9392C2.91136 9.16671 2.90909 10.7548 2.90909 13.0909V16.9091C2.90909 19.2453 2.91136 20.8332 3.01833 22.0608C3.12253 23.2565 3.3114 23.868 3.54323 24.2945C4.10105 25.3208 4.99111 26.1552 6.08588 26.6782C6.54086 26.8955 7.19308 27.0727 8.46848 27.1703C9.77782 27.2705 11.4718 27.2727 13.9636 27.2727H18.0364C20.5283 27.2727 22.2221 27.2705 23.5315 27.1703C24.807 27.0727 25.4592 26.8955 25.9142 26.6782C27.0089 26.1552 27.8989 25.3208 28.4567 24.2945C28.6886 23.868 28.8775 23.2565 28.9817 22.0608C29.0886 20.8332 29.0909 19.2453 29.0909 16.9091V13.0909C29.0909 10.7548 29.0886 9.16671 28.9817 7.9392C28.8775 6.74351 28.6886 6.13205 28.4567 5.70551C27.8989 4.67917 27.0089 3.84473 25.9142 3.32178C25.4592 3.10444 24.807 2.92737 23.5315 2.82968C22.2221 2.7294 20.5283 2.72727 18.0364 2.72727Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M15.0001 23.1818C19.5187 23.1818 23.1819 19.5187 23.1819 15C23.1819 10.4813 19.5187 6.81821 15.0001 6.81821C10.4814 6.81821 6.81824 10.4813 6.81824 15C6.81824 19.5187 10.4814 23.1818 15.0001 23.1818ZM15.0001 20.4546C18.0125 20.4546 20.4546 18.0124 20.4546 15C20.4546 11.9876 18.0125 9.54548 15.0001 9.54548C11.9876 9.54548 9.54551 11.9876 9.54551 15C9.54551 18.0124 11.9876 20.4546 15.0001 20.4546Z" fill="white"/><path d="M23.1819 5.45456C22.4287 5.45456 21.8182 6.06509 21.8182 6.8182C21.8182 7.5713 22.4287 8.18183 23.1819 8.18183C23.935 8.18183 24.5455 7.5713 24.5455 6.8182C24.5455 6.06509 23.935 5.45456 23.1819 5.45456Z" fill="white"/></svg>
+                            </a>
+                            <a href="https://www.youtube.com/@UltimateDriftbr" class="header__social header__youtube" title="Visitar Canal do youtube">
+                                <svg width="35" height="23" viewBox="0 0 35 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9798 15.7486V6.5292C17.4661 8.06927 20.1663 9.557 23.3598 11.161C20.7258 12.5323 17.4661 14.0709 13.9798 15.7486ZM33.4093 1.94397C32.8079 1.20015 31.7829 0.621146 30.6917 0.429457C27.4842 -0.142339 7.47422 -0.143965 4.26852 0.429457C3.39344 0.583459 2.61421 0.955702 1.94483 1.53405C-0.875634 3.9916 0.00816584 17.1707 0.688008 19.3055C0.973888 20.2295 1.34346 20.8959 1.80889 21.3334C2.40854 21.9117 3.22957 22.3099 4.17263 22.4885C6.81354 23.0013 20.4191 23.288 30.6358 22.5655C31.5772 22.4115 32.4104 22.0005 33.0676 21.3975C35.6754 18.9498 35.4976 5.03065 33.4093 1.94397Z" fill="white"/></svg>
+                            </a>
+                            <a href="https://www.twitch.tv/ultimatedriftbr" class="header__social header__twitch" title="Visitar Twicht">
+                                <svg width="26" height="27" viewBox="0 0 26 27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.8327 12.5367L19.5 16.3934H15.1663L11.3747 19.7684V16.3934H6.5V1.92921H23.8327V12.5367ZM5.41684 0.000900175L0 4.82259V22.1783H6.5V27L11.9168 22.1783H16.2495L26 13.5V0L5.41684 0.000900175ZM18.4168 5.30421H20.5832V11.0901H18.4168V5.30421ZM12.4579 5.30421H14.6253V11.0901H12.4569L12.4579 5.30421Z" fill="white"/></svg>
+                            </a>
+                            <a href="https://www.facebook.com/ultimatedriftbr" class="header__social header__facebook" title="Visitar Facebook">
+                                <svg width="14" height="28" viewBox="0 0 14 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.5498 28V15.4H13.3752L14 9.8H9.5498V7.07246C9.5498 5.63046 9.58665 4.2 11.6017 4.2H13.6426V0.196191C13.6426 0.135991 11.8895 0 10.1159 0C6.41199 0 4.09276 2.32007 4.09276 6.58027V9.8H0V15.4H4.09276V28H9.5498Z" fill="white"/></svg>
+                            </a>
+                            <a href="https://www.tiktok.com/@ultimate_drift" class="header__social header__tiktok" title="Visitar tiktok">
+                                <svg width="24" height="30" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M35.0188 9.83776C34.7073 9.6773 34.404 9.50139 34.1102 9.3107C33.2557 8.74767 32.4723 8.08424 31.7768 7.33472C30.0366 5.35011 29.3866 3.33675 29.1472 1.92711H29.1568C28.9569 0.757046 29.0395 0 29.052 0H21.1259V30.5482C21.1259 30.9584 21.1259 31.3637 21.1086 31.7643C21.1086 31.8141 21.1038 31.8601 21.1009 31.9138C21.1009 31.9358 21.1009 31.9588 21.0961 31.9818C21.0961 31.9876 21.0961 31.9933 21.0961 31.9991C21.0126 33.0951 20.66 34.1539 20.0696 35.0823C19.4791 36.0108 18.6688 36.7803 17.7099 37.3233C16.7105 37.89 15.5802 38.1872 14.4304 38.1858C10.7375 38.1858 7.74453 35.1844 7.74453 31.4778C7.74453 27.7711 10.7375 24.7698 14.4304 24.7698C15.1295 24.7691 15.8242 24.8788 16.4889 25.0946L16.4985 17.0508C14.4808 16.791 12.4309 16.9508 10.4783 17.5202C8.52563 18.0895 6.71256 19.0561 5.15344 20.3588C3.7873 21.5419 2.63877 22.9535 1.75955 24.5302C1.42497 25.1052 0.162592 27.4156 0.00972199 31.1654C-0.0864224 33.2937 0.55486 35.4987 0.860599 36.4101V36.4292C1.05289 36.9659 1.79801 38.7971 3.01231 40.3409C3.99148 41.5793 5.14834 42.6671 6.44562 43.5694V43.5502L6.46485 43.5694C10.302 46.1683 14.5564 45.9977 14.5564 45.9977C15.2928 45.968 17.7599 45.9977 20.5615 44.6743C23.6689 43.2072 25.438 41.0213 25.438 41.0213C26.5681 39.7153 27.4668 38.2268 28.0954 36.6199C28.8126 34.7407 29.052 32.4868 29.052 31.586V15.3795C29.1482 15.437 30.4288 16.2813 30.4288 16.2813C30.4288 16.2813 32.2738 17.46 35.1524 18.2275C37.2176 18.7738 40 18.8888 40 18.8888V11.0462C39.0251 11.1516 37.0455 10.8449 35.0188 9.83776Z" fill="white"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header__bottom">
+        <div class="wrapper">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-10 col-lg-4">
+                    <a href="https://www.ultimatedrift.com.br/" class="header__logo-box">
+                        <img src="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/logo.png" alt="Logo ultimate drift" class="header__logo">
+                    </a>
+                </div>
+                <div class="col-2 col-lg-8">
+                    <nav class="nav__menu">
+                        <button class="nav__close ui__display--none ui__display--lg-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M177.007,177.008a1.907,1.907,0,0,1,2.7,0l6.744,6.744,6.744-6.744a1.907,1.907,0,1,1,2.7,2.7l-6.744,6.744,6.744,6.744a1.907,1.907,0,1,1-2.7,2.7l-6.744-6.744L179.7,195.89a1.907,1.907,0,1,1-2.7-2.7l6.744-6.744-6.744-6.744A1.907,1.907,0,0,1,177.007,177.008Z" transform="translate(-176.448 -176.449)" fill="#d6d6d6"/></svg>
+                        </button>
+                        <ul class="nav__list">
+                            <li class="nav__item">
+                                <a href="https://www.ultimatedrift.com.br/" class="nav__btn">
+                                    Home
+                                </a>
+                            </li>
+                            
+                            <!--  -->
+                             <li class="nav__item">
+                                    <a href="https://www.ultimatedrift.com.br/ingressos" class="nav__btn">
+
+                                        Ingressos
+                                    </a>
+                                </li>
+                            <li class="nav__item" >
+                                <a href="https://www.ultimatedrift.com.br/pilotos" class="nav__btn">
+                                    Pilotos
+                                </a>
+                                </li>
+                            <li class="nav__item">
+                                <a href="https://forms.gle/64JUaXQJJCBfiVV99" class="nav__btn" target="_blank">
+                                    Inscrição Curinga
+                                </a>
+                            </li>
+							<li class="nav__item" >
+                                <a href="https://www.ultimatedrift.com.br/classificacao" class="nav__btn">
+                                    Classificação
+                                </a>
+                            </li>
+                            <li class="nav__item" >
+                                <a href="https://www.ultimatedrift.com.br/etapas" class="nav__btn">
+                                    Etapas
+                                </a>
+                            </li>
+                            <li class="nav__item">
+                                <a href="https://www.ultimatedrift.com.br/categorias" class="nav__btn">
+                                    Categorias
+                                </a>
+                            </li>
+                            <li class="nav__item">
+                                <a href="https://www.ultimatedrift.com.br/noticias" class="nav__btn">
+                                    Notícias
+                                </a>
+                            </li>
+                            <li class="nav__item">
+                                <a href="https://www.ultimatedrift.com.br/patrocinadores" class="nav__btn nav__sponsor">
+                                    Patrocinadores
+                                </a>
+                            </li>
+                            <li class="nav__item">
+                                <a href="https://www.ultimatedrift.com.br/contato" class="nav__btn" data-section="contact">
+                                    Contato
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="header__social ui__display--none ui__display--lg-flex">
+                            <span class="header__top-right-label">Nos siga</span>
+                            <div class="header__social-items">
+                                <a href="https://www.instagram.com/ultimatedriftbr/" title="Visitar Instagram" class="header__social header__instagram">
+                                    <svg width="32" height="30" viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.951215 4.46735C0 6.21754 0 8.50867 0 13.0909V16.9091C0 21.4913 0 23.7825 0.951215 25.5326C1.78793 27.0721 3.12303 28.3238 4.76518 29.1082C6.63204 30 9.07591 30 13.9636 30H18.0364C22.9241 30 25.368 30 27.2348 29.1082C28.8769 28.3238 30.2121 27.0721 31.0487 25.5326C32 23.7825 32 21.4913 32 16.9091V13.0909C32 8.50867 32 6.21754 31.0487 4.46735C30.2121 2.92784 28.8769 1.67618 27.2348 0.891764C25.368 0 22.9241 0 18.0364 0H13.9636C9.07591 0 6.63204 0 4.76518 0.891764C3.12303 1.67618 1.78793 2.92784 0.951215 4.46735ZM18.0364 2.72727H13.9636C11.4718 2.72727 9.77782 2.7294 8.46848 2.82968C7.19308 2.92737 6.54086 3.10444 6.08588 3.32178C4.99111 3.84473 4.10105 4.67917 3.54323 5.70551C3.3114 6.13205 3.12253 6.74351 3.01833 7.9392C2.91136 9.16671 2.90909 10.7548 2.90909 13.0909V16.9091C2.90909 19.2453 2.91136 20.8332 3.01833 22.0608C3.12253 23.2565 3.3114 23.868 3.54323 24.2945C4.10105 25.3208 4.99111 26.1552 6.08588 26.6782C6.54086 26.8955 7.19308 27.0727 8.46848 27.1703C9.77782 27.2705 11.4718 27.2727 13.9636 27.2727H18.0364C20.5283 27.2727 22.2221 27.2705 23.5315 27.1703C24.807 27.0727 25.4592 26.8955 25.9142 26.6782C27.0089 26.1552 27.8989 25.3208 28.4567 24.2945C28.6886 23.868 28.8775 23.2565 28.9817 22.0608C29.0886 20.8332 29.0909 19.2453 29.0909 16.9091V13.0909C29.0909 10.7548 29.0886 9.16671 28.9817 7.9392C28.8775 6.74351 28.6886 6.13205 28.4567 5.70551C27.8989 4.67917 27.0089 3.84473 25.9142 3.32178C25.4592 3.10444 24.807 2.92737 23.5315 2.82968C22.2221 2.7294 20.5283 2.72727 18.0364 2.72727Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M15.0001 23.1818C19.5187 23.1818 23.1819 19.5187 23.1819 15C23.1819 10.4813 19.5187 6.81821 15.0001 6.81821C10.4814 6.81821 6.81824 10.4813 6.81824 15C6.81824 19.5187 10.4814 23.1818 15.0001 23.1818ZM15.0001 20.4546C18.0125 20.4546 20.4546 18.0124 20.4546 15C20.4546 11.9876 18.0125 9.54548 15.0001 9.54548C11.9876 9.54548 9.54551 11.9876 9.54551 15C9.54551 18.0124 11.9876 20.4546 15.0001 20.4546Z" fill="white"/><path d="M23.1819 5.45456C22.4287 5.45456 21.8182 6.06509 21.8182 6.8182C21.8182 7.5713 22.4287 8.18183 23.1819 8.18183C23.935 8.18183 24.5455 7.5713 24.5455 6.8182C24.5455 6.06509 23.935 5.45456 23.1819 5.45456Z" fill="white"/></svg>
+                                </a>
+                                <a href="" class="header__social header__youtube" title="Visitar Canal do youtube">
+                                    <svg width="35" height="23" viewBox="0 0 35 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9798 15.7486V6.5292C17.4661 8.06927 20.1663 9.557 23.3598 11.161C20.7258 12.5323 17.4661 14.0709 13.9798 15.7486ZM33.4093 1.94397C32.8079 1.20015 31.7829 0.621146 30.6917 0.429457C27.4842 -0.142339 7.47422 -0.143965 4.26852 0.429457C3.39344 0.583459 2.61421 0.955702 1.94483 1.53405C-0.875634 3.9916 0.00816584 17.1707 0.688008 19.3055C0.973888 20.2295 1.34346 20.8959 1.80889 21.3334C2.40854 21.9117 3.22957 22.3099 4.17263 22.4885C6.81354 23.0013 20.4191 23.288 30.6358 22.5655C31.5772 22.4115 32.4104 22.0005 33.0676 21.3975C35.6754 18.9498 35.4976 5.03065 33.4093 1.94397Z" fill="white"/></svg>
+                                </a>
+                                <a href="" class="header__social header__twitch" title="Visitar Twicht">
+                                    <svg width="26" height="27" viewBox="0 0 26 27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.8327 12.5367L19.5 16.3934H15.1663L11.3747 19.7684V16.3934H6.5V1.92921H23.8327V12.5367ZM5.41684 0.000900175L0 4.82259V22.1783H6.5V27L11.9168 22.1783H16.2495L26 13.5V0L5.41684 0.000900175ZM18.4168 5.30421H20.5832V11.0901H18.4168V5.30421ZM12.4579 5.30421H14.6253V11.0901H12.4569L12.4579 5.30421Z" fill="white"/></svg>
+                                </a>
+                                <a href="" class="header__social header__facebook" title="Visitar Facebook">
+                                    <svg width="14" height="28" viewBox="0 0 14 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.5498 28V15.4H13.3752L14 9.8H9.5498V7.07246C9.5498 5.63046 9.58665 4.2 11.6017 4.2H13.6426V0.196191C13.6426 0.135991 11.8895 0 10.1159 0C6.41199 0 4.09276 2.32007 4.09276 6.58027V9.8H0V15.4H4.09276V28H9.5498Z" fill="white"/></svg>
+                                </a>
+                                <a href="" class="header__social header__tiktok" title="Visitar tiktok">
+                                    <svg width="24" height="30" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M35.0188 9.83776C34.7073 9.6773 34.404 9.50139 34.1102 9.3107C33.2557 8.74767 32.4723 8.08424 31.7768 7.33472C30.0366 5.35011 29.3866 3.33675 29.1472 1.92711H29.1568C28.9569 0.757046 29.0395 0 29.052 0H21.1259V30.5482C21.1259 30.9584 21.1259 31.3637 21.1086 31.7643C21.1086 31.8141 21.1038 31.8601 21.1009 31.9138C21.1009 31.9358 21.1009 31.9588 21.0961 31.9818C21.0961 31.9876 21.0961 31.9933 21.0961 31.9991C21.0126 33.0951 20.66 34.1539 20.0696 35.0823C19.4791 36.0108 18.6688 36.7803 17.7099 37.3233C16.7105 37.89 15.5802 38.1872 14.4304 38.1858C10.7375 38.1858 7.74453 35.1844 7.74453 31.4778C7.74453 27.7711 10.7375 24.7698 14.4304 24.7698C15.1295 24.7691 15.8242 24.8788 16.4889 25.0946L16.4985 17.0508C14.4808 16.791 12.4309 16.9508 10.4783 17.5202C8.52563 18.0895 6.71256 19.0561 5.15344 20.3588C3.7873 21.5419 2.63877 22.9535 1.75955 24.5302C1.42497 25.1052 0.162592 27.4156 0.00972199 31.1654C-0.0864224 33.2937 0.55486 35.4987 0.860599 36.4101V36.4292C1.05289 36.9659 1.79801 38.7971 3.01231 40.3409C3.99148 41.5793 5.14834 42.6671 6.44562 43.5694V43.5502L6.46485 43.5694C10.302 46.1683 14.5564 45.9977 14.5564 45.9977C15.2928 45.968 17.7599 45.9977 20.5615 44.6743C23.6689 43.2072 25.438 41.0213 25.438 41.0213C26.5681 39.7153 27.4668 38.2268 28.0954 36.6199C28.8126 34.7407 29.052 32.4868 29.052 31.586V15.3795C29.1482 15.437 30.4288 16.2813 30.4288 16.2813C30.4288 16.2813 32.2738 17.46 35.1524 18.2275C37.2176 18.7738 40 18.8888 40 18.8888V11.0462C39.0251 11.1516 37.0455 10.8449 35.0188 9.83776Z" fill="white"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+                    <button class="header__menu ui__display--none ui__display--lg-block">
+                            <svg class="header__menu-icon" width="30" height="24.064" viewBox="0 0 20 14.064"><g transform="translate(-2 -5)"><path d="M2,6A1,1,0,0,1,3,5H21a1,1,0,0,1,0,2H3A1,1,0,0,1,2,6Z" fill="#ff7a11"/><path d="M2,12.032a1,1,0,0,1,1-1H21a1,1,0,0,1,0,2H3A1,1,0,0,1,2,12.032Z" fill="#ff7a11"/><path d="M3,17.065a1,1,0,0,0,0,2H21a1,1,0,0,0,0-2Z" fill="#ff7a11"/></g></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    </header>
+
+
+    <main class="main">
+<section class="contato">
+    <div class="wrapper">
+        <a href="javascript:history.back()" class="ui__title" data-animate="slide-bottom">
+            <svg class="ui__icon" width="15" height="27" viewBox="0 0 15 27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5208 26.7703C13.8818 27.1025 14.4396 27.0692 14.7678 26.7039C15.096 26.3386 15.0632 25.774 14.7022 25.4419L2.00202 13.8182C1.67385 13.5193 1.67385 13.0875 2.00202 12.7886L14.7022 1.5634C15.0632 1.23129 15.096 0.666705 14.8006 0.301387C14.4725 -0.0639308 13.9146 -0.0971413 13.5536 0.201755L0.853422 11.4602C-0.262355 12.4565 -0.295172 14.1171 0.820606 15.1466L13.5208 26.7703Z" fill="#54F251"/></svg>
+            <h1 class="">
+                Página não encontrada
+            </h1>
+        </a>
+        <div class="row">
+            <img class="error__img" src="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/svg/404.svg" alt="" class="">
+        </div>
+    </div>
+</section>
+
+
+
+
+</main>
+
+
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"\/*"},{"not":{"href_matches":["\/wp-*.php","\/wp-admin\/*","\/wp-content\/uploads\/*","\/wp-content\/*","\/wp-content\/plugins\/*","\/wp-content\/themes\/ultimate-drift\/*","\/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" id="google-translate-js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" id="fancybox-js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" id="swiper-js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@11" id="sweetalert-js"></script>
+<script type="text/javascript" id="meu-tema-script-js-extra">
+/* <![CDATA[ */
+var my_ajax_object = {"ajax_url":"https:\/\/www.ultimatedrift.com.br\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/js/bundle.min.js?ver=1777561473" id="meu-tema-script-js"></script>
+<script type="text/javascript" id="wp-statistics-tracker-js-extra">
+/* <![CDATA[ */
+var WP_Statistics_Tracker_Object = {"requestUrl":"https:\/\/www.ultimatedrift.com.br\/wp-json\/wp-statistics\/v2","ajaxUrl":"https:\/\/www.ultimatedrift.com.br\/wp-admin\/admin-ajax.php","hitParams":{"wp_statistics_hit":1,"source_type":"404","source_id":0,"search_query":"","signature":"08bd11d0916f4d3641537bca6636fc2f","endpoint":"hit"},"option":{"dntEnabled":false,"bypassAdBlockers":false,"consentIntegration":{"name":null,"status":[]},"isPreview":false,"userOnline":false,"isWpConsentApiActive":false},"isLegacyEventLoaded":"","customEventAjaxUrl":"https:\/\/www.ultimatedrift.com.br\/wp-admin\/admin-ajax.php?action=wp_statistics_custom_event&nonce=a893fa62d8","onlineParams":{"wp_statistics_hit":1,"source_type":"404","source_id":0,"search_query":"","signature":"08bd11d0916f4d3641537bca6636fc2f","action":"wp_statistics_online_check"},"jsCheckTime":"60000"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.ultimatedrift.com.br/wp-content/plugins/wp-statistics/assets/js/tracker.js?ver=14.16.8" id="wp-statistics-tracker-js"></script>
+
+<footer class="footer">
+    <div class="wrapper">
+        <div class="footer__top">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-xl-4">
+                    <a href="https://www.ultimatedrift.com.br/" class="footer__logo">
+                        <img width="280" height="112" src="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/logo-footer.png" alt="Logo Ultimate drifit" class="footer__logo-img" loading="lazy">
+                    </a>
+                </div>
+                <div class="col-md-2">
+                    <ul class="footer__nav-list">
+                        <li class="nav__item">
+                            <a href="https://www.ultimatedrift.com.br/" class="nav__btn">
+                                Home
+                            </a>
+                        </li>
+                        
+                                                    <li class="nav__item">
+                                <a href="https://www.tycket.com.br/ultimate-drift-ribeir-o-preto-14-a-16-agosto.html" class="nav__btn" target="_blank">
+                                    Ingressos
+                                </a>
+                            </li>
+                                                <li class="nav__item" >
+                            <a href="https://www.ultimatedrift.com.br/pilotos" class="nav__btn">
+                                Pilotos
+                            </a>
+                        </li>
+                        <li class="nav__item" >
+                            <a href="https://www.ultimatedrift.com.br/classificacao" class="nav__btn">
+                                Classificação
+                            </a>
+                        </li>
+                        <li class="nav__item" >
+                            <a href="https://www.ultimatedrift.com.br/etapas" class="nav__btn">
+                                Etapas
+                            </a>
+                        </li>
+                        <li class="nav__item" >
+                            <a href="https://www.ultimatedrift.com.br/termos-e-condicoes" class="nav__btn">
+                                Termos e Condições
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <ul class="footer__nav-list">
+                        <li class="nav__item">
+                            <a href="https://www.ultimatedrift.com.br/categorias" class="nav__btn">
+                                Categorias
+                            </a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="https://www.ultimatedrift.com.br/noticias" class="nav__btn">
+                                Notícias
+                            </a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="https://www.ultimatedrift.com.br/patrocinadores" class="nav__btn">
+                                Patrocinadores
+                            </a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="https://www.ultimatedrift.com.br/contato" class="nav__btn" data-section="contact">
+                                Contato
+                            </a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="https://www.cba.org.br/campeonato/downloads/250/459" target="_blank" class="nav__btn" data-section="contact">
+                                Regulamento
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </div>
+                <div class="col-xl-3">
+                    <span class="footer__top-right-label">Nos siga</span>
+                    <div class="footer__social-box">
+                        <a href="https://www.instagram.com/ultimatedriftbr/" title="Visitar Instagram" class="footer__social footer__instagram">
+                                <svg width="32" height="30" viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.951215 4.46735C0 6.21754 0 8.50867 0 13.0909V16.9091C0 21.4913 0 23.7825 0.951215 25.5326C1.78793 27.0721 3.12303 28.3238 4.76518 29.1082C6.63204 30 9.07591 30 13.9636 30H18.0364C22.9241 30 25.368 30 27.2348 29.1082C28.8769 28.3238 30.2121 27.0721 31.0487 25.5326C32 23.7825 32 21.4913 32 16.9091V13.0909C32 8.50867 32 6.21754 31.0487 4.46735C30.2121 2.92784 28.8769 1.67618 27.2348 0.891764C25.368 0 22.9241 0 18.0364 0H13.9636C9.07591 0 6.63204 0 4.76518 0.891764C3.12303 1.67618 1.78793 2.92784 0.951215 4.46735ZM18.0364 2.72727H13.9636C11.4718 2.72727 9.77782 2.7294 8.46848 2.82968C7.19308 2.92737 6.54086 3.10444 6.08588 3.32178C4.99111 3.84473 4.10105 4.67917 3.54323 5.70551C3.3114 6.13205 3.12253 6.74351 3.01833 7.9392C2.91136 9.16671 2.90909 10.7548 2.90909 13.0909V16.9091C2.90909 19.2453 2.91136 20.8332 3.01833 22.0608C3.12253 23.2565 3.3114 23.868 3.54323 24.2945C4.10105 25.3208 4.99111 26.1552 6.08588 26.6782C6.54086 26.8955 7.19308 27.0727 8.46848 27.1703C9.77782 27.2705 11.4718 27.2727 13.9636 27.2727H18.0364C20.5283 27.2727 22.2221 27.2705 23.5315 27.1703C24.807 27.0727 25.4592 26.8955 25.9142 26.6782C27.0089 26.1552 27.8989 25.3208 28.4567 24.2945C28.6886 23.868 28.8775 23.2565 28.9817 22.0608C29.0886 20.8332 29.0909 19.2453 29.0909 16.9091V13.0909C29.0909 10.7548 29.0886 9.16671 28.9817 7.9392C28.8775 6.74351 28.6886 6.13205 28.4567 5.70551C27.8989 4.67917 27.0089 3.84473 25.9142 3.32178C25.4592 3.10444 24.807 2.92737 23.5315 2.82968C22.2221 2.7294 20.5283 2.72727 18.0364 2.72727Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M15.0001 23.1818C19.5187 23.1818 23.1819 19.5187 23.1819 15C23.1819 10.4813 19.5187 6.81821 15.0001 6.81821C10.4814 6.81821 6.81824 10.4813 6.81824 15C6.81824 19.5187 10.4814 23.1818 15.0001 23.1818ZM15.0001 20.4546C18.0125 20.4546 20.4546 18.0124 20.4546 15C20.4546 11.9876 18.0125 9.54548 15.0001 9.54548C11.9876 9.54548 9.54551 11.9876 9.54551 15C9.54551 18.0124 11.9876 20.4546 15.0001 20.4546Z" fill="white"/><path d="M23.1819 5.45456C22.4287 5.45456 21.8182 6.06509 21.8182 6.8182C21.8182 7.5713 22.4287 8.18183 23.1819 8.18183C23.935 8.18183 24.5455 7.5713 24.5455 6.8182C24.5455 6.06509 23.935 5.45456 23.1819 5.45456Z" fill="white"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/@UltimateDriftbr" class="footer__social footer__youtube" title="Visitar Canal do youtube">
+                            <svg width="35" height="23" viewBox="0 0 35 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.9798 15.7486V6.5292C17.4661 8.06927 20.1663 9.557 23.3598 11.161C20.7258 12.5323 17.4661 14.0709 13.9798 15.7486ZM33.4093 1.94397C32.8079 1.20015 31.7829 0.621146 30.6917 0.429457C27.4842 -0.142339 7.47422 -0.143965 4.26852 0.429457C3.39344 0.583459 2.61421 0.955702 1.94483 1.53405C-0.875634 3.9916 0.00816584 17.1707 0.688008 19.3055C0.973888 20.2295 1.34346 20.8959 1.80889 21.3334C2.40854 21.9117 3.22957 22.3099 4.17263 22.4885C6.81354 23.0013 20.4191 23.288 30.6358 22.5655C31.5772 22.4115 32.4104 22.0005 33.0676 21.3975C35.6754 18.9498 35.4976 5.03065 33.4093 1.94397Z" fill="white"/></svg>
+                        </a>
+                        <a href="https://www.twitch.tv/ultimatedriftbr" class="footer__social footer__twitch" title="Visitar Twicht">
+                            <svg width="26" height="27" viewBox="0 0 26 27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.8327 12.5367L19.5 16.3934H15.1663L11.3747 19.7684V16.3934H6.5V1.92921H23.8327V12.5367ZM5.41684 0.000900175L0 4.82259V22.1783H6.5V27L11.9168 22.1783H16.2495L26 13.5V0L5.41684 0.000900175ZM18.4168 5.30421H20.5832V11.0901H18.4168V5.30421ZM12.4579 5.30421H14.6253V11.0901H12.4569L12.4579 5.30421Z" fill="white"/></svg>
+                        </a>
+                        <a href="https://www.facebook.com/ultimatedriftbr" class="footer__social footer__facebook" title="Visitar Facebook">
+                            <svg width="14" height="28" viewBox="0 0 14 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.5498 28V15.4H13.3752L14 9.8H9.5498V7.07246C9.5498 5.63046 9.58665 4.2 11.6017 4.2H13.6426V0.196191C13.6426 0.135991 11.8895 0 10.1159 0C6.41199 0 4.09276 2.32007 4.09276 6.58027V9.8H0V15.4H4.09276V28H9.5498Z" fill="white"/></svg>
+                        </a>
+                        <a href="https://www.tiktok.com/@ultimate_drift" class="footer__social footer__tiktok" title="Visitar tiktok">
+                            <svg width="24" height="30" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M35.0188 9.83776C34.7073 9.6773 34.404 9.50139 34.1102 9.3107C33.2557 8.74767 32.4723 8.08424 31.7768 7.33472C30.0366 5.35011 29.3866 3.33675 29.1472 1.92711H29.1568C28.9569 0.757046 29.0395 0 29.052 0H21.1259V30.5482C21.1259 30.9584 21.1259 31.3637 21.1086 31.7643C21.1086 31.8141 21.1038 31.8601 21.1009 31.9138C21.1009 31.9358 21.1009 31.9588 21.0961 31.9818C21.0961 31.9876 21.0961 31.9933 21.0961 31.9991C21.0126 33.0951 20.66 34.1539 20.0696 35.0823C19.4791 36.0108 18.6688 36.7803 17.7099 37.3233C16.7105 37.89 15.5802 38.1872 14.4304 38.1858C10.7375 38.1858 7.74453 35.1844 7.74453 31.4778C7.74453 27.7711 10.7375 24.7698 14.4304 24.7698C15.1295 24.7691 15.8242 24.8788 16.4889 25.0946L16.4985 17.0508C14.4808 16.791 12.4309 16.9508 10.4783 17.5202C8.52563 18.0895 6.71256 19.0561 5.15344 20.3588C3.7873 21.5419 2.63877 22.9535 1.75955 24.5302C1.42497 25.1052 0.162592 27.4156 0.00972199 31.1654C-0.0864224 33.2937 0.55486 35.4987 0.860599 36.4101V36.4292C1.05289 36.9659 1.79801 38.7971 3.01231 40.3409C3.99148 41.5793 5.14834 42.6671 6.44562 43.5694V43.5502L6.46485 43.5694C10.302 46.1683 14.5564 45.9977 14.5564 45.9977C15.2928 45.968 17.7599 45.9977 20.5615 44.6743C23.6689 43.2072 25.438 41.0213 25.438 41.0213C26.5681 39.7153 27.4668 38.2268 28.0954 36.6199C28.8126 34.7407 29.052 32.4868 29.052 31.586V15.3795C29.1482 15.437 30.4288 16.2813 30.4288 16.2813C30.4288 16.2813 32.2738 17.46 35.1524 18.2275C37.2176 18.7738 40 18.8888 40 18.8888V11.0462C39.0251 11.1516 37.0455 10.8449 35.0188 9.83776Z" fill="white"/></svg>
+                        </a>
+                    </div>
+                    <div class="index__app-links">
+                        <a href="https://play.google.com/store/apps/details?id=br.com.ultimatedrift.app" class="index__app-link" target="_blank">
+                            <img src="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/play-store.png" alt="logotipo play store" class="index__app-logo">
+                        </a>
+                        <a href="https://apps.apple.com/us/app/ultimate-drift-app/id6737285909" class="index__app-link" target="_blank">
+                            <img src="https://www.ultimatedrift.com.br/wp-content/themes/ultimate-drift/img/app-store.png" alt="logotipo app store" class="index__app-logo">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <p>Ultimate Drift &copy; - 2026 Campeonato Brasileiro de Drift. Todos os direitos reservados. Desenvolvido por <a href="https://api.whatsapp.com/send/?phone=5514998979211&text&type=phone_number&app_absent=0" class="footer__dev">Long-On</a></p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
