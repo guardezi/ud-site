@@ -1,0 +1,54 @@
+# Firebase App Hosting — backend de HML (juiz-ud-stage) do site público.
+# Doc: https://firebase.google.com/docs/app-hosting/configure
+
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  maxInstances: 10
+  minInstances: 0
+  concurrency: 80
+
+env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyBCxuhaH-7_fE_yG1eCKO5V7J0BW6vU1sA
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: juiz-ud-stage.firebaseapp.com
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: juiz-ud-stage
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: juiz-ud-stage.appspot.com
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "1027730609670"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:1027730609670:web:4c7a2fd5ff4a125f251587
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: https://ud-site--juiz-ud-stage.us-east4.hosted.app
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # Secret pra HMAC entre backoffice → /api/revalidate.
+  # firebase apphosting:secrets:set REVALIDATE_SECRET --project juiz-ud-stage
+  # - variable: REVALIDATE_SECRET
+  #   secret: REVALIDATE_SECRET
+  #   availability:
+  #     - RUNTIME

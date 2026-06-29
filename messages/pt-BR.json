@@ -1,0 +1,148 @@
+{
+  "brand": {
+    "name": "Ultimate Drift",
+    "tagline": "O campeonato brasileiro de drift profissional.",
+    "shortDescription": "Ultimate Drift é o principal campeonato brasileiro de drift profissional, com etapas em circuitos pelo país."
+  },
+  "nav": {
+    "home": "Início",
+    "pilotos": "Pilotos",
+    "etapas": "Etapas",
+    "classificacao": "Classificação",
+    "categorias": "Categorias",
+    "noticias": "Notícias",
+    "patrocinadores": "Patrocinadores",
+    "contato": "Contato",
+    "ingressos": "Ingressos",
+    "inscricaoCuringa": "Inscrição Curinga",
+    "regulamento": "Regulamento",
+    "language": "Idioma"
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados.",
+    "termos": "Termos e Condições",
+    "privacidade": "Privacidade",
+    "regulamento": "Regulamento",
+    "followUs": "Acompanhe a gente"
+  },
+  "home": {
+    "heroEyebrow": "Campeonato brasileiro de drift",
+    "heroTitle": "Drift de elite, do clip ao podium.",
+    "heroSubtitle": "Acompanhe pilotos, etapas e resultados em tempo real.",
+    "heroCta": "Ver próxima etapa",
+    "nextStage": "Próxima etapa",
+    "topDrivers": "Ranking — top 5",
+    "viewAllStandings": "Ver classificação completa",
+    "viewAllStages": "Ver todas as etapas",
+    "viewAllDrivers": "Ver todos os pilotos",
+    "latestNews": "Últimas notícias",
+    "viewAllNews": "Ver todas as notícias",
+    "noNews": "Em breve."
+  },
+  "pilotos": {
+    "title": "Pilotos",
+    "subtitle": "Quem corre nas pistas do Ultimate Drift.",
+    "filter": "Filtrar por categoria",
+    "all": "Todos",
+    "number": "Nº",
+    "category": "Categoria",
+    "location": "Local",
+    "noResults": "Nenhum piloto encontrado.",
+    "profile": {
+      "stats": "Estatísticas",
+      "bio": "Biografia",
+      "cars": "Carros",
+      "sponsors": "Patrocínios",
+      "history": "Histórico de batalhas",
+      "social": "Redes sociais",
+      "noCars": "Sem carros cadastrados.",
+      "noSponsors": "Sem patrocinadores cadastrados.",
+      "noBio": "Bio em breve."
+    }
+  },
+  "etapas": {
+    "title": "Etapas",
+    "subtitle": "Calendário e resultados do campeonato.",
+    "next": "Próxima",
+    "past": "Encerradas",
+    "future": "Próximas",
+    "viewStage": "Ver etapa",
+    "timetable": "Cronograma",
+    "circuit": "Circuito",
+    "qualifying": "Classificação (Qualifying)",
+    "bracket": "Chaveamento",
+    "viewQualifying": "Ver qualifying",
+    "viewBracket": "Ver chaveamento",
+    "noEvents": "Sem etapas cadastradas.",
+    "results": "Resultados",
+    "categories": {
+      "EVENT": "Evento",
+      "TRACK": "Pista",
+      "ENTERTAINMENT": "Entretenimento",
+      "OTHER": "Outro"
+    }
+  },
+  "classificacao": {
+    "title": "Classificação",
+    "subtitle": "Pontuação acumulada no campeonato vigente.",
+    "position": "Pos.",
+    "driver": "Piloto",
+    "points": "Pontos",
+    "stage": "Etapa",
+    "empty": "Ranking ainda não computado.",
+    "fantasyToggle": "Dorikin League",
+    "championshipToggle": "Campeonato"
+  },
+  "categorias": {
+    "title": "Categorias",
+    "subtitle": "As categorias do campeonato.",
+    "empty": "Sem categorias cadastradas.",
+    "viewDrivers": "Ver pilotos",
+    "rules": "Regulamento"
+  },
+  "noticias": {
+    "title": "Notícias",
+    "subtitle": "Tudo sobre o campeonato.",
+    "empty": "Sem notícias publicadas ainda.",
+    "publishedAt": "Publicado em {date}",
+    "by": "Por {author}",
+    "readMore": "Ler mais",
+    "related": "Relacionados"
+  },
+  "patrocinadores": {
+    "title": "Patrocinadores",
+    "subtitle": "Quem viabiliza o campeonato.",
+    "tierTitle": "Patrocinadores oficiais",
+    "empty": "Em breve."
+  },
+  "contato": {
+    "title": "Contato",
+    "subtitle": "Fale com a equipe Ultimate Drift.",
+    "email": "E-mail",
+    "social": "Redes sociais",
+    "press": "Imprensa",
+    "sponsorship": "Patrocínio"
+  },
+  "sobre": {
+    "title": "Sobre o Ultimate Drift",
+    "subtitle": "O principal campeonato brasileiro de drift profissional."
+  },
+  "termos": {
+    "title": "Termos e Condições"
+  },
+  "privacidade": {
+    "title": "Política de Privacidade"
+  },
+  "common": {
+    "loading": "Carregando…",
+    "error": "Algo deu errado.",
+    "errorRetry": "Tentar novamente",
+    "search": "Buscar",
+    "backToHome": "Voltar pra home",
+    "notFoundTitle": "Página não encontrada",
+    "notFoundSubtitle": "A página que você procurou pode ter sido movida ou nunca existiu."
+  },
+  "breadcrumbs": {
+    "home": "Início"
+  }
+}

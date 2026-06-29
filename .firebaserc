@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "juiz-ud-stage",
+    "production": "ultimate-drift-production"
+  }
+}

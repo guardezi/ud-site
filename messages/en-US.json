@@ -1,0 +1,142 @@
+{
+  "brand": {
+    "name": "Ultimate Drift",
+    "tagline": "Brazil's premier professional drift championship.",
+    "shortDescription": "Ultimate Drift is Brazil's leading professional drift championship, with stages across circuits nationwide."
+  },
+  "nav": {
+    "home": "Home",
+    "pilotos": "Drivers",
+    "etapas": "Stages",
+    "classificacao": "Standings",
+    "categorias": "Categories",
+    "noticias": "News",
+    "patrocinadores": "Sponsors",
+    "contato": "Contact",
+    "ingressos": "Tickets",
+    "inscricaoCuringa": "Wildcard Entry",
+    "regulamento": "Rulebook",
+    "language": "Language"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "termos": "Terms & Conditions",
+    "privacidade": "Privacy",
+    "regulamento": "Rulebook",
+    "followUs": "Follow along"
+  },
+  "home": {
+    "heroEyebrow": "Brazilian drift championship",
+    "heroTitle": "Elite drift, from the clip to the podium.",
+    "heroSubtitle": "Follow drivers, stages, and real-time results.",
+    "heroCta": "See the next stage",
+    "nextStage": "Next stage",
+    "topDrivers": "Standings — top 5",
+    "viewAllStandings": "View full standings",
+    "viewAllStages": "View all stages",
+    "viewAllDrivers": "View all drivers",
+    "latestNews": "Latest news",
+    "viewAllNews": "View all news",
+    "noNews": "Coming soon."
+  },
+  "pilotos": {
+    "title": "Drivers",
+    "subtitle": "The drivers on the Ultimate Drift grid.",
+    "filter": "Filter by category",
+    "all": "All",
+    "number": "#",
+    "category": "Category",
+    "location": "Location",
+    "noResults": "No drivers found.",
+    "profile": {
+      "stats": "Stats",
+      "bio": "Biography",
+      "cars": "Cars",
+      "sponsors": "Sponsors",
+      "history": "Battle history",
+      "social": "Social networks",
+      "noCars": "No cars registered.",
+      "noSponsors": "No sponsors registered.",
+      "noBio": "Bio coming soon."
+    }
+  },
+  "etapas": {
+    "title": "Stages",
+    "subtitle": "Championship calendar and results.",
+    "next": "Next",
+    "past": "Completed",
+    "future": "Upcoming",
+    "viewStage": "View stage",
+    "timetable": "Schedule",
+    "circuit": "Circuit",
+    "qualifying": "Qualifying",
+    "bracket": "Bracket",
+    "viewQualifying": "View qualifying",
+    "viewBracket": "View bracket",
+    "noEvents": "No stages scheduled.",
+    "results": "Results",
+    "categories": {
+      "EVENT": "Event",
+      "TRACK": "Track",
+      "ENTERTAINMENT": "Entertainment",
+      "OTHER": "Other"
+    }
+  },
+  "classificacao": {
+    "title": "Standings",
+    "subtitle": "Accumulated points in the current championship.",
+    "position": "Pos.",
+    "driver": "Driver",
+    "points": "Points",
+    "stage": "Stage",
+    "empty": "Standings not computed yet.",
+    "fantasyToggle": "Dorikin League",
+    "championshipToggle": "Championship"
+  },
+  "categorias": {
+    "title": "Categories",
+    "subtitle": "Championship categories.",
+    "empty": "No categories registered.",
+    "viewDrivers": "View drivers",
+    "rules": "Rulebook"
+  },
+  "noticias": {
+    "title": "News",
+    "subtitle": "Everything about the championship.",
+    "empty": "No news yet.",
+    "publishedAt": "Published {date}",
+    "by": "By {author}",
+    "readMore": "Read more",
+    "related": "Related"
+  },
+  "patrocinadores": {
+    "title": "Sponsors",
+    "subtitle": "The brands that make the championship happen.",
+    "tierTitle": "Official sponsors",
+    "empty": "Coming soon."
+  },
+  "contato": {
+    "title": "Contact",
+    "subtitle": "Get in touch with the Ultimate Drift team.",
+    "email": "Email",
+    "social": "Social networks",
+    "press": "Press",
+    "sponsorship": "Sponsorship"
+  },
+  "sobre": {
+    "title": "About Ultimate Drift",
+    "subtitle": "Brazil's premier professional drift championship."
+  },
+  "termos": { "title": "Terms & Conditions" },
+  "privacidade": { "title": "Privacy Policy" },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong.",
+    "errorRetry": "Try again",
+    "search": "Search",
+    "backToHome": "Back to home",
+    "notFoundTitle": "Page not found",
+    "notFoundSubtitle": "The page you were looking for may have been moved or never existed."
+  },
+  "breadcrumbs": { "home": "Home" }
+}

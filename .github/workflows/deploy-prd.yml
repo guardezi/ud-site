@@ -1,0 +1,68 @@
+# Deploy de PRODUÇÃO — disparado por tag semver (ex.: v1.0.0).
+#
+# Gate manual: o job `rollout` referencia o environment `production`, configurado
+# em Settings → Environments → production com:
+#   - Required reviewers (lista de quem pode aprovar)
+#   - Deployment branches: Only tags matching v*
+#
+# Pré-requisitos no repo:
+#   secrets.GCP_SA_KEY_PRD — JSON da Service Account de ultimate-drift-production com:
+#     - Firebase App Hosting Admin
+#     - Cloud Build Editor
+#     - Service Usage Consumer
+#
+# Setup one-shot do backend PRD (rode uma vez localmente):
+#   firebase apphosting:backends:create \
+#     --project=ultimate-drift-production \
+#     --location=us-east4
+#   # No prompt: nome `ud-site`, mesmo repo GitHub, root branch `main`,
+#   # AUTO-ROLLOUT DESATIVADO.
+#
+#   firebase apphosting:backends:update ud-site \
+#     --project=ultimate-drift-production \
+#     --environment=production
+#   # Faz o App Hosting carregar apphosting.production.yaml automaticamente.
+
+name: deploy-prd-ud-site
+
+on:
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: deploy-prd-ud-site
+  cancel-in-progress: false
+
+jobs:
+  rollout:
+    name: Rollout em ultimate-drift-production
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://ud-site--ultimate-drift-production.us-east4.hosted.app
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY_PRD }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ultimate-drift-production
+
+      - name: Install firebase-tools
+        run: npm install -g firebase-tools@latest
+
+      - name: Criar rollout no App Hosting
+        run: |
+          firebase apphosting:rollouts:create ud-site \
+            --project=ultimate-drift-production \
+            --git-commit=${{ github.sha }} \
+            --force
+
+      - name: Resumo
+        run: |
+          echo "PRD deploy aprovado para tag ${{ github.ref_name }}"
+          echo "Backend: ud-site @ ultimate-drift-production"

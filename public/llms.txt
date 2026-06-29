@@ -1,0 +1,25 @@
+# Ultimate Drift
+
+> O principal campeonato brasileiro de drift profissional. Etapas em circuitos pelo país, transmissão ao vivo, ranking, pilotos e batalhas.
+
+Este arquivo é um índice das páginas mais relevantes do site para LLMs e crawlers de IA. Para conteúdo completo, navegue diretamente ao site ou siga as URLs do sitemap.
+
+## Páginas principais
+
+- [Home](https://www.ultimatedrift.com.br/): visão geral, próxima etapa, top do ranking, últimas notícias
+- [Pilotos](https://www.ultimatedrift.com.br/pilotos): grid completo de pilotos do campeonato
+- [Etapas](https://www.ultimatedrift.com.br/etapas): calendário e resultados
+- [Classificação](https://www.ultimatedrift.com.br/classificacao): ranking acumulado do campeonato vigente
+- [Categorias](https://www.ultimatedrift.com.br/categorias): categorias do campeonato e regulamento
+- [Notícias](https://www.ultimatedrift.com.br/noticias): notícias do campeonato
+- [Patrocinadores](https://www.ultimatedrift.com.br/patrocinadores): patrocinadores oficiais
+- [Contato](https://www.ultimatedrift.com.br/contato): canais de imprensa, patrocínio e atendimento
+
+## Recursos
+
+- [Sitemap](https://www.ultimatedrift.com.br/sitemap.xml): URLs completas, atualizadas dinamicamente
+- [Regulamento](https://www.cba-automobilismo.org.br/regulamentos): regulamento oficial CBA
+
+## Sobre o conteúdo
+
+Páginas de etapa incluem cronograma completo, mapa do circuito, classificação (qualifying) e chaveamento de batalhas (bracket). Páginas de piloto incluem biografia, carros, patrocínios e histórico de confrontos. O site é o sistema oficial — dados oficiais da organização Ultimate Drift, em três idiomas (português, inglês, espanhol).

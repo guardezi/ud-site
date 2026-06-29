@@ -1,0 +1,142 @@
+{
+  "brand": {
+    "name": "Ultimate Drift",
+    "tagline": "El principal campeonato brasileño de drift profesional.",
+    "shortDescription": "Ultimate Drift es el principal campeonato brasileño de drift profesional, con etapas en circuitos por todo el país."
+  },
+  "nav": {
+    "home": "Inicio",
+    "pilotos": "Pilotos",
+    "etapas": "Etapas",
+    "classificacao": "Clasificación",
+    "categorias": "Categorías",
+    "noticias": "Noticias",
+    "patrocinadores": "Patrocinadores",
+    "contato": "Contacto",
+    "ingressos": "Entradas",
+    "inscricaoCuringa": "Inscripción Comodín",
+    "regulamento": "Reglamento",
+    "language": "Idioma"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados.",
+    "termos": "Términos y Condiciones",
+    "privacidade": "Privacidad",
+    "regulamento": "Reglamento",
+    "followUs": "Síguenos"
+  },
+  "home": {
+    "heroEyebrow": "Campeonato brasileño de drift",
+    "heroTitle": "Drift de élite, del clip al podio.",
+    "heroSubtitle": "Sigue pilotos, etapas y resultados en tiempo real.",
+    "heroCta": "Ver la próxima etapa",
+    "nextStage": "Próxima etapa",
+    "topDrivers": "Clasificación — top 5",
+    "viewAllStandings": "Ver clasificación completa",
+    "viewAllStages": "Ver todas las etapas",
+    "viewAllDrivers": "Ver todos los pilotos",
+    "latestNews": "Últimas noticias",
+    "viewAllNews": "Ver todas las noticias",
+    "noNews": "Próximamente."
+  },
+  "pilotos": {
+    "title": "Pilotos",
+    "subtitle": "Los pilotos del Ultimate Drift.",
+    "filter": "Filtrar por categoría",
+    "all": "Todos",
+    "number": "Nº",
+    "category": "Categoría",
+    "location": "Lugar",
+    "noResults": "Ningún piloto encontrado.",
+    "profile": {
+      "stats": "Estadísticas",
+      "bio": "Biografía",
+      "cars": "Coches",
+      "sponsors": "Patrocinios",
+      "history": "Historial de batallas",
+      "social": "Redes sociales",
+      "noCars": "Sin coches registrados.",
+      "noSponsors": "Sin patrocinadores registrados.",
+      "noBio": "Biografía pronto."
+    }
+  },
+  "etapas": {
+    "title": "Etapas",
+    "subtitle": "Calendario y resultados del campeonato.",
+    "next": "Próxima",
+    "past": "Cerradas",
+    "future": "Próximas",
+    "viewStage": "Ver etapa",
+    "timetable": "Cronograma",
+    "circuit": "Circuito",
+    "qualifying": "Clasificación (Qualifying)",
+    "bracket": "Llaves",
+    "viewQualifying": "Ver qualifying",
+    "viewBracket": "Ver llaves",
+    "noEvents": "Sin etapas programadas.",
+    "results": "Resultados",
+    "categories": {
+      "EVENT": "Evento",
+      "TRACK": "Pista",
+      "ENTERTAINMENT": "Entretenimiento",
+      "OTHER": "Otro"
+    }
+  },
+  "classificacao": {
+    "title": "Clasificación",
+    "subtitle": "Puntuación acumulada en el campeonato vigente.",
+    "position": "Pos.",
+    "driver": "Piloto",
+    "points": "Puntos",
+    "stage": "Etapa",
+    "empty": "Clasificación aún no computada.",
+    "fantasyToggle": "Dorikin League",
+    "championshipToggle": "Campeonato"
+  },
+  "categorias": {
+    "title": "Categorías",
+    "subtitle": "Las categorías del campeonato.",
+    "empty": "Sin categorías registradas.",
+    "viewDrivers": "Ver pilotos",
+    "rules": "Reglamento"
+  },
+  "noticias": {
+    "title": "Noticias",
+    "subtitle": "Todo sobre el campeonato.",
+    "empty": "Sin noticias publicadas todavía.",
+    "publishedAt": "Publicado el {date}",
+    "by": "Por {author}",
+    "readMore": "Leer más",
+    "related": "Relacionados"
+  },
+  "patrocinadores": {
+    "title": "Patrocinadores",
+    "subtitle": "Quién hace posible el campeonato.",
+    "tierTitle": "Patrocinadores oficiales",
+    "empty": "Próximamente."
+  },
+  "contato": {
+    "title": "Contacto",
+    "subtitle": "Habla con el equipo Ultimate Drift.",
+    "email": "Email",
+    "social": "Redes sociales",
+    "press": "Prensa",
+    "sponsorship": "Patrocinio"
+  },
+  "sobre": {
+    "title": "Sobre Ultimate Drift",
+    "subtitle": "El principal campeonato brasileño de drift profesional."
+  },
+  "termos": { "title": "Términos y Condiciones" },
+  "privacidade": { "title": "Política de Privacidad" },
+  "common": {
+    "loading": "Cargando…",
+    "error": "Algo salió mal.",
+    "errorRetry": "Intentar de nuevo",
+    "search": "Buscar",
+    "backToHome": "Volver al inicio",
+    "notFoundTitle": "Página no encontrada",
+    "notFoundSubtitle": "La página que buscabas puede haber sido movida o nunca existió."
+  },
+  "breadcrumbs": { "home": "Inicio" }
+}

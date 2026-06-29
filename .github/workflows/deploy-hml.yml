@@ -1,0 +1,55 @@
+# Deploy de HML — push em main dispara um rollout no backend App Hosting
+# `ud-site` do projeto juiz-ud-stage.
+#
+# Pré-requisitos no repo (Settings → Secrets and variables → Actions):
+#   secrets.GCP_SA_KEY_HML  — JSON da Service Account de juiz-ud-stage com:
+#     - Firebase App Hosting Admin
+#     - Cloud Build Editor
+#     - Service Usage Consumer
+#
+# Setup one-shot do backend HML:
+#   firebase apphosting:backends:create --project=juiz-ud-stage --location=us-east4
+#   # No prompt: nome `ud-site`, repo GitHub, root branch `main`,
+#   # AUTO-ROLLOUT DESATIVADO (esse workflow controla os deploys).
+
+name: deploy-hml-ud-site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ud-site/**"
+      - ".github/workflows/deploy-hml.yml"
+
+concurrency:
+  group: deploy-hml-ud-site
+  cancel-in-progress: false
+
+jobs:
+  rollout:
+    name: Rollout em juiz-ud-stage
+    runs-on: ubuntu-latest
+    environment:
+      name: hml
+      url: https://ud-site--juiz-ud-stage.us-east4.hosted.app
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY_HML }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: juiz-ud-stage
+
+      - name: Install firebase-tools
+        run: npm install -g firebase-tools@latest
+
+      - name: Criar rollout no App Hosting
+        run: |
+          firebase apphosting:rollouts:create ud-site \
+            --project=juiz-ud-stage \
+            --git-branch=main \
+            --force

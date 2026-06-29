@@ -1,0 +1,56 @@
+# CI de pull request — valida lint, typecheck e build do Next antes do merge.
+# O preview de URL é criado nativamente pelo Firebase App Hosting quando o
+# backend está conectado ao repo.
+
+name: ci-ud-site
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ud-site/**"
+      - ".github/workflows/ci.yml"
+
+concurrency:
+  group: ci-ud-site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint, typecheck e build (ud-site)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ud-site
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: ud-site/pnpm-lock.yaml
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY_HML }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: juiz-ud-stage.firebaseapp.com
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: juiz-ud-stage
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: juiz-ud-stage.appspot.com
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID_HML }}
+          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID_HML }}
+          NEXT_PUBLIC_SITE_URL: https://ud-site--juiz-ud-stage.us-east4.hosted.app
