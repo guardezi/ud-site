@@ -32,8 +32,9 @@ export default async function EtapasPage({ params }: { params: Promise<{ locale:
   const t = await getTranslations("etapas");
   const stages = await listStageHubs();
   const now = Date.now();
-  const upcoming = stages.filter((s) => s.startDate && s.startDate.getTime() >= now);
-  const past = stages.filter((s) => s.startDate && s.startDate.getTime() < now);
+  const ms = (s: typeof stages[number]) => (s.startDate ? new Date(s.startDate as unknown as string).getTime() : 0);
+  const upcoming = stages.filter((s) => ms(s) >= now);
+  const past = stages.filter((s) => ms(s) > 0 && ms(s) < now);
 
   const ld = itemListLd({
     name: t("title"),

@@ -111,9 +111,8 @@ export const listStageHubs = unstable_cache(
 export async function getNextStageHub(): Promise<PublicStageHubSummary | null> {
   const all = await listStageHubs();
   const now = Date.now();
-  const upcoming = all
-    .filter((h) => h.startDate && h.startDate.getTime() >= now)
-    .sort((a, b) => (a.startDate!.getTime() - b.startDate!.getTime()));
+  const ms = (h: PublicStageHubSummary) => (h.startDate ? new Date(h.startDate as unknown as string).getTime() : 0);
+  const upcoming = all.filter((h) => ms(h) >= now).sort((a, b) => ms(a) - ms(b));
   return upcoming[0] ?? all[0] ?? null;
 }
 
