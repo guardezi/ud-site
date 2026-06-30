@@ -1,1 +1,82 @@
-{}
+{
+  "/noticia/ultimate-drift-2026-o-maior-campeonato-de-drift-da-america-latina-retorna-a-londrina": {
+    "to": "/noticias/ultimate-drift-2026-o-maior-campeonato-de-drift-da-america-latina-retorna-a-londrina",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-vai-realizar-etapa-no-kartodromo-internacional-ao-lado-do-beto-carrero-nos-dias-25-e-26-de-abril": {
+    "to": "/noticias/ultimate-drift-vai-realizar-etapa-no-kartodromo-internacional-ao-lado-do-beto-carrero-nos-dias-25-e-26-de-abril",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-2026-reune-milhares-de-fas-e-consagra-campeoes-no-mega-space": {
+    "to": "/noticias/ultimate-drift-2026-reune-milhares-de-fas-e-consagra-campeoes-no-mega-space",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-transforma-o-mega-space-em-gigantesco-parque-automotivo-com-atracoes-para-toda-a-familia": {
+    "to": "/noticias/ultimate-drift-transforma-o-mega-space-em-gigantesco-parque-automotivo-com-atracoes-para-toda-a-familia",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-confirma-inscricao-de-mia-orleana-segunda-mulher-da-temporada-2026-e-unica-piloto-internacional-com-inscricao-anual": {
+    "to": "/noticias/ultimate-drift-confirma-inscricao-de-mia-orleana-segunda-mulher-da-temporada-2026-e-unica-piloto-internacional-com-inscricao-anual",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-calendario2026": {
+    "to": "/noticias/ultimate-drift-calendario2026",
+    "code": 301
+  },
+  "/noticia/primeiro-lote-de-camarotes-all-inclusive-da-etapa-de-abertura-da-ultimate-drift-no-mega-space-se-esgota-em-menos-de-24-horas": {
+    "to": "/noticias/primeiro-lote-de-camarotes-all-inclusive-da-etapa-de-abertura-da-ultimate-drift-no-mega-space-se-esgota-em-menos-de-24-horas",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-anuncia-lista-oficial-de-pilotos-inscritos-para-a-temporada-2026": {
+    "to": "/noticias/ultimate-drift-anuncia-lista-oficial-de-pilotos-inscritos-para-a-temporada-2026",
+    "code": 301
+  },
+  "/noticia/campeoes-brasileiros-da-temporada-2025": {
+    "to": "/noticias/campeoes-brasileiros-da-temporada-2025",
+    "code": 301
+  },
+  "/noticia/piracicaba-foi-o-palco-da-etapa-final-do-ultimate-drift-2025": {
+    "to": "/noticias/piracicaba-foi-o-palco-da-etapa-final-do-ultimate-drift-2025",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-agita-ribeirao-preto-no-estadio-palma-travassos": {
+    "to": "/noticias/ultimate-drift-agita-ribeirao-preto-no-estadio-palma-travassos",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-vive-historico-fim-de-semana-em-balneario-camboriu": {
+    "to": "/noticias/ultimate-drift-vive-historico-fim-de-semana-em-balneario-camboriu",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-tem-inicio-eletrizante-da-etapa-em-londrina-com-qualify-e-pre-batalhas-acirradas": {
+    "to": "/noticias/ultimate-drift-tem-inicio-eletrizante-da-etapa-em-londrina-com-qualify-e-pre-batalhas-acirradas",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-inicia-temporada-2025-no-mega-space-com-mais-de-50-pilotos-inscritos": {
+    "to": "/noticias/ultimate-drift-inicia-temporada-2025-no-mega-space-com-mais-de-50-pilotos-inscritos",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-tera-transmissao-ao-vivo-da-mavtv-brasil-em-2025": {
+    "to": "/noticias/ultimate-drift-tera-transmissao-ao-vivo-da-mavtv-brasil-em-2025",
+    "code": 301
+  },
+  "/noticia/ultimate-drift-se-torna-a-mais-recente-afiliada-da-formula-drift": {
+    "to": "/noticias/ultimate-drift-se-torna-a-mais-recente-afiliada-da-formula-drift",
+    "code": 301
+  },
+  "/historia/a-origem-do-drift-no-brasil": {
+    "to": "/noticias/a-origem-do-drift-no-brasil",
+    "code": 301
+  },
+  "/termos-e-condicoes": {
+    "to": "/termos",
+    "code": 301
+  },
+  "/category/historia": {
+    "to": "/categorias/historia",
+    "code": 301
+  },
+  "/category/noticia": {
+    "to": "/categorias/noticia",
+    "code": 301
+  }
+}
