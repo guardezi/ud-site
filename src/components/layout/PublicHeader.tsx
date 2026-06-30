@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { LiveSignalIcon, SOCIAL_LINKS } from "@/components/wp-icons";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 import { MobileNavToggle } from "./MobileNavToggle";
 
 const NAV: Array<{
@@ -36,7 +37,8 @@ export function PublicHeader() {
                 <span className="ui__display--none ui__display--md-block">Ao vivo</span>
               </a>
             </div>
-            <div className="header__top-right">
+            <div className="header__top-right" style={{ display: "flex", alignItems: "center", gap: 20 }}>
+              <LocaleSwitcher />
               <div className="header__social ui__display--lg-none">
                 <span className="header__top-right-label">Nos siga</span>
                 <div className="header__social-items">

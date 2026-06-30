@@ -1,61 +1,137 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
-import { useState, useTransition } from "react";
-import { ChevronDown, Globe } from "lucide-react";
-import { LOCALES, type Locale, localeShort } from "@/i18n/config";
+import { useLocale } from "next-intl";
+import { useState, useRef, useEffect, useTransition } from "react";
+import { LOCALES, type Locale } from "@/i18n/config";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { cn } from "@/lib/utils/cn";
+
+const FLAG_BY_LOCALE: Record<Locale, { src: string; label: string }> = {
+  "pt-BR": { src: "/theme/svg/br-flag.svg", label: "Português" },
+  "en-US": { src: "/theme/svg/us-flag.svg", label: "English" },
+  "es-ES": { src: "/theme/svg/es-flag.svg", label: "Español" },
+};
 
 export function LocaleSwitcher() {
-  const t = useTranslations("nav");
   const locale = useLocale() as Locale;
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [, startTransition] = useTransition();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open]);
 
   const change = (next: Locale) => {
+    if (next === locale) {
+      setOpen(false);
+      return;
+    }
     setOpen(false);
     startTransition(() => {
-      // pathname é tipado mas pode incluir rotas dinâmicas; o router resolve
-      // params já preenchidos automaticamente quando passamos só o pathname.
       router.replace(pathname as never, { locale: next });
     });
   };
 
+  const current = FLAG_BY_LOCALE[locale];
+
   return (
-    <div className="relative">
+    <div
+      ref={ref}
+      style={{ position: "relative", display: "inline-flex", alignItems: "center" }}
+    >
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1.5 rounded border border-rail px-2.5 py-1 text-xs uppercase tracking-wider text-mute hover:text-signal hover:border-drift transition-colors"
-        aria-label={t("language")}
+        aria-label={`Idioma atual: ${current.label}. Clique para mudar.`}
+        aria-haspopup="menu"
         aria-expanded={open}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          background: "transparent",
+          border: "none",
+          padding: 0,
+          cursor: "pointer",
+          color: "#fff",
+        }}
       >
-        <Globe className="size-3.5" aria-hidden />
-        <span>{localeShort(locale)}</span>
-        <ChevronDown className="size-3" aria-hidden />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={current.src}
+          alt={current.label}
+          width={32}
+          height={22}
+          style={{ display: "block", borderRadius: 3, objectFit: "cover" }}
+          loading="lazy"
+        />
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden>
+          <path d="M1 1L5 5L9 1" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
+
       {open && (
         <ul
           role="menu"
-          className="absolute right-0 top-full mt-1 z-50 min-w-[8rem] rounded border border-rail bg-panel shadow-xl"
+          style={{
+            position: "absolute",
+            top: "100%",
+            right: 0,
+            marginTop: 6,
+            padding: "4px 0",
+            minWidth: 150,
+            background: "#141417",
+            border: "1px solid #3f3f3f",
+            borderRadius: 4,
+            listStyle: "none",
+            zIndex: 9999,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+          }}
         >
-          {LOCALES.map((l) => (
-            <li key={l}>
-              <button
-                type="button"
-                onClick={() => change(l)}
-                className={cn(
-                  "block w-full px-3 py-2 text-left text-xs uppercase tracking-wider",
-                  l === locale ? "text-drift" : "text-mute hover:text-signal hover:bg-rail",
-                )}
-              >
-                {localeShort(l)} · {l}
-              </button>
-            </li>
-          ))}
+          {LOCALES.map((l) => {
+            const f = FLAG_BY_LOCALE[l];
+            const active = l === locale;
+            return (
+              <li key={l} role="none">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => change(l)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    width: "100%",
+                    padding: "10px 14px",
+                    background: "transparent",
+                    border: "none",
+                    color: active ? "#54F251" : "#fff",
+                    fontWeight: active ? 700 : 400,
+                    fontSize: 14,
+                    cursor: active ? "default" : "pointer",
+                    textAlign: "left",
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={f.src}
+                    alt=""
+                    width={26}
+                    height={18}
+                    style={{ borderRadius: 2, objectFit: "cover", flexShrink: 0 }}
+                  />
+                  <span>{f.label}</span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
