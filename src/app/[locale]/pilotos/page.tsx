@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { itemListLd } from "@/lib/seo/jsonld";
 import { canonical } from "@/lib/seo/canonical";
 import { buildMetadata } from "@/lib/seo/meta";
+import { UDImage } from "@/components/ui/UDImage";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 3600;
@@ -77,17 +78,16 @@ export default async function PilotosPage({ params }: { params: Promise<{ locale
                           </div>
                         )}
                         <div className="drivers__rank-img-box">
-                          {d.fotoUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              width={220}
-                              height={220}
-                              src={d.fotoUrl}
-                              alt={`Imagem representativa de ${d.apelido}`}
-                              className="drivers__rank-driver-img"
-                              loading="lazy"
-                            />
-                          ) : null}
+                          <UDImage
+                            src={d.fotoPath}
+                            alt={`Imagem representativa de ${d.apelido}`}
+                            baseVariant="small"
+                            srcsetPreset="compact"
+                            sizes="(max-width: 576px) 50vw, (max-width: 992px) 33vw, 220px"
+                            width={220}
+                            height={220}
+                            className="drivers__rank-driver-img"
+                          />
                         </div>
                         <div className="drivers__rank-bottom">
                           <div className="drivers__rank-number-box">

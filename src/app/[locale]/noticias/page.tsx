@@ -3,6 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { listNews } from "@/lib/news/queries";
 import { buildMetadata } from "@/lib/seo/meta";
+import { UDImage } from "@/components/ui/UDImage";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 60;
@@ -59,14 +60,15 @@ export default async function NoticiasPage({ params, searchParams }: PageProps) 
                       className="news__link"
                     >
                       <div className="news__img-small">
-                        {n.coverImageUrl ? (
-                          <img
+                        {n.coverImagePath ? (
+                          <UDImage
+                            src={n.coverImagePath}
+                            alt={n.title}
+                            baseVariant="small"
+                            srcsetPreset="responsive"
+                            sizes="(max-width: 768px) 100vw, 300px"
                             width={300}
                             height={200}
-                            src={n.coverImageUrl}
-                            alt={n.title}
-                            loading="lazy"
-                            decoding="async"
                           />
                         ) : (
                           <div style={{ width: "100%", aspectRatio: "3/2", background: "#1f1f24" }} />

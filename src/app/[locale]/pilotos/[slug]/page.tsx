@@ -8,6 +8,7 @@ import { personLd } from "@/lib/seo/jsonld";
 import { canonical } from "@/lib/seo/canonical";
 import { buildMetadata } from "@/lib/seo/meta";
 import { InstagramIcon, YouTubeIcon, FacebookIcon, TikTokIcon } from "@/components/wp-icons";
+import { UDImage } from "@/components/ui/UDImage";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 86400;
@@ -41,7 +42,6 @@ export default async function DriverPage({ params }: { params: PageParams }) {
   if (!driver) notFound();
   const tPil = await getTranslations("pilotos.profile");
 
-  // Carro principal (com `principal: true` ou o primeiro)
   const mainCar = driver.cars.find((c) => c.principal) ?? driver.cars[0] ?? null;
 
   const social: Array<{ href: string; label: string; Icon: typeof InstagramIcon }> = [];
@@ -118,16 +118,18 @@ export default async function DriverPage({ params }: { params: PageParams }) {
             </div>
             <div className="driver__top-right" data-animate="slide-right">
               <div className="driver__top-box-img">
-                {driver.fotoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    width={494}
-                    height={484}
-                    src={driver.heroFotoUrl ?? driver.fotoUrl}
-                    alt={`Imagem de ${driver.apelido}`}
-                    className="driver__img"
-                  />
-                ) : null}
+                <UDImage
+                  src={driver.fotoPath}
+                  alt={`Imagem de ${driver.apelido}`}
+                  baseVariant="medium"
+                  srcsetPreset="responsive"
+                  sizes="(max-width: 768px) 100vw, 500px"
+                  width={494}
+                  height={484}
+                  className="driver__img"
+                  loading="eager"
+                  fetchPriority="high"
+                />
               </div>
             </div>
           </div>
@@ -154,10 +156,16 @@ export default async function DriverPage({ params }: { params: PageParams }) {
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
                       {driver.cars.map((car, i) => (
                         <article key={i} style={{ background: "#1f1f24", borderRadius: "16px 6px 16px 6px", overflow: "hidden" }}>
-                          {car.fotoUrl && (
+                          {car.fotoPath && (
                             <div style={{ position: "relative", aspectRatio: "16/9", background: "#0a0a0b" }}>
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={car.fotoUrl} alt={car.modelo ?? "Carro"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                              <UDImage
+                                src={car.fotoPath}
+                                alt={[car.marca, car.modelo].filter(Boolean).join(" ") || "Carro"}
+                                baseVariant="small"
+                                srcsetPreset="responsive"
+                                sizes="(max-width: 576px) 100vw, 220px"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              />
                             </div>
                           )}
                           <div style={{ padding: 12 }}>
@@ -219,10 +227,16 @@ export default async function DriverPage({ params }: { params: PageParams }) {
                           rel={s.site ? "noopener noreferrer" : undefined}
                           style={{ background: "#1f1f24", borderRadius: 8, padding: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, color: "#fff" }}
                         >
-                          {s.fotoUrl && (
+                          {s.fotoPath && (
                             <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={s.fotoUrl} alt={s.nome} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                              <UDImage
+                                src={s.fotoPath}
+                                alt={s.nome}
+                                baseVariant="thumb"
+                                srcsetPreset="compact"
+                                sizes="110px"
+                                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                              />
                             </div>
                           )}
                           <span style={{ fontSize: 12, textAlign: "center" }}>{s.nome}</span>

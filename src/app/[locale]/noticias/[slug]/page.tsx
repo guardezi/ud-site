@@ -9,6 +9,7 @@ import { canonical } from "@/lib/seo/canonical";
 import { buildMetadata } from "@/lib/seo/meta";
 import { renderMarkdown } from "@/lib/utils/markdown";
 import { toIso } from "@/lib/firestore-utils";
+import { UDImage } from "@/components/ui/UDImage";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 3600;
@@ -89,15 +90,17 @@ export default async function NoticiaPage({ params }: { params: PageParams }) {
                 {article.category && <> • <span>{article.category}</span></>}
               </div>
             )}
-            {article.coverImageHighUrl && (
+            {article.coverImagePath && (
               <div className="post-thumbnail">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <UDImage
+                  src={article.coverImagePath}
+                  alt={article.title}
+                  baseVariant="high"
+                  srcsetPreset="responsive"
+                  sizes="(max-width: 1024px) 100vw, 1024px"
                   width={1024}
                   height={683}
-                  src={article.coverImageHighUrl}
-                  alt={article.title}
-                  decoding="async"
+                  loading="eager"
                   fetchPriority="high"
                 />
               </div>
