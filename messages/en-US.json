@@ -127,8 +127,12 @@
     "title": "About Ultimate Drift",
     "subtitle": "Brazil's premier professional drift championship."
   },
-  "termos": { "title": "Terms & Conditions" },
-  "privacidade": { "title": "Privacy Policy" },
+  "termos": {
+    "title": "Terms & Conditions"
+  },
+  "privacidade": {
+    "title": "Privacy Policy"
+  },
   "common": {
     "loading": "Loading…",
     "error": "Something went wrong.",
@@ -138,5 +142,85 @@
     "notFoundTitle": "Page not found",
     "notFoundSubtitle": "The page you were looking for may have been moved or never existed."
   },
-  "breadcrumbs": { "home": "Home" }
+  "breadcrumbs": {
+    "home": "Home"
+  },
+  "ingressos": {
+    "catalog": {
+      "title": "Tickets",
+      "subtitle": "Secure your spot at the Ultimate Drift rounds.",
+      "noEvents": "No events with tickets on sale right now.",
+      "viewEvent": "View tickets",
+      "from": "From",
+      "soldOut": "Sold out"
+    },
+    "event": {
+      "backToCatalog": "Back to tickets",
+      "chooseTickets": "Choose your tickets",
+      "unavailable": "Tickets are unavailable for this event.",
+      "each": "each",
+      "available": "{count} available",
+      "soldOut": "Sold out",
+      "maxPerOrder": "Max {count} per order",
+      "quantity": "Quantity",
+      "buyerData": "Your details",
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "total": "Total",
+      "submit": "Continue to payment",
+      "submitting": "Processing…",
+      "emptySelection": "Select at least one ticket.",
+      "nameRequired": "Enter your name.",
+      "emailInvalid": "Enter a valid email."
+    },
+    "order": {
+      "title": "Your order",
+      "denied": "Order not found or invalid link.",
+      "status": "Status",
+      "summary": "Summary",
+      "buyer": "Buyer",
+      "total": "Total",
+      "quantity": "Qty",
+      "pendingTitle": "Payment pending",
+      "pendingHelp": "Complete the payment to issue your tickets.",
+      "simulatePayment": "Simulate payment",
+      "paying": "Processing payment…",
+      "processingTitle": "Issuing your tickets…",
+      "processingHelp": "Payment confirmed. We're generating your tickets — this page refreshes automatically.",
+      "ticketsTitle": "Your tickets",
+      "ticket": "Ticket",
+      "holder": "Holder",
+      "checkedIn": "Checked in",
+      "showAtGate": "Show this QR at the gate.",
+      "expired": "This order has expired.",
+      "cancelled": "This order was cancelled.",
+      "refunded": "This order was refunded.",
+      "statusLabels": {
+        "pending": "Pending",
+        "paid": "Paid",
+        "issued": "Issued",
+        "cancelled": "Cancelled",
+        "expired": "Expired",
+        "refunded": "Refunded"
+      }
+    },
+    "errors": {
+      "INVALID_INPUT": "Invalid data. Please review and try again.",
+      "QUANTITY_INVALID": "Invalid quantity for one of the tickets.",
+      "EVENT_NOT_FOUND": "Event not found.",
+      "TYPE_NOT_FOUND": "Ticket type unavailable.",
+      "LOT_NOT_FOUND": "Lot not found.",
+      "LOT_NOT_ACTIVE": "This lot is no longer on sale.",
+      "SALES_NOT_STARTED": "Sales haven't started yet.",
+      "SALES_ENDED": "Sales have ended.",
+      "INSUFFICIENT_STOCK": "Not enough stock for the selected quantity.",
+      "IDEMPOTENCY_CONFLICT": "There was a conflict with the order. Try again.",
+      "FORBIDDEN": "Access denied.",
+      "ORDER_NOT_FOUND": "Order not found.",
+      "ORDER_NOT_PENDING": "This order is no longer pending.",
+      "RESERVATION_EXPIRED": "Your reservation expired. Please order again.",
+      "INTERNAL": "Unexpected error. Please try again."
+    }
+  }
 }
