@@ -88,7 +88,8 @@ export const listPublishedEvents = unstable_cache(
         .limit(100)
         .get();
       return snap.docs.map((doc) => docToEventSummary(doc.id, doc.data() as Record<string, unknown>));
-    } catch {
+    } catch (e) {
+      console.error("[ticketing] listPublishedEvents failed:", e);
       return [];
     }
   },
