@@ -87,6 +87,11 @@ export const listPublishedEvents = unstable_cache(
         .orderBy("startsAt", "asc")
         .limit(100)
         .get();
+      console.error(
+        "[ticketing-debug] docs:", snap.size,
+        "| projectId:", process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        "| appProject:", adminDb.app?.options?.projectId,
+      );
       return snap.docs.map((doc) => docToEventSummary(doc.id, doc.data() as Record<string, unknown>));
     } catch (e) {
       console.error("[ticketing] listPublishedEvents failed:", e);
