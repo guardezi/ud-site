@@ -9,7 +9,9 @@ import { formatDateRange } from "@/lib/format";
 import { CheckoutForm, type CheckoutType } from "./CheckoutForm";
 import type { Locale } from "@/i18n/config";
 
-export const revalidate = 60;
+// Dinâmico: lê o evento/lotes via Admin SDK no request. ISR estático
+// pré-renderiza no build (sem credencial Firebase) e cravaria "não encontrado".
+export const dynamic = "force-dynamic";
 
 type PageParams = Promise<{ locale: Locale; slug: string }>;
 

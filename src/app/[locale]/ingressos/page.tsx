@@ -8,7 +8,10 @@ import { buildMetadata } from "@/lib/seo/meta";
 import { formatDateRange } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 
-export const revalidate = 300;
+// Dinâmico: o catálogo é lido via Admin SDK no request (credencial de runtime).
+// Com ISR estático, o Next pré-renderiza no build — onde não há credencial
+// Firebase — e cravaria "nenhum evento" no HTML.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
