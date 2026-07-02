@@ -30,10 +30,17 @@ export async function generateMetadata({
 
 export default async function IngressosCatalogPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: Locale }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
+  // Consome searchParams (valor de runtime) pra FORÇAR render dinâmico: o
+  // build do App Hosting estava pré-renderizando esta rota fixa estaticamente
+  // — sem credencial Firebase — cravando "nenhum evento". `force-dynamic`
+  // sozinho não bastou nesta rota; a dependência de searchParams garante SSR.
+  await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("ingressos");
   const events = await listPublishedEvents();
