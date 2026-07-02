@@ -1,5 +1,4 @@
 import "server-only";
-import { unstable_cache } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
 import { imageMedium } from "@/lib/firebase/image-variants";
 import { num, str, tsToDate } from "@/lib/firestore-utils";
@@ -26,9 +25,11 @@ import type {
  * Catálogo é leitura pública (CONTRACTS.md §6) — só eventos `published`.
  * Estoque (`reserved`/`sold`/`quota`) é legível, mas NUNCA escrito aqui;
  * escrita de estoque só em transação no server action (`actions.ts`).
+ *
+ * NÃO usa `unstable_cache`: as páginas são `force-dynamic` e a leitura é feita
+ * no request (credencial de runtime). Cachear a função capturava o resultado
+ * vazio do build (sem credencial Firebase) e o site ficava sem eventos.
  */
-
-const CACHE_TAG = "ticketing";
 
 function docToLot(id: string, d: Record<string, unknown>): PublicLot {
   const quota = num(d.quota) ?? 0;
@@ -78,29 +79,20 @@ function lotIsOnSale(lot: PublicLot, now: number): boolean {
  * Lista eventos publicados, ordenados por início (upcoming primeiro). Cap 100.
  * Só metadados — sem tipos/lotes (use `getPublishedEventBySlug` p/ o detalhe).
  */
-export const listPublishedEvents = unstable_cache(
-  async (): Promise<PublicTicketEventSummary[]> => {
-    try {
-      const snap = await adminDb
-        .collection("ticketEvents")
-        .where("status", "==", "published")
-        .orderBy("startsAt", "asc")
-        .limit(100)
-        .get();
-      console.error(
-        "[ticketing-debug] docs:", snap.size,
-        "| projectId:", process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        "| appProject:", adminDb.app?.options?.projectId,
-      );
-      return snap.docs.map((doc) => docToEventSummary(doc.id, doc.data() as Record<string, unknown>));
-    } catch (e) {
-      console.error("[ticketing] listPublishedEvents failed:", e);
-      return [];
-    }
-  },
-  ["ticketing-published-events"],
-  { revalidate: 300, tags: [CACHE_TAG, "ticket-events"] },
-);
+export async function listPublishedEvents(): Promise<PublicTicketEventSummary[]> {
+  try {
+    const snap = await adminDb
+      .collection("ticketEvents")
+      .where("status", "==", "published")
+      .orderBy("startsAt", "asc")
+      .limit(100)
+      .get();
+    return snap.docs.map((doc) => docToEventSummary(doc.id, doc.data() as Record<string, unknown>));
+  } catch (e) {
+    console.error("[ticketing] listPublishedEvents failed:", e);
+    return [];
+  }
+}
 
 /**
  * Detalhe de um evento publicado por slug, com `ticketTypes` ativos e seus
@@ -113,52 +105,46 @@ export const listPublishedEvents = unstable_cache(
 export async function getPublishedEventBySlug(slug: string): Promise<PublicTicketEvent | null> {
   const clean = slug.trim();
   if (!clean) return null;
-  const fn = unstable_cache(
-    async (): Promise<PublicTicketEvent | null> => {
-      try {
-        const eventSnap = await adminDb
-          .collection("ticketEvents")
-          .where("slug", "==", clean)
-          .where("status", "==", "published")
-          .limit(1)
-          .get();
-        if (eventSnap.empty) return null;
-        const eventDoc = eventSnap.docs[0]!;
-        const summary = docToEventSummary(eventDoc.id, eventDoc.data() as Record<string, unknown>);
+  try {
+    const eventSnap = await adminDb
+      .collection("ticketEvents")
+      .where("slug", "==", clean)
+      .where("status", "==", "published")
+      .limit(1)
+      .get();
+    if (eventSnap.empty) return null;
+    const eventDoc = eventSnap.docs[0]!;
+    const summary = docToEventSummary(eventDoc.id, eventDoc.data() as Record<string, unknown>);
 
-        const now = Date.now();
-        const typesSnap = await eventDoc.ref
-          .collection("ticketTypes")
-          .where("active", "==", true)
-          .orderBy("sortOrder", "asc")
-          .get();
+    const now = Date.now();
+    const typesSnap = await eventDoc.ref
+      .collection("ticketTypes")
+      .where("active", "==", true)
+      .orderBy("sortOrder", "asc")
+      .get();
 
-        const types: PublicTicketType[] = [];
-        for (const typeDoc of typesSnap.docs) {
-          const td = typeDoc.data() as Record<string, unknown>;
-          const lotsSnap = await typeDoc.ref.collection("lots").orderBy("sortOrder", "asc").get();
-          const lots = lotsSnap.docs
-            .map((l) => docToLot(l.id, l.data() as Record<string, unknown>))
-            .filter((lot) => lotIsOnSale(lot, now));
-          if (lots.length === 0) continue; // tipo sem lote vendável agora não aparece
-          types.push({
-            id: typeDoc.id,
-            name: str(td.name) ?? "",
-            description: str(td.description),
-            sortOrder: num(td.sortOrder) ?? 0,
-            lots,
-          });
-        }
+    const types: PublicTicketType[] = [];
+    for (const typeDoc of typesSnap.docs) {
+      const td = typeDoc.data() as Record<string, unknown>;
+      const lotsSnap = await typeDoc.ref.collection("lots").orderBy("sortOrder", "asc").get();
+      const lots = lotsSnap.docs
+        .map((l) => docToLot(l.id, l.data() as Record<string, unknown>))
+        .filter((lot) => lotIsOnSale(lot, now));
+      if (lots.length === 0) continue; // tipo sem lote vendável agora não aparece
+      types.push({
+        id: typeDoc.id,
+        name: str(td.name) ?? "",
+        description: str(td.description),
+        sortOrder: num(td.sortOrder) ?? 0,
+        lots,
+      });
+    }
 
-        return { ...summary, ticketTypes: types };
-      } catch {
-        return null;
-      }
-    },
-    [`ticketing-event-${clean}`],
-    { revalidate: 60, tags: [CACHE_TAG, `ticket-event:${clean}`] },
-  );
-  return fn();
+    return { ...summary, ticketTypes: types };
+  } catch (e) {
+    console.error("[ticketing] getPublishedEventBySlug failed:", e);
+    return null;
+  }
 }
 
 function docToOrderItem(d: Record<string, unknown>): PublicOrderItem {
