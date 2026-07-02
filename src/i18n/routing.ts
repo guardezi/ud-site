@@ -75,6 +75,21 @@ export const routing = defineRouting({
       "en-US": "/sponsors",
       "es-ES": "/patrocinadores",
     },
+    "/ingressos": {
+      "pt-BR": "/ingressos",
+      "en-US": "/tickets",
+      "es-ES": "/entradas",
+    },
+    "/ingressos/[slug]": {
+      "pt-BR": "/ingressos/[slug]",
+      "en-US": "/tickets/[slug]",
+      "es-ES": "/entradas/[slug]",
+    },
+    "/ingressos/pedido/[orderId]": {
+      "pt-BR": "/ingressos/pedido/[orderId]",
+      "en-US": "/tickets/order/[orderId]",
+      "es-ES": "/entradas/pedido/[orderId]",
+    },
     "/contato": {
       "pt-BR": "/contato",
       "en-US": "/contact",

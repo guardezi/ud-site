@@ -1,0 +1,137 @@
+name: Preview — Cloud Run (PR)
+
+# Builda a imagem Docker, publica no Artifact Registry e deploya um Cloud Run
+# efêmero por PR (ud-site-pr-<n>). Comenta a URL no PR e limpa tudo no
+# fechamento. Espelha o padrão do eco2cycle / ud-backoffice.
+#
+# Prereqs (já provisionados no juiz-ud-stage, compartilhados com ud-backoffice):
+#   - Artifact Registry docker repo "previews" em us-east4
+#   - SA github-hml-deployer com run.admin/artifactregistry.writer/iam.serviceAccountUser
+#   - GitHub Secret GCP_SA_KEY_HML
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: preview-cloudrun-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  GCP_PROJECT_ID: juiz-ud-stage
+  GCP_REGION: us-east4
+  AR_REGISTRY: us-east4-docker.pkg.dev/juiz-ud-stage/previews
+  PR_NUMBER: ${{ github.event.pull_request.number }}
+  SERVICE: ud-site-pr-${{ github.event.pull_request.number }}
+
+jobs:
+  # ── Deploy preview ─────────────────────────────────────────────────────────
+  deploy-preview:
+    name: Deploy PR preview
+    runs-on: ubuntu-latest
+    if: github.event.action != 'closed'
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY_HML }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push image
+        run: |
+          IMAGE="${{ env.AR_REGISTRY }}/ud-site:pr-${{ env.PR_NUMBER }}"
+          docker build --platform linux/amd64 \
+            --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyBCxuhaH-7_fE_yG1eCKO5V7J0BW6vU1sA \
+            --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=juiz-ud-stage.firebaseapp.com \
+            --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID=juiz-ud-stage \
+            --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=juiz-ud-stage.appspot.com \
+            --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=1027730609670 \
+            --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=1:1027730609670:web:4c7a2fd5ff4a125f251587 \
+            --build-arg NEXT_PUBLIC_SITE_URL=https://ud-site--juiz-ud-stage.us-east4.hosted.app \
+            -t "$IMAGE" .
+          docker push "$IMAGE"
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE }}
+          image: ${{ env.AR_REGISTRY }}/ud-site:pr-${{ env.PR_NUMBER }}
+          region: ${{ env.GCP_REGION }}
+          # Env de RUNTIME lidos pelo Admin SDK (admin.ts) — sem isso o
+          # projectId fica undefined no Cloud Run e as queries do Firestore
+          # voltam vazias. Credencial vem da SA de runtime (applicationDefault).
+          env_vars: |
+            NEXT_PUBLIC_FIREBASE_PROJECT_ID=juiz-ud-stage
+            NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=juiz-ud-stage.appspot.com
+          flags: >-
+            --port=3000
+            --memory=512Mi
+            --cpu=1
+            --min-instances=0
+            --max-instances=1
+            --allow-unauthenticated
+            --no-cpu-throttling
+
+      - name: Comment preview URL on PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MARKER="<!-- ud-site-preview -->"
+          URL="${{ steps.deploy.outputs.url }}"
+          BODY="${MARKER}
+          ## 🔎 Preview do PR
+
+          | Ambiente | URL |
+          |----------|-----|
+          | **ud-site** | ${URL} |
+
+          **Commit:** \`${GITHUB_SHA:0:7}\` · efêmero (removido ao fechar o PR)"
+
+          COMMENT_ID=$(gh api repos/${{ github.repository }}/issues/${{ env.PR_NUMBER }}/comments \
+            --paginate --jq ".[] | select(.body | startswith(\"${MARKER}\")) | .id" | head -1)
+
+          if [ -n "$COMMENT_ID" ]; then
+            gh api repos/${{ github.repository }}/issues/comments/$COMMENT_ID -X PATCH -f body="$BODY"
+          else
+            gh api repos/${{ github.repository }}/issues/${{ env.PR_NUMBER }}/comments -X POST -f body="$BODY"
+          fi
+
+  # ── Cleanup on PR close ────────────────────────────────────────────────────
+  cleanup-preview:
+    name: Cleanup PR preview
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed'
+    permissions:
+      contents: read
+
+    steps:
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY_HML }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Delete Cloud Run service
+        run: |
+          gcloud run services delete "${{ env.SERVICE }}" \
+            --region=${{ env.GCP_REGION }} --project=${{ env.GCP_PROJECT_ID }} --quiet \
+            2>/dev/null || echo "service not found, skipping"
+
+      - name: Delete Artifact Registry image
+        run: |
+          gcloud artifacts docker images delete \
+            "${{ env.AR_REGISTRY }}/ud-site:pr-${{ env.PR_NUMBER }}" \
+            --quiet --delete-tags 2>/dev/null || echo "image not found, skipping"

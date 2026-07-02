@@ -144,5 +144,83 @@
   },
   "breadcrumbs": {
     "home": "Início"
+  },
+  "ingressos": {
+    "catalog": {
+      "title": "Ingressos",
+      "subtitle": "Garanta seu lugar nas etapas do Ultimate Drift.",
+      "noEvents": "Nenhum evento com ingressos à venda no momento.",
+      "viewEvent": "Ver ingressos",
+      "from": "A partir de",
+      "soldOut": "Esgotado"
+    },
+    "event": {
+      "backToCatalog": "Voltar aos ingressos",
+      "chooseTickets": "Escolha seus ingressos",
+      "unavailable": "Ingressos indisponíveis para este evento.",
+      "each": "cada",
+      "available": "{count} disponíveis",
+      "soldOut": "Esgotado",
+      "maxPerOrder": "Máx. {count} por pedido",
+      "quantity": "Quantidade",
+      "buyerData": "Seus dados",
+      "name": "Nome completo",
+      "email": "E-mail",
+      "phone": "Telefone (opcional)",
+      "total": "Total",
+      "submit": "Continuar para pagamento",
+      "submitting": "Processando…",
+      "emptySelection": "Selecione ao menos um ingresso.",
+      "nameRequired": "Informe seu nome.",
+      "emailInvalid": "Informe um e-mail válido."
+    },
+    "order": {
+      "title": "Seu pedido",
+      "denied": "Pedido não encontrado ou link inválido.",
+      "status": "Status",
+      "summary": "Resumo",
+      "buyer": "Comprador",
+      "total": "Total",
+      "quantity": "Qtd",
+      "pendingTitle": "Pagamento pendente",
+      "pendingHelp": "Conclua o pagamento para emitir seus ingressos.",
+      "simulatePayment": "Simular pagamento",
+      "paying": "Processando pagamento…",
+      "processingTitle": "Emitindo seus ingressos…",
+      "processingHelp": "Pagamento confirmado. Estamos gerando seus ingressos — esta página atualiza sozinha.",
+      "ticketsTitle": "Seus ingressos",
+      "ticket": "Ingresso",
+      "holder": "Portador",
+      "checkedIn": "Check-in realizado",
+      "showAtGate": "Apresente este QR na entrada.",
+      "expired": "Este pedido expirou.",
+      "cancelled": "Este pedido foi cancelado.",
+      "refunded": "Este pedido foi reembolsado.",
+      "statusLabels": {
+        "pending": "Pendente",
+        "paid": "Pago",
+        "issued": "Emitido",
+        "cancelled": "Cancelado",
+        "expired": "Expirado",
+        "refunded": "Reembolsado"
+      }
+    },
+    "errors": {
+      "INVALID_INPUT": "Dados inválidos. Revise e tente novamente.",
+      "QUANTITY_INVALID": "Quantidade inválida para um dos ingressos.",
+      "EVENT_NOT_FOUND": "Evento não encontrado.",
+      "TYPE_NOT_FOUND": "Tipo de ingresso indisponível.",
+      "LOT_NOT_FOUND": "Lote não encontrado.",
+      "LOT_NOT_ACTIVE": "Este lote não está mais à venda.",
+      "SALES_NOT_STARTED": "As vendas ainda não começaram.",
+      "SALES_ENDED": "As vendas foram encerradas.",
+      "INSUFFICIENT_STOCK": "Estoque insuficiente para a quantidade escolhida.",
+      "IDEMPOTENCY_CONFLICT": "Houve um conflito no pedido. Tente novamente.",
+      "FORBIDDEN": "Acesso negado.",
+      "ORDER_NOT_FOUND": "Pedido não encontrado.",
+      "ORDER_NOT_PENDING": "Este pedido não está mais pendente.",
+      "RESERVATION_EXPIRED": "Sua reserva expirou. Refaça o pedido.",
+      "INTERNAL": "Erro inesperado. Tente novamente."
+    }
   }
 }
