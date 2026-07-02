@@ -73,6 +73,24 @@ export function formatNumber(n: number | null | undefined, locale: string): stri
   return new Intl.NumberFormat(locale).format(n);
 }
 
+/**
+ * Formata um valor em CENTAVOS (int) como moeda. Ticketing guarda dinheiro
+ * sempre em centavos (CONTRACTS.md) — divide por 100 aqui, no ponto de exibição.
+ * Default BRL, mas aceita qualquer ISO currency.
+ */
+export function formatCurrencyCents(
+  cents: number | null | undefined,
+  locale: string | undefined | null,
+  currency = "BRL",
+): string {
+  const value = typeof cents === "number" && Number.isFinite(cents) ? cents / 100 : 0;
+  try {
+    return new Intl.NumberFormat(safeLocale(locale), { style: "currency", currency }).format(value);
+  } catch {
+    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+  }
+}
+
 /** Tempo em ms a partir de qualquer shape, ou null. Usado em filtros/ordenação. */
 export function dateLikeMs(v: DateLike): number | null {
   const d = toDate(v);

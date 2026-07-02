@@ -127,8 +127,12 @@
     "title": "Sobre Ultimate Drift",
     "subtitle": "El principal campeonato brasileño de drift profesional."
   },
-  "termos": { "title": "Términos y Condiciones" },
-  "privacidade": { "title": "Política de Privacidad" },
+  "termos": {
+    "title": "Términos y Condiciones"
+  },
+  "privacidade": {
+    "title": "Política de Privacidad"
+  },
   "common": {
     "loading": "Cargando…",
     "error": "Algo salió mal.",
@@ -138,5 +142,85 @@
     "notFoundTitle": "Página no encontrada",
     "notFoundSubtitle": "La página que buscabas puede haber sido movida o nunca existió."
   },
-  "breadcrumbs": { "home": "Inicio" }
+  "breadcrumbs": {
+    "home": "Inicio"
+  },
+  "ingressos": {
+    "catalog": {
+      "title": "Entradas",
+      "subtitle": "Asegura tu lugar en las etapas del Ultimate Drift.",
+      "noEvents": "No hay eventos con entradas a la venta ahora mismo.",
+      "viewEvent": "Ver entradas",
+      "from": "Desde",
+      "soldOut": "Agotado"
+    },
+    "event": {
+      "backToCatalog": "Volver a las entradas",
+      "chooseTickets": "Elige tus entradas",
+      "unavailable": "Entradas no disponibles para este evento.",
+      "each": "cada una",
+      "available": "{count} disponibles",
+      "soldOut": "Agotado",
+      "maxPerOrder": "Máx. {count} por pedido",
+      "quantity": "Cantidad",
+      "buyerData": "Tus datos",
+      "name": "Nombre completo",
+      "email": "Correo electrónico",
+      "phone": "Teléfono (opcional)",
+      "total": "Total",
+      "submit": "Continuar al pago",
+      "submitting": "Procesando…",
+      "emptySelection": "Selecciona al menos una entrada.",
+      "nameRequired": "Indica tu nombre.",
+      "emailInvalid": "Indica un correo válido."
+    },
+    "order": {
+      "title": "Tu pedido",
+      "denied": "Pedido no encontrado o enlace inválido.",
+      "status": "Estado",
+      "summary": "Resumen",
+      "buyer": "Comprador",
+      "total": "Total",
+      "quantity": "Cant.",
+      "pendingTitle": "Pago pendiente",
+      "pendingHelp": "Completa el pago para emitir tus entradas.",
+      "simulatePayment": "Simular pago",
+      "paying": "Procesando pago…",
+      "processingTitle": "Emitiendo tus entradas…",
+      "processingHelp": "Pago confirmado. Estamos generando tus entradas — esta página se actualiza sola.",
+      "ticketsTitle": "Tus entradas",
+      "ticket": "Entrada",
+      "holder": "Titular",
+      "checkedIn": "Check-in realizado",
+      "showAtGate": "Muestra este QR en la entrada.",
+      "expired": "Este pedido ha caducado.",
+      "cancelled": "Este pedido fue cancelado.",
+      "refunded": "Este pedido fue reembolsado.",
+      "statusLabels": {
+        "pending": "Pendiente",
+        "paid": "Pagado",
+        "issued": "Emitido",
+        "cancelled": "Cancelado",
+        "expired": "Caducado",
+        "refunded": "Reembolsado"
+      }
+    },
+    "errors": {
+      "INVALID_INPUT": "Datos inválidos. Revísalos e inténtalo de nuevo.",
+      "QUANTITY_INVALID": "Cantidad inválida para una de las entradas.",
+      "EVENT_NOT_FOUND": "Evento no encontrado.",
+      "TYPE_NOT_FOUND": "Tipo de entrada no disponible.",
+      "LOT_NOT_FOUND": "Lote no encontrado.",
+      "LOT_NOT_ACTIVE": "Este lote ya no está a la venta.",
+      "SALES_NOT_STARTED": "Las ventas aún no han comenzado.",
+      "SALES_ENDED": "Las ventas han finalizado.",
+      "INSUFFICIENT_STOCK": "Stock insuficiente para la cantidad elegida.",
+      "IDEMPOTENCY_CONFLICT": "Hubo un conflicto con el pedido. Inténtalo de nuevo.",
+      "FORBIDDEN": "Acceso denegado.",
+      "ORDER_NOT_FOUND": "Pedido no encontrado.",
+      "ORDER_NOT_PENDING": "Este pedido ya no está pendiente.",
+      "RESERVATION_EXPIRED": "Tu reserva ha caducado. Vuelve a pedir.",
+      "INTERNAL": "Error inesperado. Inténtalo de nuevo."
+    }
+  }
 }

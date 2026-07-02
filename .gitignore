@@ -37,3 +37,4 @@ pnpm-debug.log*
 
 # scripts cache
 scripts/.cache/
+.cache/
