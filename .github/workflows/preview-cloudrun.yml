@@ -69,6 +69,12 @@ jobs:
           service: ${{ env.SERVICE }}
           image: ${{ env.AR_REGISTRY }}/ud-site:pr-${{ env.PR_NUMBER }}
           region: ${{ env.GCP_REGION }}
+          # Env de RUNTIME lidos pelo Admin SDK (admin.ts) — sem isso o
+          # projectId fica undefined no Cloud Run e as queries do Firestore
+          # voltam vazias. Credencial vem da SA de runtime (applicationDefault).
+          env_vars: |
+            NEXT_PUBLIC_FIREBASE_PROJECT_ID=juiz-ud-stage
+            NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=juiz-ud-stage.appspot.com
           flags: >-
             --port=3000
             --memory=512Mi
