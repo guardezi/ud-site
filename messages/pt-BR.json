@@ -75,6 +75,12 @@
     "viewBracket": "Ver chaveamento",
     "noEvents": "Sem etapas cadastradas.",
     "results": "Resultados",
+    "watchLive": "Assistir ao vivo",
+    "regulation": "Regulamento",
+    "wildcardForm": "Inscrição Curinga",
+    "map": "Mapa",
+    "qualifyMap": "Mapa do Qualifying",
+    "faq": "Perguntas frequentes",
     "categories": {
       "EVENT": "Evento",
       "TRACK": "Pista",

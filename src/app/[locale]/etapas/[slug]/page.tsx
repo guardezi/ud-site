@@ -94,6 +94,36 @@ export default async function StagePage({ params }: { params: PageParams }) {
             >
               {t("viewBracket")} <ChevronRight className="size-3" aria-hidden />
             </Link>
+            {stage.liveUrl && (
+              <a
+                href={stage.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded border border-rail px-3 py-2 text-xs uppercase tracking-[0.18em] text-mute hover:text-signal hover:border-drift"
+              >
+                {t("watchLive")} <ChevronRight className="size-3" aria-hidden />
+              </a>
+            )}
+            {stage.regulationUrl && (
+              <a
+                href={stage.regulationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded border border-rail px-3 py-2 text-xs uppercase tracking-[0.18em] text-mute hover:text-signal hover:border-drift"
+              >
+                {t("regulation")} <ChevronRight className="size-3" aria-hidden />
+              </a>
+            )}
+            {stage.wildcardFormUrl && (
+              <a
+                href={stage.wildcardFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded border border-rail px-3 py-2 text-xs uppercase tracking-[0.18em] text-mute hover:text-signal hover:border-drift"
+              >
+                {t("wildcardForm")} <ChevronRight className="size-3" aria-hidden />
+              </a>
+            )}
           </div>
         </div>
 
@@ -148,6 +178,61 @@ export default async function StagePage({ params }: { params: PageParams }) {
         <section className="mt-12">
           <h2 className="eyebrow mb-3">{t("circuit")}</h2>
           <p className="max-w-3xl whitespace-pre-line text-signal/90">{circuit.description}</p>
+        </section>
+      )}
+
+      {(circuit?.mapImageUrl || circuit?.qualifyMapImageUrl) && (
+        <section className="mt-12">
+          <h2 className="eyebrow mb-4">{t("map")}</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {circuit?.mapImageUrl && (
+              <figure className="relative aspect-video overflow-hidden rounded border border-rail">
+                <Image
+                  src={circuit.mapImageUrl}
+                  alt={`${circuit.name} — ${t("map")}`}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-contain"
+                  unoptimized
+                />
+              </figure>
+            )}
+            {circuit?.qualifyMapImageUrl && (
+              <figure className="relative aspect-video overflow-hidden rounded border border-rail">
+                <Image
+                  src={circuit.qualifyMapImageUrl}
+                  alt={`${circuit.name} — ${t("qualifyMap")}`}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-contain"
+                  unoptimized
+                />
+                <figcaption className="absolute bottom-0 left-0 bg-asphalt/80 px-2 py-1 text-xs uppercase tracking-wider text-mute">
+                  {t("qualifyMap")}
+                </figcaption>
+              </figure>
+            )}
+          </div>
+        </section>
+      )}
+
+      {circuit && circuit.faqs.length > 0 && (
+        <section className="mt-12">
+          <h2 className="eyebrow mb-4">{t("faq")}</h2>
+          <div className="max-w-3xl divide-y divide-rail rounded border border-rail">
+            {circuit.faqs.map((faq, i) => (
+              <details key={i} className="group px-4 py-3">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 text-signal marker:content-['']">
+                  <span>{faq.question}</span>
+                  <ChevronRight
+                    className="size-4 shrink-0 text-mute transition-transform group-open:rotate-90"
+                    aria-hidden
+                  />
+                </summary>
+                <p className="mt-2 whitespace-pre-line text-sm text-signal/80">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
         </section>
       )}
 

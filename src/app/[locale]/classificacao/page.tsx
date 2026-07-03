@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { WPPageSnapshot } from "@/components/home/WPPageSnapshot";
+import { StandingsTable } from "@/components/standings/StandingsTable";
+import { getCurrentChampionshipStandings } from "@/lib/championship/queries";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
@@ -24,5 +26,24 @@ export async function generateMetadata({
 export default async function ClassificacaoPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <WPPageSnapshot slug="classificacao" />;
+  const t = await getTranslations("classificacao");
+
+  const standings = await getCurrentChampionshipStandings();
+
+  // TODO: query exposes only the current championship (single ranking, no
+  // category/season split). When publicChampionshipHistory grows a season or
+  // category dimension, add a selector here and render one table per category.
+  if (!standings || standings.entries.length === 0) {
+    return <WPPageSnapshot slug="classificacao" />;
+  }
+
+  return (
+    <section className="wrapper" style={{ padding: "60px 0" }}>
+      <div className="ui__title" data-animate="slide-bottom">
+        <h1>{t("title")}</h1>
+        <p className="text-mute">{t("subtitle")}</p>
+      </div>
+      <StandingsTable entries={standings.entries} />
+    </section>
+  );
 }

@@ -75,6 +75,12 @@
     "viewBracket": "Ver llaves",
     "noEvents": "Sin etapas programadas.",
     "results": "Resultados",
+    "watchLive": "Ver en vivo",
+    "regulation": "Reglamento",
+    "wildcardForm": "Inscripción Comodín",
+    "map": "Mapa",
+    "qualifyMap": "Mapa del Qualifying",
+    "faq": "Preguntas frecuentes",
     "categories": {
       "EVENT": "Evento",
       "TRACK": "Pista",

@@ -37,6 +37,9 @@ export type PublicStageHubSummary = {
 export type PublicStageHub = PublicStageHubSummary & {
   posterImageHighUrl: string | null;
   timetable: TimetableDay[];
+  liveUrl: string | null;
+  regulationUrl: string | null;
+  wildcardFormUrl: string | null;
   updatedAt: Date | null;
 };
 
@@ -85,6 +88,9 @@ function docToHub(id: string, d: Record<string, unknown>): PublicStageHub {
     ...base,
     posterImageHighUrl: imageHigh(base.posterImagePath),
     timetable,
+    liveUrl: str(d.liveUrl),
+    regulationUrl: str(d.regulationUrl),
+    wildcardFormUrl: str(d.wildcardFormUrl),
     updatedAt: tsToDate(d.updatedAt),
   };
 }
