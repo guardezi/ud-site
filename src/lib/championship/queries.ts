@@ -65,22 +65,68 @@ export async function getCurrentChampionshipId(): Promise<number | null> {
   }
 }
 
+/**
+ * Fallback quando o ponteiro settings/publicRound|round não expõe um
+ * championshipId (ou aponta pra um campeonato sem dados): escolhe o campeonato
+ * mais recente diretamente de /publicChampionshipHistory. Sem isso, /classificacao
+ * cairia no snapshot do WordPress mesmo com dado vivo no Firestore.
+ *
+ * Critério: mais recente por computedAt/updatedAt; se nenhum doc tiver timestamp,
+ * desempata pelo maior championshipId (doc id numérico = temporada mais nova).
+ */
+export async function getLatestChampionshipId(): Promise<number | null> {
+  try {
+    const snap = await adminDb.collection("publicChampionshipHistory").get();
+    if (snap.empty) return null;
+    let byTs: { id: number; t: number } | null = null;
+    let maxId: number | null = null;
+    for (const doc of snap.docs) {
+      const id = num(doc.id);
+      if (id === null) continue;
+      maxId = maxId === null ? id : Math.max(maxId, id);
+      const d = doc.data() as Record<string, unknown>;
+      const ts = tsToDate(d.computedAt) ?? tsToDate(d.updatedAt);
+      if (ts) {
+        const t = ts.getTime();
+        if (!byTs || t > byTs.t) byTs = { id, t };
+      }
+    }
+    return byTs ? byTs.id : maxId;
+  } catch {
+    return null;
+  }
+}
+
+function loadStandings(championshipId: number): Promise<ChampionshipStandings | null> {
+  return unstable_cache(
+    async () => {
+      try {
+        return await fetchStandings(championshipId);
+      } catch {
+        return null;
+      }
+    },
+    [`standings-${championshipId}`],
+    { revalidate: 300, tags: ["standings", `championship:${championshipId}`] },
+  )();
+}
+
 export async function getCurrentChampionshipStandings(): Promise<ChampionshipStandings | null> {
   try {
-    const id = await getCurrentChampionshipId();
+    const pointerId = await getCurrentChampionshipId();
+    const id = pointerId ?? (await getLatestChampionshipId());
     if (!id) return null;
-    const fn = unstable_cache(
-      async () => {
-        try {
-          return await fetchStandings(id);
-        } catch {
-          return null;
-        }
-      },
-      [`standings-${id}`],
-      { revalidate: 300, tags: ["standings", `championship:${id}`] },
-    );
-    return fn();
+
+    let standings = await loadStandings(id);
+
+    // Ponteiro apontou pra um campeonato inexistente/vazio → tenta o mais recente.
+    if ((!standings || standings.entries.length === 0) && pointerId) {
+      const latestId = await getLatestChampionshipId();
+      if (latestId && latestId !== id) {
+        standings = await loadStandings(latestId);
+      }
+    }
+    return standings;
   } catch {
     return null;
   }
