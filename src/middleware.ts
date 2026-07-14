@@ -16,5 +16,7 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  // `auth` fora do next-intl: as páginas de ação do Firebase (/auth/action)
+  // não são rotas localizadas — têm layout próprio e i18n via `lang`.
+  matcher: ["/((?!api|auth|_next|_vercel|.*\\..*).*)"],
 };
