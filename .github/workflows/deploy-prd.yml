@@ -1,0 +1,67 @@
+# Deploy PRD — ud-site (Firebase App Hosting)
+#
+# Espelha o deploy-prd.yml do ud-backoffice: gatilho por tag semver `v*`. O gate
+# é a criação deliberada da tag (ato manual). O job referencia o Environment
+# `production`; como o repo é privado neste plano, o environment fica sem
+# protection rule — o gate efetivo é a tag. Dispara um rollout do backend
+# `ud-site` no projeto de PRODUÇÃO a partir do commit EXATO da tag.
+#
+# Config de runtime/env do PRD: apphosting.production.yaml — aplicado
+# automaticamente pelo App Hosting quando o backend de produção está com
+# environment=production.
+#
+# HML NÃO tem workflow: o backend de staging (juiz-ud-stage) usa auto-rollout
+# nativo do App Hosting (push na main deploya sozinho). Só o PRD é gated por
+# tag aqui.
+#
+# Pré-requisitos (já provisionados em ultimate-drift-production):
+#   1. Backend App Hosting `ud-site` criado e conectado ao repo guardezi/ud-site,
+#      com auto-rollout DESLIGADO (senão duplica com este workflow). ✔ feito.
+#   2. Secret GCP_SA_KEY_PRD no GitHub — JSON de uma SA em ultimate-drift-production
+#      com roles: Firebase App Hosting Admin + Cloud Build Editor + Developer
+#      Connect Read (`roles/developerconnect.readTokenAccessor`, necessário pro
+#      rollout ler o repo conectado via Developer Connect). ✔ secret já existe.
+#   3. GitHub Environment `production`.
+
+name: Deploy PRD
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: deploy-prd
+  cancel-in-progress: false
+
+jobs:
+  rollout:
+    name: Rollout App Hosting (PRD)
+    runs-on: ubuntu-latest
+    # Environment production: sem protection rule neste plano (repo privado). Se
+    # o repo virar público/plano pago, adicionar required reviewer aqui vira gate
+    # de aprovação por clique. Hoje o gate é a criação da tag `v*`.
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY_PRD }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install firebase-tools
+        run: npm i -g firebase-tools@15
+
+      # Deploya o commit EXATO da tag (não o HEAD da branch), garantindo que o
+      # que subiu é o que foi tagueado e aprovado.
+      - name: Create rollout
+        run: |
+          firebase apphosting:rollouts:create ud-site \
+            --project ultimate-drift-production \
+            --git-commit ${{ github.sha }} \
+            --force
