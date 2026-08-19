@@ -7,6 +7,7 @@ import { formatCurrencyCents } from "@/lib/format";
 import { QRCode } from "@/components/ticketing/QRCode";
 import { PayButton } from "./PayButton";
 import { AutoRefresh } from "./AutoRefresh";
+import { PurchaseEvent } from "./PurchaseEvent";
 import type { Locale } from "@/i18n/config";
 import type { OrderStatus } from "@/lib/ticketing/schema";
 
@@ -70,8 +71,23 @@ export default async function OrderPage({
 
   const statusLabel = t(`order.statusLabels.${order.status}` as `order.statusLabels.${OrderStatus}`);
 
+  // Pedido pago/emitido → evento `purchase` no GA4 (dedup por transaction_id).
+  const purchased = order.status === "paid" || order.status === "issued";
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 lg:py-16">
+      {purchased ? (
+        <PurchaseEvent
+          transactionId={order.id}
+          value={order.amountCents / 100}
+          currency={currency}
+          items={order.items.map((item) => ({
+            item_name: `${item.typeName} · ${item.lotName}`,
+            quantity: item.quantity,
+            price: item.unitPriceCents / 100,
+          }))}
+        />
+      ) : null}
       <header className="mb-8">
         <p className="eyebrow">{t("order.title")}</p>
         <h1 className="display mt-2 text-3xl text-signal lg:text-4xl">{t("order.title")}</h1>
