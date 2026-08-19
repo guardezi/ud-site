@@ -75,6 +75,12 @@
     "viewBracket": "View bracket",
     "noEvents": "No stages scheduled.",
     "results": "Results",
+    "watchLive": "Watch live",
+    "regulation": "Regulations",
+    "wildcardForm": "Wildcard entry",
+    "map": "Map",
+    "qualifyMap": "Qualifying map",
+    "faq": "FAQ",
     "categories": {
       "EVENT": "Event",
       "TRACK": "Track",
