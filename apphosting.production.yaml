@@ -47,6 +47,19 @@ env:
       - BUILD
       - RUNTIME
 
+  # Analytics de terceiros — só em produção (HML/preview não têm estes vars, então
+  # o componente <Analytics/> não dispara). NEXT_PUBLIC → inlined em build-time.
+  - variable: NEXT_PUBLIC_GA_MEASUREMENT_ID
+    value: G-FNNWZN504Y
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_CLARITY_ID
+    value: y4kdzjhkcy
+    availability:
+      - BUILD
+      - RUNTIME
+
   # firebase apphosting:secrets:set REVALIDATE_SECRET --project ultimate-drift-production
   # - variable: REVALIDATE_SECRET
   #   secret: REVALIDATE_SECRET

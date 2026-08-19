@@ -6,10 +6,16 @@ import { lookupLegacyRedirect } from "@/lib/redirects";
 const intl = createMiddleware(routing);
 
 export default function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname + request.nextUrl.search;
-  const legacy = lookupLegacyRedirect(path);
+  // Lookup por pathname: as tabelas de 301 do WP são chaveadas por slug, sem
+  // query. Incluir a search na chave quebrava o match sempre que havia ?utm_*.
+  const legacy = lookupLegacyRedirect(request.nextUrl.pathname);
   if (legacy) {
     const url = new URL(legacy.to, request.url);
+    // Preserva a query de entrada (utm_*, gclid, etc.) no destino do 301, sem
+    // sobrescrever params que o próprio destino já defina.
+    request.nextUrl.searchParams.forEach((value, key) => {
+      if (!url.searchParams.has(key)) url.searchParams.append(key, value);
+    });
     return NextResponse.redirect(url, legacy.code ?? 301);
   }
   return intl(request);
