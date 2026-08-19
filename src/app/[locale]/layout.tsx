@@ -6,6 +6,7 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { Analytics } from "@/components/analytics/Analytics";
 import { organizationLd, websiteLd } from "@/lib/seo/jsonld";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
@@ -87,6 +88,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           <PublicFooter />
         </NextIntlClientProvider>
         <JsonLd data={[organizationLd(), websiteLd()]} />
+        <Analytics />
       </body>
     </html>
   );
