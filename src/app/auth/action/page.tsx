@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
@@ -41,14 +41,15 @@ const STRINGS: Record<Lang, Record<string, string>> = {
     save: "Salvar nova senha",
     saving: "Salvando...",
     resetOkTitle: "Senha alterada!",
-    resetOkBody: "Volte ao app Ultimate Drift e entre com a sua nova senha.",
+    resetOkBody: "Entre no app Ultimate Drift com a sua nova senha.",
     verifyOkTitle: "E-mail verificado!",
     verifyOkBody: "Sua conta foi confirmada. Você já pode voltar ao app.",
+    openApp: "Abrir o app",
     errTitle: "Não foi possível concluir",
     errInvalid: "Este link é inválido ou já expirou. Solicite um novo pelo app.",
     errGeneric: "Algo deu errado. Tente novamente em instantes.",
     errWeak: "A senha não atende aos requisitos.",
-    close: "Você já pode fechar esta janela.",
+    close: "Se o app não abrir sozinho, toque no botão acima.",
   },
   en: {
     verifying: "Validating the link...",
@@ -65,14 +66,15 @@ const STRINGS: Record<Lang, Record<string, string>> = {
     save: "Save new password",
     saving: "Saving...",
     resetOkTitle: "Password changed!",
-    resetOkBody: "Go back to the Ultimate Drift app and sign in with your new password.",
+    resetOkBody: "Sign in to the Ultimate Drift app with your new password.",
     verifyOkTitle: "Email verified!",
     verifyOkBody: "Your account is confirmed. You can go back to the app now.",
+    openApp: "Open the app",
     errTitle: "We couldn't finish",
     errInvalid: "This link is invalid or has expired. Request a new one from the app.",
     errGeneric: "Something went wrong. Please try again shortly.",
     errWeak: "The password doesn't meet the requirements.",
-    close: "You can close this window now.",
+    close: "If the app doesn't open on its own, tap the button above.",
   },
   es: {
     verifying: "Validando el enlace...",
@@ -89,14 +91,15 @@ const STRINGS: Record<Lang, Record<string, string>> = {
     save: "Guardar nueva contraseña",
     saving: "Guardando...",
     resetOkTitle: "¡Contraseña cambiada!",
-    resetOkBody: "Vuelve a la app Ultimate Drift e inicia sesión con tu nueva contraseña.",
+    resetOkBody: "Inicia sesión en la app Ultimate Drift con tu nueva contraseña.",
     verifyOkTitle: "¡Correo verificado!",
     verifyOkBody: "Tu cuenta fue confirmada. Ya puedes volver a la app.",
+    openApp: "Abrir la app",
     errTitle: "No se pudo completar",
     errInvalid: "Este enlace no es válido o ha caducado. Solicita uno nuevo desde la app.",
     errGeneric: "Algo salió mal. Inténtalo de nuevo en unos momentos.",
     errWeak: "La contraseña no cumple los requisitos.",
-    close: "Ya puedes cerrar esta ventana.",
+    close: "Si la app no se abre sola, toca el botón de arriba.",
   },
 };
 
@@ -106,6 +109,53 @@ function resolveLang(raw: string | null): Lang {
   if (v.startsWith("es")) return "es";
   if (v.startsWith("en")) return "en";
   return "pt";
+}
+
+// ---------------------------------------------------------------------------
+// Reabrir o app após concluir. O reset acontece aqui na web; ao terminar,
+// mandamos o usuário de volta ao app pelo deep link `new-password` (registrado
+// no ud-app: App Link https + custom scheme `ultimatedrift://new-password`).
+// ---------------------------------------------------------------------------
+const UD_APP_STORE_URL = "https://apps.apple.com/app/id6737285909";
+const UD_PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=br.com.ultimatedrift.app";
+const ANDROID_PACKAGE = "br.com.ultimatedrift.app";
+const DEEP_PATH = "new-password";
+
+function isMobileUA(): boolean {
+  const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  return /android|iphone|ipad|ipod/i.test(ua);
+}
+
+/**
+ * Abre o app com estratégia por plataforma, caindo na loja quando não está
+ * instalado. Android: `intent://` (package explícito + fallback Play Store).
+ * iOS: custom scheme `ultimatedrift://new-password` com fallback pra App Store.
+ * Desktop: abre a Play Store numa nova aba (não há app pra abrir).
+ */
+function openUdApp() {
+  const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  if (/android/i.test(ua)) {
+    const fallback = encodeURIComponent(UD_PLAY_STORE_URL);
+    window.location.href = `intent://ultimatedrift.app/${DEEP_PATH}#Intent;scheme=https;package=${ANDROID_PACKAGE};S.browser_fallback_url=${fallback};end`;
+  } else if (/iphone|ipad|ipod/i.test(ua)) {
+    let opened = false;
+    const mark = () => {
+      opened = true;
+    };
+    document.addEventListener("visibilitychange", mark);
+    window.addEventListener("pagehide", mark);
+    window.setTimeout(() => {
+      document.removeEventListener("visibilitychange", mark);
+      window.removeEventListener("pagehide", mark);
+      if (!opened && document.visibilityState === "visible") {
+        window.location.href = UD_APP_STORE_URL;
+      }
+    }, 1500);
+    window.location.href = `ultimatedrift://${DEEP_PATH}`;
+  } else {
+    window.open(UD_PLAY_STORE_URL, "_blank", "noopener");
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -225,6 +275,16 @@ function ActionInner() {
     };
   }, [oobCode, mode, t]);
 
+  // Ao concluir, tenta reabrir o app automaticamente (best-effort, só mobile —
+  // no desktop não há app pra abrir). O botão "Abrir o app" fica como fallback.
+  const autoOpened = useRef(false);
+  useEffect(() => {
+    if (status === "success" && !autoOpened.current && isMobileUA()) {
+      autoOpened.current = true;
+      openUdApp();
+    }
+  }, [status]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isValidPassword(password) || submitting || !oobCode) return;
@@ -277,6 +337,13 @@ function ActionInner() {
           {okTitle}
         </h1>
         <p className="text-center text-[14px] text-mute">{okBody}</p>
+        <button
+          type="button"
+          onClick={openUdApp}
+          className="mt-6 w-full rounded-lg bg-drift py-3 font-bold text-ink transition hover:opacity-90"
+        >
+          {t.openApp}
+        </button>
         <p className="mt-4 text-center text-[12px] text-faint">{t.close}</p>
       </Shell>
     );
