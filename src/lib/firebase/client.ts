@@ -3,6 +3,7 @@
 import { getApp, getApps, initializeApp, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
+import { ensureAppCheck } from "./app-check";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -20,6 +21,8 @@ let clientDb: Firestore;
 function ensure() {
   if (!clientApp) {
     clientApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
+    // App Check antes de qualquer serviço, pra os tokens saírem já no 1º request.
+    ensureAppCheck(clientApp);
     clientAuth = getAuth(clientApp);
     clientDb = getFirestore(clientApp);
   }
