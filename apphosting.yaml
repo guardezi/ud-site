@@ -40,13 +40,13 @@ env:
       - BUILD
       - RUNTIME
 
-  # App Check — site key pública do reCAPTCHA v3 do HML (juiz-ud-stage).
+  # App Check — site key pública do reCAPTCHA Enterprise do HML (juiz-ud-stage).
   # Registrada em Firebase Console → App Check → Apps → app web `ud-site` →
-  # reCAPTCHA v3. Pública por design (roda no client), então vai direto no yaml;
+  # reCAPTCHA Enterprise. Pública por design (roda no client), então vai direto no yaml;
   # a secret key correspondente fica só no Console. Enquanto estiver
   # REPLACE_ME_*, o App Check não inicializa (ver src/lib/firebase/app-check.ts).
-  - variable: NEXT_PUBLIC_FIREBASE_APPCHECK_RECAPTCHA_V3_SITE_KEY
-    value: REPLACE_ME_HML
+  - variable: NEXT_PUBLIC_FIREBASE_APPCHECK_RECAPTCHA_SITE_KEY
+    value: 6LfAIM0tAAAAAENUUoKirxlcxFoVyq5E9L6hRwXR
     availability:
       - BUILD
       - RUNTIME
