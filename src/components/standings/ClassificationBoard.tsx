@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { imageSrcSet, imageVariant } from "@/lib/firebase/image-variants";
@@ -23,6 +23,36 @@ export function ClassificationBoard({
   const router = useRouter();
   const [seasonId, setSeasonId] = useState(initialChampionshipId);
   const [categoryBySeason, setCategoryBySeason] = useState<Record<number, SeasonCategory>>({});
+
+  // `?categoria=` lido no cliente pra página continuar ISR (useSearchParams
+  // tiraria o board do HTML estático). Aceita `rookie`/`master`/`geral` e o
+  // formato do site legado `rookie-2026` (o ano escolhe a temporada).
+  useEffect(() => {
+    const parsed = parseCategoria(new URLSearchParams(window.location.search).get("categoria"));
+    if (!parsed) return;
+    const season = (parsed.year != null && seasons.find((s) => s.year === parsed.year)) || null;
+    const id = season?.championshipId ?? initialChampionshipId;
+    const target = seasons.find((s) => s.championshipId === id);
+    const cat = target?.categories.some((c) => c.key === parsed.category) ? parsed.category : "Pro";
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza com a URL só na montagem
+    setSeasonId(id);
+    setCategoryBySeason((prev) => ({ ...prev, [id]: cat }));
+  }, [seasons, initialChampionshipId]);
+
+  // Mantém a URL compartilhável: `?categoria=rookie` na temporada padrão,
+  // `?categoria=rookie-2025` em outra; geral na padrão = sem parâmetro.
+  const syncUrl = (id: number, cat: SeasonCategory) => {
+    const season = seasons.find((s) => s.championshipId === id);
+    const url = new URL(window.location.href);
+    const base = cat === "Pro" ? "geral" : cat.toLowerCase();
+    if (id === initialChampionshipId) {
+      if (cat === "Pro") url.searchParams.delete("categoria");
+      else url.searchParams.set("categoria", base);
+    } else {
+      url.searchParams.set("categoria", `${base}-${season?.year ?? ""}`);
+    }
+    window.history.replaceState(window.history.state, "", url);
+  };
 
   return (
     <section className="rank">
@@ -48,7 +78,10 @@ export function ClassificationBoard({
                 key={s.championshipId}
                 type="button"
                 className={`rank__season-btn button ${s.championshipId === seasonId ? "active" : ""}`}
-                onClick={() => setSeasonId(s.championshipId)}
+                onClick={() => {
+                  setSeasonId(s.championshipId);
+                  syncUrl(s.championshipId, categoryBySeason[s.championshipId] ?? "Pro");
+                }}
               >
                 {s.year}
               </button>
@@ -68,7 +101,10 @@ export function ClassificationBoard({
                       key={c.key}
                       type="button"
                       className={`rank__button ${c.key === active ? "active" : ""}`}
-                      onClick={() => setCategoryBySeason((prev) => ({ ...prev, [s.championshipId]: c.key }))}
+                      onClick={() => {
+                        setCategoryBySeason((prev) => ({ ...prev, [s.championshipId]: c.key }));
+                        syncUrl(s.championshipId, c.key);
+                      }}
                     >
                       {t(`category${c.key}`)}
                     </button>
@@ -94,6 +130,15 @@ export function ClassificationBoard({
       </div>
     </section>
   );
+}
+
+/** `rookie` | `master` | `geral`/`pro`, opcionalmente com `-AAAA`. Desconhecido → geral. */
+function parseCategoria(raw: string | null): { category: SeasonCategory; year: number | null } | null {
+  if (!raw) return null;
+  const m = /^([a-z]+)(?:-(\d{4}))?$/.exec(raw.trim().toLowerCase());
+  const name = m?.[1] ?? "";
+  const category: SeasonCategory = name === "rookie" ? "Rookie" : name === "master" ? "Master" : "Pro";
+  return { category, year: m?.[2] ? Number(m[2]) : null };
 }
 
 function stageTitle(t: ReturnType<typeof useTranslations>, s: SeasonStage) {

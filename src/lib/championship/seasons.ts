@@ -203,19 +203,21 @@ async function fetchSeasons(): Promise<ClassificationSeasons> {
   return { seasons: seasons.filter((s) => s.categories.length > 0), activeChampionshipId };
 }
 
+// Falha de leitura não entra no cache (senão a página ficaria vazia por 5 min).
+const loadSeasonsCached = unstable_cache(fetchSeasons, ["classification-seasons"], {
+  revalidate: 300,
+  tags: ["standings"],
+});
+
 /**
  * Temporadas (ano asc, como os botões do site legado) com a classificação de
  * cada uma. Lista vazia quando a leitura falha. Cache de 5 min, tag `standings`.
  */
-export const getClassificationSeasons = unstable_cache(
-  async (): Promise<ClassificationSeasons> => {
-    try {
-      return await fetchSeasons();
-    } catch (e) {
-      console.error("[championship] getClassificationSeasons failed:", e);
-      return { seasons: [], activeChampionshipId: null };
-    }
-  },
-  ["classification-seasons"],
-  { revalidate: 300, tags: ["standings"] },
-);
+export async function getClassificationSeasons(): Promise<ClassificationSeasons> {
+  try {
+    return await loadSeasonsCached();
+  } catch (e) {
+    console.error("[championship] getClassificationSeasons failed:", e);
+    return { seasons: [], activeChampionshipId: null };
+  }
+}
