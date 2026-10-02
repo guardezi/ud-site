@@ -1,242 +1,307 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { ChevronRight } from "lucide-react";
-import { getStageHubBySlug, listStageHubs } from "@/lib/stages/queries";
-import { getCircuitById } from "@/lib/circuits/queries";
-import { buildMetadata } from "@/lib/seo/meta";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { getPathname } from "@/i18n/navigation";
+import { BackTitle } from "@/components/stages/BackTitle";
+import { UDImage } from "@/components/ui/UDImage";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getStageEventDetail, listStageEvents, resolveStageEventSlug, type StageEventSummary } from "@/lib/stages/events";
+import { listStageEventSponsors } from "@/lib/stages/sponsors";
+import { formatScheduleDay, formatStageDays, formatStageNumbers } from "@/lib/stages/labels";
+import { imageHigh } from "@/lib/firebase/image-variants";
+import { buildMetadata } from "@/lib/seo/meta";
 import { sportsEventLd } from "@/lib/seo/jsonld";
 import { canonical } from "@/lib/seo/canonical";
-import { formatDateRange } from "@/lib/format";
-import { toIso } from "@/lib/firestore-utils";
-import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 600;
 
 export async function generateStaticParams() {
-  const stages = await listStageHubs().catch(() => []);
+  const stages = await listStageEvents().catch(() => []);
   return stages.map((s) => ({ slug: s.slug }));
 }
 
 type PageParams = Promise<{ locale: Locale; slug: string }>;
+type Translator = Awaited<ReturnType<typeof getTranslations<"etapas">>>;
+
+/** "11ª e 12ª Etapa – ECPA - Piracicaba (Piracicaba - SP)" — mesmo padrão dos posts do WordPress. */
+function stageTitle(stage: StageEventSummary, t: Translator, locale: string): string {
+  const head = stage.stageNumbers.length
+    ? t("stageTitle", { numbers: formatStageNumbers(stage.stageNumbers, locale), count: stage.stageNumbers.length })
+    : t("stageTitleNoNumber");
+  if (stage.venue) return `${head} – ${stage.venue}${stage.city ? ` (${stage.city})` : ""}`;
+  return stage.city ? `${head} – ${stage.city}` : head;
+}
+
+function isYouTube(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.replace(/^www\.|^m\./, "");
+    return host === "youtube.com" || host === "youtu.be";
+  } catch {
+    return false;
+  }
+}
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const stage = await getStageHubBySlug(slug).catch(() => null);
-  if (!stage) return {};
+  const resolved = await resolveStageEventSlug(slug).catch(() => null);
+  if (!resolved) return {};
+  const stage = resolved.summary;
+  const t = await getTranslations({ locale, namespace: "etapas" });
+  const title = stageTitle(stage, t, locale);
   return buildMetadata({
     href: "/etapas/[slug]",
     locale,
-    params: { slug },
-    title: stage.name,
-    description: `Etapa ${stage.name} do Ultimate Drift. Cronograma, mapa e resultados.`,
-    image: stage.posterImageHighUrl ?? stage.posterImageUrl ?? undefined,
+    params: { slug: stage.slug },
+    title,
+    description: t("metaDescription", { name: title }),
+    image: imageHigh(stage.artPath) ?? undefined,
   });
 }
 
+/**
+ * Página da etapa — layout `.step` do tema legado: título com voltar, arte em
+ * largura total (link de compra quando à venda), bloco claro com datas +
+ * cronograma público à esquerda e, à direita, "Comprar ingresso",
+ * Localização e Mapa (Google Maps pelo endereço do circuito); depois
+ * patrocinadores do evento e o conteúdo do circuito (mapa, descrição, FAQ).
+ */
 export default async function StagePage({ params }: { params: PageParams }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("etapas");
-  const stage = await getStageHubBySlug(slug);
-  if (!stage) notFound();
 
-  const circuit = stage.circuitId ? await getCircuitById(stage.circuitId) : null;
+  const resolved = await resolveStageEventSlug(slug);
+  if (!resolved) notFound();
+  if (!resolved.canonical) {
+    permanentRedirect(getPathname({ locale, href: { pathname: "/etapas/[slug]", params: { slug: resolved.summary.slug } } }));
+  }
+
+  const [stage, sponsors] = await Promise.all([getStageEventDetail(resolved.summary), listStageEventSponsors()]);
+  const circuit = stage.circuit;
+  const title = stageTitle(stage, t, locale);
+  const dates = formatStageDays(stage.days, locale, t.raw("monthTemplate") as string);
+  const address = circuit?.address ? [circuit.address, circuit.city].filter(Boolean).join(" - ") : null;
+  const mapsQuery = address ? encodeURIComponent(address) : null;
+  const hasRight = Boolean(stage.ticketUrl || address || stage.liveUrl || stage.regulationUrl || stage.wildcardFormUrl);
+
+  const art = stage.artPath ? (
+    <UDImage
+      src={stage.artPath}
+      alt={title}
+      baseVariant="high"
+      srcsetPreset="responsive"
+      sizes="100vw"
+      loading="eager"
+      fetchPriority="high"
+      className="step__img"
+    />
+  ) : null;
 
   const ld = sportsEventLd({
-    name: stage.name,
-    url: canonical("/etapas/[slug]", locale, { slug }),
-    startDate: toIso(stage.startDate) ?? new Date().toISOString(),
-    endDate: toIso(stage.endDate) ?? undefined,
-    locationName: circuit?.name ?? stage.name,
-    locationAddress: circuit ? { city: circuit.city, country: circuit.country } : undefined,
-    image: stage.posterImageHighUrl ?? stage.posterImageUrl,
+    name: title,
+    url: canonical("/etapas/[slug]", locale, { slug: stage.slug }),
+    startDate: stage.startDay ?? new Date().toISOString().slice(0, 10),
+    endDate: stage.endDay ?? undefined,
+    locationName: stage.venue ?? stage.city ?? title,
+    locationAddress: circuit ? { city: circuit.city, country: circuit.country } : stage.city ? { city: stage.city } : undefined,
+    image: imageHigh(stage.artPath),
     description: circuit?.description ?? null,
   });
 
   return (
-    <div className="mx-auto max-w-wide px-4 py-12 lg:px-8 lg:py-16">
-      <Breadcrumbs
-        items={[
-          { label: t("title"), href: "/etapas" },
-          { label: stage.name, href: "/etapas/[slug]", params: { slug } },
-        ]}
-        locale={locale}
-      />
+    <section className="step">
+      <div className="wrapper">
+        <BackTitle fallbackHref="/etapas" backLabel={t("back")}>
+          {title}
+        </BackTitle>
+      </div>
 
-      <header className="grid gap-6 lg:grid-cols-[1.4fr,1fr]">
-        <div>
-          {stage.startDate && (
-            <p className="eyebrow">{formatDateRange(stage.startDate, stage.endDate, locale)}</p>
+      {art && (
+        <div className="step__top">
+          {stage.ticketUrl ? (
+            <a href={stage.ticketUrl} className="step__photo-link" target="_blank" rel="noopener noreferrer" aria-label={t("buyTicket")}>
+              {art}
+            </a>
+          ) : (
+            <div className="step__photo-link">{art}</div>
           )}
-          <h1 className="display mt-2 text-4xl text-signal lg:text-6xl">{stage.name}</h1>
-          {circuit && (
-            <p className="mt-3 text-mute">
-              {circuit.name}
-              {circuit.city && ` · ${circuit.city}`}
-              {circuit.country && `, ${circuit.country}`}
-            </p>
-          )}
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href={{ pathname: "/etapas/[slug]/qualifying", params: { slug } }}
-              className="inline-flex items-center gap-1 rounded border border-rail px-3 py-2 text-xs uppercase tracking-[0.18em] text-mute hover:text-signal hover:border-drift"
-            >
-              {t("viewQualifying")} <ChevronRight className="size-3" aria-hidden />
-            </Link>
-            <Link
-              href={{ pathname: "/etapas/[slug]/bracket", params: { slug } }}
-              className="inline-flex items-center gap-1 rounded border border-rail px-3 py-2 text-xs uppercase tracking-[0.18em] text-mute hover:text-signal hover:border-drift"
-            >
-              {t("viewBracket")} <ChevronRight className="size-3" aria-hidden />
-            </Link>
-            {stage.liveUrl && (
-              <a
-                href={stage.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded border border-rail px-3 py-2 text-xs uppercase tracking-[0.18em] text-mute hover:text-signal hover:border-drift"
-              >
-                {t("watchLive")} <ChevronRight className="size-3" aria-hidden />
-              </a>
+        </div>
+      )}
+
+      <div className="step__bottom">
+        <div className="wrapper">
+          <div className="step__bottom-content">
+            <div className="step__bottom-box">
+              <div className="step__bottom-left">
+                <div className="step__bottom-left-header">
+                  {stage.venue && <span className="step__local">{stage.venue}</span>}
+                  {dates && <h3 className="step__date">{dates}</h3>}
+                  {stage.city && <h3 className="step__city">{stage.city}</h3>}
+                </div>
+                {stage.schedule.length > 0 && (
+                  <div className="step__bottom-left-body">
+                    {stage.schedule.map((day) => (
+                      <div key={day.day} className="col-12">
+                        <h3 className="step__date-secondary">{formatScheduleDay(day.day, locale)}</h3>
+                        {day.items.map((item, i) => (
+                          <span key={`${item.time}-${i}`} className="step__item">
+                            {item.time}
+                            {item.endTime ? ` - ${item.endTime}` : ""} - {item.description}
+                            {item.externalUrl && (
+                              <>
+                                <br />
+                                {t("liveStream")}{" "}
+                                <a
+                                  href={item.externalUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label={isYouTube(item.externalUrl) ? "YouTube" : t("liveStream")}
+                                  title={isYouTube(item.externalUrl) ? "YouTube" : t("liveStream")}
+                                  style={{ display: "inline-block", verticalAlign: "middle" }}
+                                >
+                                  <svg className="step__item-icon" width="35" height="23" viewBox="0 0 35 23" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M13.9798 15.7486V6.5292C17.4661 8.06927 20.1663 9.557 23.3598 11.161C20.7258 12.5323 17.4661 14.0709 13.9798 15.7486ZM33.4093 1.94397C32.8079 1.20015 31.7829 0.621146 30.6917 0.429457C27.4842 -0.142339 7.47422 -0.143965 4.26852 0.429457C3.39344 0.583459 2.61421 0.955702 1.94483 1.53405C-0.875634 3.9916 0.00816584 17.1707 0.688008 19.3055C0.973888 20.2295 1.34346 20.8959 1.80889 21.3334C2.40854 21.9117 3.22957 22.3099 4.17263 22.4885C6.81354 23.0013 20.4191 23.288 30.6358 22.5655C31.5772 22.4115 32.4104 22.0005 33.0676 21.3975C35.6754 18.9498 35.4976 5.03065 33.4093 1.94397Z"
+                                      fill="white"
+                                    />
+                                  </svg>
+                                </a>
+                              </>
+                            )}
+                          </span>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {hasRight && (
+                <div className="step__bottom-right">
+                  {stage.ticketUrl && (
+                    <a href={stage.ticketUrl} className="step__ticket" target="_blank" rel="noopener noreferrer">
+                      {t("buyTicket")}
+                    </a>
+                  )}
+                  {address && mapsQuery && (
+                    <>
+                      <h2 className="step__bottom-right-title">{t("location")}</h2>
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
+                        className="step__address"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {address}
+                      </a>
+                      <h2 className="step__bottom-right-title">{t("map")}</h2>
+                      <div className="step__map-box">
+                        <div className="step__loading">
+                          <span className="step__loading-text">{t("loadingMap")}</span>
+                        </div>
+                        <iframe
+                          className="step__frame"
+                          loading="lazy"
+                          title={`${t("map")} — ${address}`}
+                          src={`https://maps.google.com/maps?q=${mapsQuery}&z=15&output=embed`}
+                          width={1080}
+                          height={260}
+                          style={{ border: 0 }}
+                          allowFullScreen
+                        />
+                      </div>
+                    </>
+                  )}
+                  {(stage.liveUrl || stage.regulationUrl || stage.wildcardFormUrl) && (
+                    <div style={{ marginTop: 20 }}>
+                      {stage.liveUrl && (
+                        <a className="step__link" href={stage.liveUrl} target="_blank" rel="noopener noreferrer">
+                          {t("watchLive")}
+                        </a>
+                      )}
+                      {stage.regulationUrl && (
+                        <a className="step__link" href={stage.regulationUrl} target="_blank" rel="noopener noreferrer">
+                          {t("regulation")}
+                        </a>
+                      )}
+                      {stage.wildcardFormUrl && (
+                        <a className="step__link" href={stage.wildcardFormUrl} target="_blank" rel="noopener noreferrer">
+                          {t("wildcardForm")}
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {sponsors.length > 0 && (
+              <div className="step__sponsors-container">
+                {sponsors.map((s) => {
+                  const logo = s.logoPath ? (
+                    <UDImage
+                      src={s.logoPath}
+                      alt={t("sponsorAlt", { name: s.name })}
+                      baseVariant="small"
+                      srcsetPreset="compact"
+                      sizes="160px"
+                      width={200}
+                      height={200}
+                      className="step__sponsors-img"
+                    />
+                  ) : (
+                    <span className="step__item">{s.name}</span>
+                  );
+                  return (
+                    <div key={s.id} className="step__sponsors-item">
+                      {s.site ? (
+                        <a href={s.site} title={t("sponsorVisit", { name: s.name })} className="step__sponsors-link" target="_blank" rel="noopener noreferrer">
+                          {logo}
+                        </a>
+                      ) : (
+                        <div className="step__sponsors-link">{logo}</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             )}
-            {stage.regulationUrl && (
-              <a
-                href={stage.regulationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded border border-rail px-3 py-2 text-xs uppercase tracking-[0.18em] text-mute hover:text-signal hover:border-drift"
-              >
-                {t("regulation")} <ChevronRight className="size-3" aria-hidden />
-              </a>
-            )}
-            {stage.wildcardFormUrl && (
-              <a
-                href={stage.wildcardFormUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded border border-rail px-3 py-2 text-xs uppercase tracking-[0.18em] text-mute hover:text-signal hover:border-drift"
-              >
-                {t("wildcardForm")} <ChevronRight className="size-3" aria-hidden />
-              </a>
+
+            {circuit && (circuit.mapImageUrl || circuit.description || circuit.faqs.length > 0) && (
+              <div className="step__content">
+                {circuit.mapImageUrl && (
+                  <figure className="wp-block-image size-large">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={circuit.mapImageUrl} alt={`${t("trackMap")} — ${circuit.name}`} loading="lazy" decoding="async" style={{ maxWidth: "100%", height: "auto" }} />
+                  </figure>
+                )}
+                {circuit.description &&
+                  circuit.description
+                    .split(/\n{2,}/)
+                    .map((p, i) => <p key={i} style={{ whiteSpace: "pre-line" }}>{p}</p>)}
+                {circuit.faqs.length > 0 && (
+                  <>
+                    <p>
+                      <strong>{t("faq")}</strong>
+                    </p>
+                    {circuit.faqs.map((f, i) => (
+                      <p key={i} style={{ whiteSpace: "pre-line" }}>
+                        <strong>{f.question}</strong>
+                        <br />
+                        {f.answer}
+                      </p>
+                    ))}
+                  </>
+                )}
+              </div>
             )}
           </div>
         </div>
-
-        {stage.posterImageHighUrl && (
-          <div className="relative aspect-[4/5] overflow-hidden rounded border border-rail">
-            <Image
-              src={stage.posterImageHighUrl}
-              alt={stage.name}
-              fill
-              priority
-              sizes="(min-width: 1024px) 500px, 100vw"
-              className="object-cover"
-              unoptimized
-            />
-          </div>
-        )}
-      </header>
-
-      {stage.timetable.length > 0 && (
-        <section className="mt-12">
-          <h2 className="eyebrow mb-4">{t("timetable")}</h2>
-          <div className="space-y-6">
-            {stage.timetable.map((day) => (
-              <div key={day.day}>
-                <p className="data mb-2 text-sm uppercase tracking-wider text-drift">{day.day}</p>
-                <ul className="divide-y divide-rail rounded border border-rail">
-                  {day.items.map((item, i) => (
-                    <li key={i} className="flex items-baseline gap-4 px-3 py-2">
-                      <span className="data shrink-0 text-sm text-signal">
-                        {item.startTime}
-                        {item.endTime ? `–${item.endTime}` : ""}
-                      </span>
-                      <div className="flex-1">
-                        <p className="text-signal">{item.title}</p>
-                        {item.sublocation && (
-                          <p className="text-xs text-mute">{item.sublocation}</p>
-                        )}
-                      </div>
-                      <span className="hidden md:inline text-xs uppercase tracking-wider text-faint">
-                        {t(`categories.${item.category}` as never)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {circuit?.description && (
-        <section className="mt-12">
-          <h2 className="eyebrow mb-3">{t("circuit")}</h2>
-          <p className="max-w-3xl whitespace-pre-line text-signal/90">{circuit.description}</p>
-        </section>
-      )}
-
-      {(circuit?.mapImageUrl || circuit?.qualifyMapImageUrl) && (
-        <section className="mt-12">
-          <h2 className="eyebrow mb-4">{t("map")}</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {circuit?.mapImageUrl && (
-              <figure className="relative aspect-video overflow-hidden rounded border border-rail">
-                <Image
-                  src={circuit.mapImageUrl}
-                  alt={`${circuit.name} — ${t("map")}`}
-                  fill
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-contain"
-                  unoptimized
-                />
-              </figure>
-            )}
-            {circuit?.qualifyMapImageUrl && (
-              <figure className="relative aspect-video overflow-hidden rounded border border-rail">
-                <Image
-                  src={circuit.qualifyMapImageUrl}
-                  alt={`${circuit.name} — ${t("qualifyMap")}`}
-                  fill
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-contain"
-                  unoptimized
-                />
-                <figcaption className="absolute bottom-0 left-0 bg-asphalt/80 px-2 py-1 text-xs uppercase tracking-wider text-mute">
-                  {t("qualifyMap")}
-                </figcaption>
-              </figure>
-            )}
-          </div>
-        </section>
-      )}
-
-      {circuit && circuit.faqs.length > 0 && (
-        <section className="mt-12">
-          <h2 className="eyebrow mb-4">{t("faq")}</h2>
-          <div className="max-w-3xl divide-y divide-rail rounded border border-rail">
-            {circuit.faqs.map((faq, i) => (
-              <details key={i} className="group px-4 py-3">
-                <summary className="flex cursor-pointer items-center justify-between gap-4 text-signal marker:content-['']">
-                  <span>{faq.question}</span>
-                  <ChevronRight
-                    className="size-4 shrink-0 text-mute transition-transform group-open:rotate-90"
-                    aria-hidden
-                  />
-                </summary>
-                <p className="mt-2 whitespace-pre-line text-sm text-signal/80">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-      )}
-
+      </div>
       <JsonLd data={ld} />
-    </div>
+    </section>
   );
 }
