@@ -75,6 +75,11 @@ export const routing = defineRouting({
       "en-US": "/sponsors",
       "es-ES": "/patrocinadores",
     },
+    "/patrocinadores/[slug]": {
+      "pt-BR": "/patrocinadores/[slug]",
+      "en-US": "/sponsors/[slug]",
+      "es-ES": "/patrocinadores/[slug]",
+    },
     "/ingressos": {
       "pt-BR": "/ingressos",
       "en-US": "/tickets",

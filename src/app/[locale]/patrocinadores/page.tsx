@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { WPPageSnapshot } from "@/components/home/WPPageSnapshot";
-import { UDImage } from "@/components/ui/UDImage";
-import { listSponsors, type PublicSponsor } from "@/lib/sponsors/queries";
+import { Link } from "@/i18n/navigation";
+import { BackArrow, CheckItem } from "@/components/sponsors/SponsorsUi";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
-export const revalidate = 3600;
+/**
+ * "Seja um patrocinador" — mesma página do site legado
+ * (ultimatedrift.com.br/patrocinadores): conteúdo institucional fixo (i18n
+ * `patrocinadores.*`) com as classes `sponsors__*` do tema.
+ *
+ * O formulário "Conte com a gente" do legado (nome da empresa, email,
+ * telefone, CNPJ → e-mail via admin-ajax do WordPress) ficou de fora até
+ * definirmos pra onde o lead vai — ver PR.
+ */
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,
@@ -23,85 +32,107 @@ export async function generateMetadata({
   });
 }
 
-/** Agrupa por tier preservando a ordem global (já vem ordenado por `order` asc). */
-function groupByTier(sponsors: PublicSponsor[]): { tier: string; items: PublicSponsor[] }[] {
-  const groups: { tier: string; items: PublicSponsor[] }[] = [];
-  const byTier = new Map<string, PublicSponsor[]>();
-  for (const s of sponsors) {
-    const tier = s.tier ?? "";
-    let bucket = byTier.get(tier);
-    if (!bucket) {
-      bucket = [];
-      byTier.set(tier, bucket);
-      groups.push({ tier, items: bucket });
-    }
-    bucket.push(s);
-  }
-  return groups;
-}
+const green = (chunks: ReactNode) => <span className="text--green">{chunks}</span>;
 
 export default async function PatrocinadoresPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("patrocinadores");
-  const sponsors = await listSponsors();
-
-  // Coleção vazia hoje: cai no snapshot legado do WordPress pra não servir página em branco.
-  if (sponsors.length === 0) {
-    return <WPPageSnapshot slug="patrocinadores" />;
-  }
-
-  const groups = groupByTier(sponsors);
+  const imageAlt = t("imageAlt");
 
   return (
     <section className="sponsors">
       <div className="wrapper">
-        <div className="ui__title" data-animate="slide-bottom">
+        <Link href="/" className="ui__title" aria-label={t("back")}>
+          <BackArrow />
           <h1>{t("title")}</h1>
-          <p>{t("subtitle")}</p>
-        </div>
+        </Link>
+        <div className="sponsors__content">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/theme/img/logo-light2.png" alt="" className="sponsors__bg" />
 
-        {groups.map((group) => (
-          <div key={group.tier || "default"} className="sponsors__tier" data-tier={group.tier || undefined}>
-            <h2 className="sponsors__tier-title">{group.tier || t("tierTitle")}</h2>
-            <div
-              className="sponsors__grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-                gap: "24px",
-                alignItems: "center",
-              }}
-            >
-              {group.items.map((s) => {
-                const logo = (
-                  <UDImage
-                    src={s.logoPath}
-                    alt={s.name}
-                    baseVariant="medium"
-                    srcsetPreset="responsive"
-                    sizes="(max-width: 576px) 45vw, (max-width: 992px) 30vw, 200px"
-                    width={200}
-                    height={120}
-                    className="sponsors__logo"
-                    style={{ width: "100%", height: "auto", objectFit: "contain" }}
-                  />
-                );
-                return (
-                  <div key={s.id} className="sponsors__item" title={s.name}>
-                    {s.website ? (
-                      <a href={s.website} target="_blank" rel="noopener noreferrer sponsored" aria-label={s.name}>
-                        {logo}
-                      </a>
-                    ) : (
-                      logo
-                    )}
-                  </div>
-                );
-              })}
+          <div className="row align-items-center justify-content-between">
+            <div className="col-lg-5">
+              <h2 className="sponsors__title">{t.rich("heroTitle", { green })}</h2>
+            </div>
+            <div className="col-lg-6">
+              <p className="sponsors__text">{t("heroText")}</p>
+            </div>
+
+            <div className="col-12">
+              <h2 className="sponsors__title-center">{t("whyTitle")}</h2>
+            </div>
+            <div className="col-lg-6">
+              <p className="sponsors__text">{t("whyText")}</p>
+              <h3 className="sponsors__items-title">{t("reachTitle")}</h3>
+              {(["reach1", "reach2", "reach3", "reach4", "reach5"] as const).map((k) => (
+                <CheckItem key={k}>{t.rich(k, { green })}</CheckItem>
+              ))}
+            </div>
+            <div className="col-lg-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/theme/img/sponsors-1.png" alt={imageAlt} className="sponsors__img" />
+            </div>
+            <div className="col-12">
+              <p className="sponsors__text-center">
+                {t("broadcastText")}
+                <br />
+                <span className="text--green">{t("broadcastHighlight")}</span>
+              </p>
+            </div>
+
+            <div className="col-12">
+              <h2 className="sponsors__title-center">{t("partnershipTitle")}</h2>
+            </div>
+            <div className="col-md-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/theme/img/sponsors-2.png" alt={imageAlt} className="sponsors__img" />
+            </div>
+            <div className="col-md-6">
+              <div className="sponsors__items-title">{t("partnershipIntro")}</div>
+              <div className="sponsors__items-highlight text--green">{t("annualTitle")}</div>
+              <div className="sponsors__items-title">{t("annualText")}</div>
+              {(["annual1", "annual2", "annual3", "annual4"] as const).map((k) => (
+                <CheckItem key={k}>
+                  <span className="text--green">{t(k)}</span>
+                </CheckItem>
+              ))}
+            </div>
+            <div className="col-md-6">
+              <div className="sponsors__items-highlight text--yellow">{t("stageTitle")}</div>
+              <div className="sponsors__items-title">{t("stageText")}</div>
+              {(["stage1", "stage2", "stage3", "stage4"] as const).map((k) => (
+                <CheckItem key={k} tone="yellow">
+                  <span className="text--yellow">{t(k)}</span>
+                </CheckItem>
+              ))}
+            </div>
+            <div className="col-md-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/theme/img/sponsors-3.png" alt={imageAlt} className="sponsors__img" />
+            </div>
+
+            <div className="col-md-6">
+              <h2 className="sponsors__big-title">{t.rich("impactTitle", { green })}</h2>
+            </div>
+            <div className="col-md-5">
+              <p className="sponsors__text sponsors__bottom-text">{t("impactText")}</p>
+            </div>
+
+            <div className="col-12">
+              <div className="ui__title">
+                <h2>{t("contactTitle")}</h2>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="sponsors__text">
+                {t("contactText")}
+                <br />
+                {t("contactClosing")}
+              </div>
             </div>
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );
