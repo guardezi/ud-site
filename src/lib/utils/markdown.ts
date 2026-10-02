@@ -13,13 +13,16 @@ const STORAGE_PATH_PATTERN = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_./-]+\.(jpg|jpeg|png|w
  * `news/foo/img.jpg`) pra URLs públicas WebP via image-variants. URLs HTTP(S)
  * passam intactas.
  */
-export function renderMarkdown(source: string): string {
-  const walkTokens = (token: { type: string; href?: string }) => {
+// Registrado uma única vez: `marked.use` acumula extensões a cada chamada.
+marked.use({
+  walkTokens(token) {
     if (token.type === "image" && token.href && STORAGE_PATH_PATTERN.test(token.href)) {
       const resolved = imageMedium(token.href);
       if (resolved) token.href = resolved;
     }
-  };
-  marked.use({ walkTokens });
+  },
+});
+
+export function renderMarkdown(source: string): string {
   return marked.parse(source) as string;
 }

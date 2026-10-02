@@ -10,6 +10,7 @@ import { buildMetadata } from "@/lib/seo/meta";
 import { renderMarkdown } from "@/lib/utils/markdown";
 import { toIso } from "@/lib/firestore-utils";
 import { UDImage } from "@/components/ui/UDImage";
+import { ChevronIcon } from "@/components/noticias/ChevronIcon";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 3600;
@@ -38,18 +39,22 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   });
 }
 
-const MONTH_PT = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
-
-function formatPtBr(date: Date | null): string {
-  if (!date) return "";
-  return `${date.getDate()} de ${MONTH_PT[date.getMonth()]} de ${date.getFullYear()}`;
-}
+/**
+ * Avatar genérico (silhueta cinza) no lugar do Gravatar "mystery person" que o
+ * WP mostrava pro autor — o doc em `news` só guarda o nome do autor.
+ */
+const AVATAR_PLACEHOLDER =
+  "data:image/svg+xml," +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><rect width="80" height="80" fill="#d1d5db"/><circle cx="40" cy="31" r="15" fill="#f3f4f6"/><path d="M12 80c2-17 14-27 28-27s26 10 28 27z" fill="#f3f4f6"/></svg>',
+  );
 
 export default async function NoticiaPage({ params }: { params: PageParams }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const article = await getNewsBySlug(slug, locale);
   if (!article) notFound();
+  const t = await getTranslations("noticias");
 
   const ld = articleLd({
     headline: article.title,
@@ -61,23 +66,19 @@ export default async function NoticiaPage({ params }: { params: PageParams }) {
     description: article.excerpt,
   });
 
-  const publishedDate = article.publishedAt instanceof Date
-    ? article.publishedAt
-    : article.publishedAt
-      ? new Date(article.publishedAt as unknown as string)
-      : null;
-  const publishedLabel = publishedDate ? `Publicado em ${formatPtBr(publishedDate)}` : "";
+  const publishedLabel = article.publishedAt
+    ? t("publishedAt", {
+        date: new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "America/Sao_Paulo" }).format(
+          article.publishedAt,
+        ),
+      })
+    : "";
 
   return (
     <div className="wrapper">
       <Link href="/noticias" className="ui__title" data-animate="slide-bottom">
-        <svg className="ui__icon" width="15" height="27" viewBox="0 0 15 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M13.5208 26.7703C13.8818 27.1025 14.4396 27.0692 14.7678 26.7039C15.096 26.3386 15.0632 25.774 14.7022 25.4419L2.00202 13.8182C1.67385 13.5193 1.67385 13.0875 2.00202 12.7886L14.7022 1.5634C15.0632 1.23129 15.096 0.666705 14.8006 0.301387C14.4725 -0.0639308 13.9146 -0.0971413 13.5536 0.201755L0.853422 11.4602C-0.262355 12.4565 -0.295172 14.1171 0.820606 15.1466L13.5208 26.7703Z"
-            fill="#54F251"
-          />
-        </svg>
-        <h1>{article.title}</h1>
+        <ChevronIcon className="ui__icon" width={15} height={27} />
+        <h1 className="">{article.title}</h1>
       </Link>
 
       <main className="single-post-container">
@@ -86,15 +87,13 @@ export default async function NoticiaPage({ params }: { params: PageParams }) {
             {publishedLabel && (
               <div className="post-meta">
                 <span>{publishedLabel}</span>
-                {article.author && <> • <span>{article.author}</span></>}
-                {article.category && <> • <span>{article.category}</span></>}
               </div>
             )}
             {article.coverImagePath && (
               <div className="post-thumbnail">
                 <UDImage
                   src={article.coverImagePath}
-                  alt={article.title}
+                  alt=""
                   baseVariant="high"
                   srcsetPreset="responsive"
                   sizes="(max-width: 1024px) 100vw, 1024px"
@@ -112,6 +111,27 @@ export default async function NoticiaPage({ params }: { params: PageParams }) {
             data-animate="slide-bottom"
             dangerouslySetInnerHTML={{ __html: renderMarkdown(article.body) }}
           />
+
+          <footer className="post-footer" data-animate="slide-bottom">
+            {article.tags.length > 0 && (
+              <div className="tags">
+                {article.tags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </div>
+            )}
+            {article.author && (
+              <div className="author-box">
+                <div className="author-avatar">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={AVATAR_PLACEHOLDER} alt="" width={60} height={60} />
+                </div>
+                <div className="author-info">
+                  <h4>{article.author}</h4>
+                </div>
+              </div>
+            )}
+          </footer>
         </article>
       </main>
 

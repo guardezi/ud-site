@@ -26,6 +26,16 @@ export type NewsArticle = NewsSummary & {
   seo: { title: string | null; description: string | null; ogImagePath: string | null };
 };
 
+/**
+ * `publishedAt` dos posts migrados é string "YYYY-MM-DD" (data do WP, sem
+ * hora). `new Date("2026-01-16")` vira meia-noite UTC = 15/01 21h em
+ * Brasília; ancorar no meio-dia UTC mantém o dia certo em qualquer fuso BR.
+ */
+function publishedDate(v: unknown): Date | null {
+  if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) return tsToDate(`${v}T12:00:00Z`);
+  return tsToDate(v);
+}
+
 function docToSummary(id: string, d: Record<string, unknown>): NewsSummary {
   const coverImagePath = str(d.coverImagePath);
   return {
@@ -39,7 +49,7 @@ function docToSummary(id: string, d: Record<string, unknown>): NewsSummary {
     author: str(d.author),
     category: str(d.category),
     tags: asArray<string>(d.tags),
-    publishedAt: tsToDate(d.publishedAt),
+    publishedAt: publishedDate(d.publishedAt),
   };
 }
 
@@ -60,10 +70,52 @@ function docToArticle(id: string, d: Record<string, unknown>): NewsArticle {
 }
 
 /**
- * Lista notícias publicadas, ordenadas mais recentes primeiro.
- * Fase 1: collection `/news` ainda vazia → retorna []. Fase 2: alimentada via
- * import-wp.mjs + CMS no ud-backoffice.
+ * Todas as notícias publicadas de um locale, mais recentes primeiro.
+ *
+ * Só filtros de igualdade (status + locale): o Firestore resolve isso com os
+ * índices de campo único, sem índice composto. A ordenação por `publishedAt`
+ * é feita em memória — a coleção é pequena (dezenas de docs, migração do WP).
+ * Com `orderBy` no servidor a query exigiria um índice composto
+ * (status, locale, publishedAt desc) que não existe em nenhum projeto, e o
+ * erro FAILED_PRECONDITION fazia a listagem cair sempre no estado vazio.
+ *
+ * Os posts migrados do WordPress só existem em pt-BR; em en-US/es-ES, sem
+ * nenhuma notícia própria do locale, cai pro pt-BR (mesmo conteúdo do site
+ * antigo, que só tinha português).
  */
+async function fetchPublishedNews(locale: Locale): Promise<NewsSummary[]> {
+  const byLocale = async (l: Locale) => {
+    const snap = await adminDb
+      .collection("news")
+      .where("status", "==", "published")
+      .where("locale", "==", l)
+      .get();
+    return snap.docs
+      .map((d) => docToSummary(d.id, d.data() as Record<string, unknown>))
+      .sort((a, b) => (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0));
+  };
+  const items = await byLocale(locale);
+  if (items.length > 0 || locale === "pt-BR") return items;
+  return byLocale("pt-BR");
+}
+
+const cachedPublishedNews = (locale: Locale) =>
+  unstable_cache(
+    async () => {
+      try {
+        // Date não sobrevive à serialização do cache: guarda ISO e reidrata.
+        const items = await fetchPublishedNews(locale);
+        return items.map((n) => ({ ...n, publishedAt: n.publishedAt?.toISOString() ?? null }));
+      } catch (err) {
+        console.error("[news] listNews falhou", err);
+        return [];
+      }
+    },
+    [`news-published-${locale}`],
+    { revalidate: 60, tags: ["news", `news:${locale}`] },
+  )();
+
+/** Lista paginada de notícias publicadas (mais recentes primeiro). */
 export async function listNews(opts: {
   locale: Locale;
   limit?: number;
@@ -71,26 +123,11 @@ export async function listNews(opts: {
 }): Promise<{ items: NewsSummary[]; total: number }> {
   const limit = opts.limit ?? 12;
   const offset = opts.offset ?? 0;
-  const fn = unstable_cache(
-    async () => {
-      try {
-        let q = adminDb
-          .collection("news")
-          .where("status", "==", "published")
-          .where("locale", "==", opts.locale)
-          .orderBy("publishedAt", "desc")
-          .limit(limit + offset);
-        const snap = await q.get();
-        const all = snap.docs.map((d) => docToSummary(d.id, d.data() as Record<string, unknown>));
-        return { items: all.slice(offset, offset + limit), total: all.length };
-      } catch {
-        return { items: [] as NewsSummary[], total: 0 };
-      }
-    },
-    [`news-list-${opts.locale}-${offset}-${limit}`],
-    { revalidate: 60, tags: ["news", `news:${opts.locale}`] },
-  );
-  return fn();
+  const all = (await cachedPublishedNews(opts.locale)).map((n) => ({
+    ...n,
+    publishedAt: n.publishedAt ? new Date(n.publishedAt) : null,
+  }));
+  return { items: all.slice(offset, offset + limit), total: all.length };
 }
 
 export async function listLatestNews(locale: Locale, n = 6): Promise<NewsSummary[]> {
@@ -102,16 +139,25 @@ export async function getNewsBySlug(slug: string, locale: Locale): Promise<NewsA
   const fn = unstable_cache(
     async () => {
       try {
-        const snap = await adminDb
-          .collection("news")
-          .where("slug", "==", slug)
-          .where("locale", "==", locale)
-          .where("status", "==", "published")
-          .limit(1)
-          .get();
-        const doc = snap.docs[0];
+        const find = async (l: Locale) => {
+          const snap = await adminDb
+            .collection("news")
+            .where("slug", "==", slug)
+            .where("locale", "==", l)
+            .where("status", "==", "published")
+            .limit(1)
+            .get();
+          return snap.docs[0] ?? null;
+        };
+        // Mesmo fallback da listagem: posts migrados só existem em pt-BR.
+        const doc = (await find(locale)) ?? (locale !== "pt-BR" ? await find("pt-BR") : null);
         if (!doc) return null;
-        return docToArticle(doc.id, doc.data() as Record<string, unknown>);
+        const article = docToArticle(doc.id, doc.data() as Record<string, unknown>);
+        return {
+          ...article,
+          publishedAt: article.publishedAt?.toISOString() ?? null,
+          updatedAt: article.updatedAt?.toISOString() ?? null,
+        };
       } catch {
         return null;
       }
@@ -119,7 +165,13 @@ export async function getNewsBySlug(slug: string, locale: Locale): Promise<NewsA
     [`news-${slug}-${locale}`],
     { revalidate: 3600, tags: ["news", `news:${slug}`] },
   );
-  return fn();
+  const cached = await fn();
+  if (!cached) return null;
+  return {
+    ...cached,
+    publishedAt: cached.publishedAt ? new Date(cached.publishedAt) : null,
+    updatedAt: cached.updatedAt ? new Date(cached.updatedAt) : null,
+  };
 }
 
 export async function listAllNewsSlugs(): Promise<Array<{ slug: string; locale: Locale; updatedAt: Date | null }>> {

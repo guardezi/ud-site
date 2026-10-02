@@ -72,11 +72,23 @@
     "code": 301
   },
   "/category/historia": {
-    "to": "/categorias/historia",
+    "to": "/noticias",
     "code": 301
   },
   "/category/noticia": {
-    "to": "/categorias/noticia",
+    "to": "/noticias",
+    "code": 301
+  },
+  "/noticia": {
+    "to": "/noticias",
+    "code": 301
+  },
+  "/historia": {
+    "to": "/noticias",
+    "code": 301
+  },
+  "/noticia/estadio-do-comercial-recebe-etapa-do-brasileiro-de-drift-em-agosto": {
+    "to": "/noticias/estadio-do-comercial-recebe-etapa-do-brasileiro-de-drift-em-agosto",
     "code": 301
   }
 }
