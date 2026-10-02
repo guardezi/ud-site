@@ -1,18 +1,25 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { UDImage } from "@/components/ui/UDImage";
 import type { StaticPathname } from "@/lib/routes";
+import type { ChampionshipClassification } from "@/lib/championship/queries";
+import { driverSlug } from "@/lib/utils/slug";
 
 /**
  * "Classificação Geral": pódio (2º/1º/3º, classes `index__rank-*` do tema
  * legado) + tabela com POS, piloto (foto, nome, #número), pontos por etapa e
  * TOTAL. Os 3 primeiros com borda verde. No mobile a tabela rola na
  * horizontal dentro do próprio container (min-width fixa).
+ *
+ * Dados: `getActiveChampionshipClassification` (mesma lógica da home do
+ * ud-app) adaptados por `toStandingsData`.
  */
 export type StandingsDriver = {
   position: number;
   name: string;
-  number: number;
-  photoSrc: string;
+  number: number | null;
+  /** Path do Storage (ou URL) da foto; sem foto, placeholder do UDImage. */
+  photo: string | null;
   /** Slug do perfil em /pilotos/[slug]; sem slug, a linha não é link. */
   slug: string | null;
   /** Pontos por etapa, na ordem; `null` = não correu (mostra "–"). */
@@ -21,7 +28,7 @@ export type StandingsDriver = {
 };
 
 export type ChampionshipStandingsData = {
-  year: number;
+  year: number | null;
   /** Quantidade de colunas de etapa (1ª…Nª). */
   stageCount: number;
   drivers: StandingsDriver[];
@@ -35,12 +42,20 @@ function PodiumCard({ driver, place }: { driver: StandingsDriver; place: "first"
       <span className="index__rank-position">{t("podiumPlace", { position: driver.position })}</span>
       <div className="index__driver-box">
         <div className="index__rank-img-box">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img width={220} height={220} src={driver.photoSrc} alt={driver.name} className="index__rank-driver-img" loading="lazy" />
+          <UDImage
+            src={driver.photo}
+            alt={driver.name}
+            baseVariant="medium"
+            srcsetPreset="compact"
+            sizes="220px"
+            width={220}
+            height={220}
+            className="index__rank-driver-img"
+          />
         </div>
         <div className="index__rank-bottom">
           <div className="index__rank-number-box">
-            <span className="index__rank-number">{driver.number}</span>
+            <span className="index__rank-number">{driver.number ?? "–"}</span>
           </div>
           <div className="index__driver-name flex-1 text-center">{driver.name}</div>
         </div>
@@ -59,6 +74,36 @@ function PodiumCard({ driver, place }: { driver: StandingsDriver; place: "first"
 
 const GRID = "grid grid-cols-[70px_200px_repeat(var(--stages),minmax(0,1fr))_110px] items-center gap-x-2";
 
+/** Colunas de etapa da tabela (layout fixo do site legado). */
+export const STANDINGS_STAGE_COLUMNS = 10;
+const TOP = 10;
+
+/**
+ * Classificação do campeonato → props da seção: top 10 do ranking geral;
+ * pontos das 10 primeiras etapas (`finalScore` 0 ou etapa ausente → "–");
+ * slug do perfil igual ao de /pilotos (`driverSlug`). `null` sem dados.
+ */
+export function toStandingsData(c: ChampionshipClassification | null): ChampionshipStandingsData | null {
+  if (!c || c.pilots.length === 0) return null;
+  return {
+    year: c.year,
+    stageCount: STANDINGS_STAGE_COLUMNS,
+    fullStandingsHref: "/classificacao",
+    drivers: c.pilots.slice(0, TOP).map((p) => ({
+      position: p.position,
+      name: p.name,
+      number: p.number,
+      photo: p.photo,
+      slug: p.name ? driverSlug({ apelido: p.name, numero: p.number }) : null,
+      stagePoints: Array.from({ length: STANDINGS_STAGE_COLUMNS }, (_, i) => {
+        const v = p.stageScores[i];
+        return v ? v : null;
+      }),
+      total: p.totalScore,
+    })),
+  };
+}
+
 export function ChampionshipStandings({ data }: { data: ChampionshipStandingsData }) {
   const t = useTranslations("homeSections");
   const [first, second, third] = data.drivers;
@@ -68,7 +113,7 @@ export function ChampionshipStandings({ data }: { data: ChampionshipStandingsDat
   return (
     <section className="index__rank">
       <div className="wrapper">
-        <h2 className="ui__title">{t("standingsTitle", { year: data.year })}</h2>
+        <h2 className="ui__title">{t("standingsTitle", { year: data.year ?? "" })}</h2>
       </div>
 
       {first && second && third && (
@@ -107,18 +152,19 @@ export function ChampionshipStandings({ data }: { data: ChampionshipStandingsDat
                   >
                     <span className="text-center text-xl font-bold text-[#002C04]">{d.position}º</span>
                     <span className="flex min-w-0 items-center gap-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={d.photoSrc}
+                      <UDImage
+                        src={d.photo}
                         alt=""
+                        baseVariant="small"
+                        srcsetPreset="compact"
+                        sizes="64px"
                         width={64}
                         height={64}
-                        loading="lazy"
                         className="size-16 shrink-0 rounded-full bg-gradient-to-b from-[#a1a1a1] to-white object-cover object-top"
                       />
                       <span className="min-w-0">
                         <span className="block truncate text-base font-bold">{d.name}</span>
-                        <span className="block text-sm text-[#6b6b6b]">#{d.number}</span>
+                        {d.number != null && <span className="block text-sm text-[#6b6b6b]">#{d.number}</span>}
                       </span>
                     </span>
                     {stageCols.map((n) => {

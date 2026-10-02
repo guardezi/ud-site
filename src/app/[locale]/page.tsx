@@ -4,7 +4,7 @@ import { NextStageBanner } from "@/components/home/NextStageBanner";
 import { SponsorCallout } from "@/components/home/SponsorCallout";
 import { NextStageSchedule } from "@/components/home/NextStageSchedule";
 import { AllStages } from "@/components/home/AllStages";
-import { ChampionshipStandings } from "@/components/home/ChampionshipStandings";
+import { ChampionshipStandings, toStandingsData } from "@/components/home/ChampionshipStandings";
 import { AppPromo } from "@/components/home/AppPromo";
 import { HomeNews } from "@/components/home/HomeNews";
 import { HomeSponsors } from "@/components/home/HomeSponsors";
@@ -12,11 +12,11 @@ import { HomeSponsors } from "@/components/home/HomeSponsors";
 import { SPONSOR_CALLOUT_MOCK } from "@/components/home/sponsor-callout.mock";
 import { NEXT_STAGE_SCHEDULE_MOCK } from "@/components/home/next-stage-schedule.mock";
 import { ALL_STAGES_MOCK } from "@/components/home/all-stages.mock";
-import { CHAMPIONSHIP_STANDINGS_MOCK } from "@/components/home/championship-standings.mock";
 import { APP_PROMO_MOCK } from "@/components/home/app-promo.mock";
 import { HOME_NEWS_MOCK } from "@/components/home/home-news.mock";
 import { HOME_SPONSORS_MOCK } from "@/components/home/home-sponsors.mock";
 import { getNextRaceEvent } from "@/lib/events/queries";
+import { getActiveChampionshipClassification } from "@/lib/championship/queries";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
@@ -41,13 +41,18 @@ export async function generateMetadata({
  * Home — mesma sequência de seções do site legado:
  * banner da próxima etapa → seja um patrocinador → próxima etapa (cronograma)
  * → todas as etapas → classificação geral → app → notícias → patrocinadores
- * e apoiadores. Só o banner lê o Firestore (`events`); o resto é mock.
+ * e apoiadores. Banner (`events`) e classificação (`championships`) leem o
+ * Firestore; o resto é mock.
  */
 export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const nextEvent = await getNextRaceEvent();
+  const [nextEvent, classification] = await Promise.all([
+    getNextRaceEvent(),
+    getActiveChampionshipClassification(),
+  ]);
+  const standings = toStandingsData(classification);
 
   return (
     <>
@@ -55,7 +60,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       <SponsorCallout data={SPONSOR_CALLOUT_MOCK} />
       <NextStageSchedule data={NEXT_STAGE_SCHEDULE_MOCK} />
       <AllStages stages={ALL_STAGES_MOCK} />
-      <ChampionshipStandings data={CHAMPIONSHIP_STANDINGS_MOCK} />
+      {standings && <ChampionshipStandings data={standings} />}
       <AppPromo data={APP_PROMO_MOCK} />
       <HomeNews data={HOME_NEWS_MOCK} />
       <HomeSponsors data={HOME_SPONSORS_MOCK} />
