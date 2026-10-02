@@ -5,6 +5,8 @@ import { Hero } from "@/components/home/Hero";
 import { TopDriversCard } from "@/components/home/TopDriversCard";
 import { WPHomeSnapshot } from "@/components/home/WPHomeSnapshot";
 import { NextStageBanner } from "@/components/home/NextStageBanner";
+import { NextStageSchedule } from "@/components/home/NextStageSchedule";
+import { NEXT_STAGE_SCHEDULE_MOCK } from "@/components/home/next-stage-schedule.mock";
 import { StagesList } from "@/components/stages/StagesList";
 import { UDImage } from "@/components/ui/UDImage";
 import {
@@ -84,6 +86,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   return (
     <>
       {banner}
+      {/* MOCK — dados fixos até a fonte do cronograma ser definida. */}
+      <NextStageSchedule data={NEXT_STAGE_SCHEDULE_MOCK} />
       {next && <Hero nextStage={next} locale={locale} />}
 
       <div className="mx-auto max-w-wide space-y-16 px-4 py-12 lg:px-8 lg:py-16">

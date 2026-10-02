@@ -37,7 +37,10 @@
     "viewAllDrivers": "Ver todos los pilotos",
     "latestNews": "Últimas noticias",
     "viewAllNews": "Ver todas las noticias",
-    "noNews": "Próximamente."
+    "noNews": "Próximamente.",
+    "buyTicket": "Comprar entrada",
+    "moreInfo": "+ Información",
+    "liveStream": "Transmisión en vivo"
   },
   "pilotos": {
     "title": "Pilotos",

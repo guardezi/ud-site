@@ -37,7 +37,10 @@
     "viewAllDrivers": "View all drivers",
     "latestNews": "Latest news",
     "viewAllNews": "View all news",
-    "noNews": "Coming soon."
+    "noNews": "Coming soon.",
+    "buyTicket": "Buy ticket",
+    "moreInfo": "+ More info",
+    "liveStream": "Live stream"
   },
   "pilotos": {
     "title": "Drivers",
