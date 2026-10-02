@@ -127,7 +127,27 @@
     "email": "Email",
     "social": "Redes sociales",
     "press": "Prensa",
-    "sponsorship": "Patrocinio"
+    "sponsorship": "Patrocinio",
+    "introTitle": "Ponte en contacto",
+    "introDescription": "Completa el formulario a continuación o contáctanos por correo electrónico. Estamos a tu disposición para resolver tus dudas. Habla con nuestro equipo para más información o alianzas.",
+    "logoAlt": "Logotipo de Ultimate Drift",
+    "form": {
+      "name": "Nombre",
+      "namePlaceholder": "Escribe tu nombre",
+      "email": "Email",
+      "emailPlaceholder": "Escribe tu email",
+      "phone": "Teléfono",
+      "phonePlaceholder": "Ej: +55 (XX) XXXX-XXXX",
+      "message": "Mensaje",
+      "messagePlaceholder": "Escribe tu mensaje",
+      "submit": "Enviar",
+      "sendingButton": "Enviando...",
+      "sending": "Enviando tu mensaje...",
+      "success": "¡Mensaje enviado! Pronto nos pondremos en contacto.",
+      "errorInvalid": "Revisa los campos: nombre, email válido, teléfono y un mensaje de al menos 10 caracteres.",
+      "errorGeneric": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde.",
+      "disabled": "El envío de mensajes por el sitio no está disponible temporalmente."
+    }
   },
   "sobre": {
     "title": "Sobre Ultimate Drift",

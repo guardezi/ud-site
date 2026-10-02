@@ -1,11 +1,17 @@
 "use client";
 
 import { FirebaseApp } from "firebase/app";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
+import {
+  getToken,
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider,
+  type AppCheck,
+} from "firebase/app-check";
 
 // Por APP (não global): idempotente mesmo se `ensure()` for chamado de vários
 // pontos, e preparado pra uma eventual FirebaseApp secundária.
 const started = new WeakSet<FirebaseApp>();
+const instances = new WeakMap<FirebaseApp, AppCheck>();
 
 /**
  * Inicializa o Firebase App Check (reCAPTCHA Enterprise) na app client — uma única vez,
@@ -49,15 +55,37 @@ export function ensureAppCheck(app: FirebaseApp): void {
 
   started.add(app);
   try {
-    initializeAppCheck(app, {
-      provider: new ReCaptchaEnterpriseProvider(siteKey),
-      isTokenAutoRefreshEnabled: true,
-    });
+    instances.set(
+      app,
+      initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider(siteKey),
+        isTokenAutoRefreshEnabled: true,
+      }),
+    );
   } catch (err) {
     // Fail-open também no caminho "key presente mas init falhou" (config
     // inválida, app já inicializado por outro caminho). `ensure()` é chamado
     // por `getClientAuth()`, que renderiza `/auth/action` — o handler de reset
     // de senha de toda a plataforma. Um throw aqui derrubaria essa página.
     console.warn("[app-check] initializeAppCheck falhou — seguindo sem App Check", err);
+  }
+}
+
+/**
+ * Token de App Check pra mandar junto de uma Server Action (ex. formulário de
+ * contato), que o servidor confere com `getAppCheck().verifyToken()`.
+ * `null` quando o App Check está desligado (sem site key) ou falhou — o
+ * servidor decide se aceita ou não a ausência do token.
+ */
+export async function getAppCheckTokenOrNull(app: FirebaseApp): Promise<string | null> {
+  ensureAppCheck(app);
+  const instance = instances.get(app);
+  if (!instance) return null;
+  try {
+    const { token } = await getToken(instance, /* forceRefresh */ false);
+    return token;
+  } catch (err) {
+    console.warn("[app-check] getToken falhou", err);
+    return null;
   }
 }
