@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import type { UpcomingStage } from "@/lib/stages/home-stages";
-import { stageDatesLabel } from "@/lib/stages/date-labels";
+import type { StageEventSummary } from "@/lib/stages/events";
+import { formatStageDays } from "@/lib/stages/labels";
 import type { StageHref } from "./NextStageSchedule";
 
 /**
@@ -9,9 +9,9 @@ import type { StageHref } from "./NextStageSchedule";
  * "Comprar ingresso" e "+ Informações". Classes `etapas-futuras`/`etapa-*`
  * do tema legado + grid/card do Bootstrap (carregado no layout).
  *
- * Dados: etapas futuras de `stageHubs` + `circuits/{id}` (`toStageCards`).
- * Sem link de ingresso por etapa nas fontes (pergunta no PR): botão
- * "Comprar ingresso" só aparece quando `ticketUrl` vier preenchido.
+ * Dados: fins de semana de etapa futuros de `listStageEvents`
+ * (src/lib/stages/events.ts). "Comprar ingresso" = `events.linkUrl` casado
+ * por data (heurística do PR #18; aparece só quando houver).
  */
 export type StageCardData = {
   id: string;
@@ -24,14 +24,18 @@ export type StageCardData = {
   moreInfoHref: StageHref | null;
 };
 
-export function toStageCards(stages: UpcomingStage[], locale: string): StageCardData[] {
+export function toStageCards(
+  stages: StageEventSummary[],
+  locale: string,
+  monthTemplate: string,
+): StageCardData[] {
   return stages.map((s) => ({
-    id: s.hub.id,
-    datesLabel: stageDatesLabel(s.startDate, s.endDate, locale),
-    city: s.circuit?.city ?? s.hub.name,
-    venue: s.circuit?.name || null,
-    ticketUrl: null,
-    moreInfoHref: { pathname: "/etapas/[slug]", params: { slug: s.hub.slug } },
+    id: s.key,
+    datesLabel: formatStageDays(s.days, locale, monthTemplate),
+    city: s.city ?? "",
+    venue: s.venue,
+    ticketUrl: s.ticketUrl,
+    moreInfoHref: { pathname: "/etapas/[slug]", params: { slug: s.slug } },
   }));
 }
 

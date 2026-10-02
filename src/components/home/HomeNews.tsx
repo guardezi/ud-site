@@ -2,12 +2,12 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { UDImage } from "@/components/ui/UDImage";
 import type { StaticPathname } from "@/lib/routes";
-import type { HomeNewsSummary } from "@/lib/news/home-news";
+import type { NewsSummary } from "@/lib/news/queries";
 
 /**
  * "Notícias": destaque grande à esquerda + lista à direita, tag de categoria
  * e botão "Todas as notícias". Classes `index__news*` do tema legado.
- * Dados: collection `news` (`listHomeNews`), mesma de /noticias.
+ * Dados: collection `news` (`listLatestNews`), mesma de /noticias.
  */
 export type HomeNewsItem = {
   slug: string;
@@ -25,7 +25,7 @@ export type HomeNewsData = {
 };
 
 /** Mais recente vira destaque; as 2 seguintes vão pra coluna da direita. */
-export function toHomeNewsData(news: HomeNewsSummary[]): HomeNewsData {
+export function toHomeNewsData(news: NewsSummary[]): HomeNewsData {
   const items = news.map((n) => ({ slug: n.slug, title: n.title, category: n.category, imagePath: n.coverImagePath }));
   return { highlight: items[0] ?? null, others: items.slice(1, 3), allNewsHref: "/noticias" };
 }

@@ -11,8 +11,8 @@ import { HomeSponsors, eventSponsorToLogo } from "@/components/home/HomeSponsors
 import { getNextRaceEvent } from "@/lib/events/queries";
 import { getActiveChampionshipClassification } from "@/lib/championship/queries";
 import { listEventSponsors } from "@/lib/sponsors/queries";
-import { getPublicStageSchedule, listUpcomingStages } from "@/lib/stages/home-stages";
-import { listHomeNews } from "@/lib/news/home-news";
+import { getStageEventDetail, listStageEvents } from "@/lib/stages/events";
+import { listLatestNews } from "@/lib/news/queries";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
@@ -40,8 +40,8 @@ export async function generateMetadata({
  * e apoiadores.
  *
  * Fontes (Firestore, as mesmas do ud-app/ud-backoffice): banner = `events`;
- * próxima etapa / todas as etapas = `stageHubs` + `circuits` + cronograma
- * `championships/{cid}/stages/{sid}/schedule`; classificação =
+ * próxima etapa / todas as etapas = `listStageEvents` (championships/{cid}/stages
+ * + stageHubs + circuits + events, mesma lógica de /etapas — PR #18); classificação =
  * `championships/{cid}/pilots`; notícias = `news`; patrocinadores =
  * `patrocinadores` (patrocinaEvento). "Seja um patrocinador" e App são
  * estáticos. Seção sem dado não aparece.
@@ -50,25 +50,25 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [nextEvent, classification, eventSponsors, upcomingStages, news] = await Promise.all([
+  const [nextEvent, classification, eventSponsors, stageEvents, news, t] = await Promise.all([
     getNextRaceEvent(),
     getActiveChampionshipClassification(),
     listEventSponsors(),
-    listUpcomingStages(),
-    listHomeNews(locale, 3),
+    listStageEvents(),
+    listLatestNews(locale, 3),
+    getTranslations("homeSections"),
   ]);
-  const nextStage = upcomingStages[0] ?? null;
-  const schedule = nextStage
-    ? await getPublicStageSchedule(nextStage.hub.championshipId, nextStage.hub.stageId)
-    : [];
+  const upcomingStages = stageEvents.filter((s) => s.isUpcoming);
+  const nextStage = upcomingStages[0] ? await getStageEventDetail(upcomingStages[0]) : null;
+  const monthTemplate = t.raw("monthTemplate") as string;
   const standings = toStandingsData(classification);
 
   return (
     <>
       {nextEvent && <NextStageBanner event={nextEvent} locale={locale} />}
       <SponsorCallout data={SPONSOR_CALLOUT} />
-      {nextStage && <NextStageSchedule data={toNextStageScheduleData(nextStage, schedule, locale)} />}
-      <AllStages stages={toStageCards(upcomingStages, locale)} />
+      {nextStage && <NextStageSchedule data={toNextStageScheduleData(nextStage, locale, monthTemplate)} />}
+      <AllStages stages={toStageCards(upcomingStages, locale, monthTemplate)} />
       {standings && <ChampionshipStandings data={standings} />}
       <AppPromo data={APP_PROMO} />
       <HomeNews data={toHomeNewsData(news)} />

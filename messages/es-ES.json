@@ -68,6 +68,7 @@
     "allNews": "Todas las noticias",
     "sponsors": "Patrocinadores",
     "supporters": "Apoyadores",
+    "monthTemplate": "{days} de {month}",
     "visit": "Visitar {name}",
     "newsCategory": {
       "noticia": "Noticia",
