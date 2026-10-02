@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { Hero } from "@/components/home/Hero";
 import { TopDriversCard } from "@/components/home/TopDriversCard";
 import { WPHomeSnapshot } from "@/components/home/WPHomeSnapshot";
+import { NextStageBanner } from "@/components/home/NextStageBanner";
 import { StagesList } from "@/components/stages/StagesList";
 import { UDImage } from "@/components/ui/UDImage";
 import {
@@ -13,6 +14,7 @@ import {
 } from "@/lib/stages/queries";
 import { getCurrentChampionshipStandings } from "@/lib/championship/queries";
 import { listLatestNews } from "@/lib/news/queries";
+import { getNextPublishedEvent } from "@/lib/ticketing/queries";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
@@ -44,7 +46,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [next, stages, standings, news] = await Promise.all([
+  const [nextTicketEvent, next, stages, standings, news] = await Promise.all([
+    getNextPublishedEvent(),
     getNextStageHub(),
     listStageHubs(),
     getCurrentChampionshipStandings(),
@@ -61,8 +64,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   // Everything empty (Firestore not seeded yet) → fall back to legacy WP snapshot.
   const hasAny =
     Boolean(next) || upcoming.length > 0 || topEntries.length > 0 || news.length > 0;
+  const banner = nextTicketEvent ? (
+    <NextStageBanner event={nextTicketEvent} locale={locale} />
+  ) : null;
   if (!hasAny) {
-    return <WPHomeSnapshot />;
+    return (
+      <>
+        {banner}
+        <WPHomeSnapshot />
+      </>
+    );
   }
 
   const [t, tEtapas] = await Promise.all([
@@ -72,6 +83,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
 
   return (
     <>
+      {banner}
       {next && <Hero nextStage={next} locale={locale} />}
 
       <div className="mx-auto max-w-wide space-y-16 px-4 py-12 lg:px-8 lg:py-16">

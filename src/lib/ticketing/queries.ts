@@ -95,6 +95,25 @@ export async function listPublishedEvents(): Promise<PublicTicketEventSummary[]>
 }
 
 /**
+ * Próxima etapa (banner da home): o primeiro evento `published`, por
+ * `startsAt` ascendente, cujo fim (`endsAt`, ou `startsAt` se não houver fim)
+ * ainda não passou — ou seja, inclui evento em andamento. `null` se não houver.
+ *
+ * Reaproveita `listPublishedEvents` (índice status ASC + startsAt ASC, já
+ * existente) e filtra em memória: o volume de eventos é pequeno.
+ */
+export async function getNextPublishedEvent(): Promise<PublicTicketEventSummary | null> {
+  const events = await listPublishedEvents();
+  const now = Date.now();
+  return (
+    events.find((ev) => {
+      const end = ev.endsAt ?? ev.startsAt;
+      return end != null && end.getTime() >= now;
+    }) ?? null
+  );
+}
+
+/**
  * Detalhe de um evento publicado por slug, com `ticketTypes` ativos e seus
  * `lots` vendáveis (status active + dentro da janela salesStart/End).
  *

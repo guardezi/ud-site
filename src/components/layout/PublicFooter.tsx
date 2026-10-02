@@ -1,16 +1,18 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { SOCIAL_LINKS } from "@/components/wp-icons";
+import { TICKETS_URL, type MainNavItem } from "./main-nav";
 
-const FOOTER_LEFT: Array<{
-  href: "/" | "/pilotos" | "/classificacao" | "/etapas" | "/termos";
-  labelKey: string;
-}> = [
-  { href: "/", labelKey: "home" },
-  { href: "/pilotos", labelKey: "pilotos" },
-  { href: "/classificacao", labelKey: "classificacao" },
-  { href: "/etapas", labelKey: "etapas" },
-  { href: "/termos", labelKey: "regulamento" },
+// Mesma ordem relativa do menu principal (main-nav.ts). Inscrição Curinga não
+// fazia parte do footer e continua de fora; "Regulamento" (/termos) é extra do
+// footer e fica no fim da coluna.
+const FOOTER_LEFT: MainNavItem[] = [
+  { kind: "internal", href: "/", labelKey: "home" },
+  { kind: "external", href: TICKETS_URL, labelKey: "ingressos" },
+  { kind: "internal", href: "/pilotos", labelKey: "pilotos" },
+  { kind: "internal", href: "/classificacao", labelKey: "classificacao" },
+  { kind: "internal", href: "/etapas", labelKey: "etapas" },
+  { kind: "internal", href: "/termos", labelKey: "regulamento" },
 ];
 
 const FOOTER_RIGHT: Array<{
@@ -23,7 +25,6 @@ const FOOTER_RIGHT: Array<{
   { href: "/contato", labelKey: "contato" },
 ];
 
-const TICKETS_URL = "https://www.tycket.com.br/ultimate-drift-ribeir-o-preto-14-a-16-agosto.html";
 const REGULAMENTO_URL = "https://www.cba.org.br/campeonato/downloads/250/459";
 const PLAY_STORE = "https://play.google.com/store/apps/details?id=br.com.ultimatedrift.app";
 const APP_STORE = "https://apps.apple.com/us/app/ultimate-drift-app/id6737285909";
@@ -54,17 +55,18 @@ export function PublicFooter() {
             <div className="col-md-2">
               <ul className="footer__nav-list">
                 {FOOTER_LEFT.map((item) => (
-                  <li key={item.href} className="nav__item">
-                    <Link href={item.href} className="nav__btn">
-                      {tNav(item.labelKey)}
-                    </Link>
+                  <li key={item.labelKey} className="nav__item">
+                    {item.kind === "internal" ? (
+                      <Link href={item.href} className="nav__btn">
+                        {tNav(item.labelKey)}
+                      </Link>
+                    ) : (
+                      <a href={item.href} className="nav__btn" target="_blank" rel="noopener noreferrer">
+                        {tNav(item.labelKey)}
+                      </a>
+                    )}
                   </li>
                 ))}
-                <li className="nav__item">
-                  <a href={TICKETS_URL} className="nav__btn" target="_blank" rel="noopener noreferrer">
-                    {tNav("ingressos")}
-                  </a>
-                </li>
               </ul>
             </div>
 
