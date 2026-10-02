@@ -227,6 +227,13 @@
       "ORDER_NOT_PENDING": "This order is no longer pending.",
       "RESERVATION_EXPIRED": "Your reservation expired. Please order again.",
       "INTERNAL": "Unexpected error. Please try again."
+    },
+    "external": {
+      "buy": "Buy ticket",
+      "comingSoon": "Sales opening soon",
+      "moreInfo": "+ More info",
+      "emptyTitle": "Tickets unavailable",
+      "emptyDescription": "There are no stages with tickets on sale yet. Check back soon!"
     }
   }
 }

@@ -227,6 +227,13 @@
       "ORDER_NOT_PENDING": "Este pedido ya no está pendiente.",
       "RESERVATION_EXPIRED": "Tu reserva ha caducado. Vuelve a pedir.",
       "INTERNAL": "Error inesperado. Inténtalo de nuevo."
+    },
+    "external": {
+      "buy": "Comprar entrada",
+      "comingSoon": "Venta próximamente",
+      "moreInfo": "+ Información",
+      "emptyTitle": "Entradas no disponibles",
+      "emptyDescription": "Aún no hay etapas con entradas a la venta. ¡Vuelve pronto!"
     }
   }
 }
