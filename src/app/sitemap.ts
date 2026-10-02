@@ -4,7 +4,6 @@ import { routing, type AppPathname } from "@/i18n/routing";
 import { canonical } from "@/lib/seo/canonical";
 import { listPublicDrivers } from "@/lib/drivers/queries";
 import { listStageHubs } from "@/lib/stages/queries";
-import { listDriftCategories } from "@/lib/driftCategories/queries";
 import { listAllNewsSlugs } from "@/lib/news/queries";
 
 type Entry = MetadataRoute.Sitemap[number];
@@ -50,14 +49,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let drivers: Awaited<ReturnType<typeof listPublicDrivers>> = [];
   let stages: Awaited<ReturnType<typeof listStageHubs>> = [];
-  let categories: Awaited<ReturnType<typeof listDriftCategories>> = [];
   let news: Awaited<ReturnType<typeof listAllNewsSlugs>> = [];
 
   try {
-    [drivers, stages, categories, news] = await Promise.all([
+    [drivers, stages, news] = await Promise.all([
       listPublicDrivers(),
       listStageHubs(),
-      listDriftCategories(),
       listAllNewsSlugs(),
     ]);
   } catch {
@@ -93,14 +90,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   ]);
 
-  const categoryEntries = categories.flatMap((c) =>
-    entry("/categorias/[slug]", {
-      params: { slug: c.slug },
-      changeFrequency: "monthly",
-      priority: 0.5,
-    }),
-  );
-
   const newsEntries: Entry[] = news.flatMap((n) => {
     // News é per-locale; emite apenas a URL no locale do doc.
     const locale = n.locale as Locale;
@@ -114,5 +103,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
   });
 
-  return [...staticEntries, ...driverEntries, ...stageEntries, ...categoryEntries, ...newsEntries];
+  return [...staticEntries, ...driverEntries, ...stageEntries, ...newsEntries];
 }
