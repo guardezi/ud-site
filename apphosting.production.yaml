@@ -41,6 +41,17 @@ env:
       - BUILD
       - RUNTIME
 
+  # App Check — site key pública do reCAPTCHA Enterprise do PRD (ultimate-drift-production).
+  # Registrada em Firebase Console → App Check → Apps → app web `ud-site` →
+  # reCAPTCHA Enterprise. Pública por design (roda no client), então vai direto no yaml;
+  # a secret key correspondente fica só no Console. Enquanto estiver
+  # REPLACE_ME_*, o App Check não inicializa (ver src/lib/firebase/app-check.ts).
+  - variable: NEXT_PUBLIC_FIREBASE_APPCHECK_RECAPTCHA_SITE_KEY
+    value: 6LfCIM0tAAAAAA6EDN52fQNjLfEDqThJ7yspv2V2
+    availability:
+      - BUILD
+      - RUNTIME
+
   - variable: NEXT_PUBLIC_SITE_URL
     value: https://www.ultimatedrift.com.br
     availability:

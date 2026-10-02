@@ -52,12 +52,12 @@ jobs:
         run: |
           IMAGE="${{ env.AR_REGISTRY }}/ud-site:pr-${{ env.PR_NUMBER }}"
           docker build --platform linux/amd64 \
-            --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyBCxuhaH-7_fE_yG1eCKO5V7J0BW6vU1sA \
+            --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyC5QgDjmEZsVdlnO5k9yr_DIs13ipfN2wk \
             --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=juiz-ud-stage.firebaseapp.com \
             --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID=juiz-ud-stage \
             --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=juiz-ud-stage.appspot.com \
             --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=1027730609670 \
-            --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=1:1027730609670:web:4c7a2fd5ff4a125f251587 \
+            --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=1:1027730609670:web:273bf88bce8729ef251587 \
             --build-arg NEXT_PUBLIC_SITE_URL=https://ud-site--juiz-ud-stage.us-east4.hosted.app \
             -t "$IMAGE" .
           docker push "$IMAGE"
