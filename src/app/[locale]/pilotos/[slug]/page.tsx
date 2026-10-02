@@ -1,79 +1,124 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { getDriverBySlug, listPublicDrivers } from "@/lib/drivers/queries";
+import { getPathname } from "@/i18n/navigation";
+import {
+  getDriverChampionshipStats,
+  getDriverProfile,
+  resolveDriverSlug,
+  type DriverChampionshipStats,
+  type PublicDriverProfile,
+} from "@/lib/drivers/queries";
+import { flagSrc } from "@/lib/drivers/nationality";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { personLd } from "@/lib/seo/jsonld";
 import { canonical } from "@/lib/seo/canonical";
 import { buildMetadata } from "@/lib/seo/meta";
-import { InstagramIcon, YouTubeIcon, FacebookIcon, TikTokIcon } from "@/components/wp-icons";
+import { imageHigh } from "@/lib/firebase/image-variants";
 import { UDImage } from "@/components/ui/UDImage";
+import { BackTitle } from "@/components/drivers/BackTitle";
+import { DriverSocialIcon } from "@/components/drivers/DriverSocialIcon";
 import type { Locale } from "@/i18n/config";
 
-export const revalidate = 86400;
+export const revalidate = 3600;
 
+// Perfis renderizados sob demanda + ISR (sem pré-render no build): 57 pilotos ×
+// 3 locales lendo Firestore em paralelo estouravam o timeout de 60s do build.
 export async function generateStaticParams() {
-  const drivers = await listPublicDrivers().catch(() => []);
-  return drivers.map((d) => ({ slug: d.slug }));
+  return [];
 }
 
 type PageParams = Promise<{ locale: Locale; slug: string }>;
 
 export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const driver = await getDriverBySlug(slug).catch(() => null);
+  const match = await resolveDriverSlug(slug).catch(() => null);
+  const driver = match ? await getDriverProfile(match.id, match.slug) : null;
   if (!driver) return {};
-  const description = (driver.bio?.slice(0, 155) ?? "").trim() || `${driver.apelido} é piloto do Ultimate Drift.`;
+  const t = await getTranslations({ locale, namespace: "pilotos.profile" });
+  const description = (driver.bio?.replace(/\s+/g, " ").slice(0, 155) ?? "").trim() || t("metaFallback", { name: driver.apelido });
   return buildMetadata({
     href: "/pilotos/[slug]",
     locale,
-    params: { slug },
+    params: { slug: driver.slug },
     title: `${driver.apelido}${driver.numero ? ` #${driver.numero}` : ""}`,
     description,
     image: driver.heroFotoUrl ?? driver.fotoUrl ?? undefined,
   });
 }
 
+/** Idade a partir de `nascimento` (YYYY-MM-DD), como `_calculateAge` do app. */
+function ageFrom(birth: string | null): number | null {
+  if (!birth) return null;
+  const [y, m, d] = birth.split("-").map(Number);
+  if (!y || !m || !d) return null;
+  const now = new Date();
+  let age = now.getFullYear() - y;
+  if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) age--;
+  return age > 0 && age < 120 ? age : null;
+}
+
+function countryName(code: string, locale: string): string {
+  if (!/^[A-Z]{2}$/.test(code)) return code;
+  try {
+    return new Intl.DisplayNames([locale], { type: "region" }).of(code) ?? code;
+  } catch {
+    return code;
+  }
+}
+
+/** Fotos dos carros do piloto (`carros[].foto` + `carros[].fotos[].url`), principal primeiro. */
+function galleryOf(driver: PublicDriverProfile): Array<{ path: string; alt: string }> {
+  const cars = [...driver.cars].sort((a, b) => Number(b.principal) - Number(a.principal));
+  const seen = new Set<string>();
+  const out: Array<{ path: string; alt: string }> = [];
+  for (const c of cars) {
+    const alt = [c.marca, c.modelo].filter(Boolean).join(" ") || driver.apelido;
+    for (const p of [c.fotoPath, ...c.fotos]) {
+      if (p && !seen.has(p)) {
+        seen.add(p);
+        out.push({ path: p, alt });
+      }
+    }
+  }
+  return out;
+}
+
 export default async function DriverPage({ params }: { params: PageParams }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const driver = await getDriverBySlug(slug);
+  const match = await resolveDriverSlug(slug);
+  if (!match) notFound();
+  if (match.slug !== slug) {
+    // Formato antigo do ud-site (`{apelido}-{numero}`) → slug canônico (= URL do WordPress).
+    permanentRedirect(getPathname({ locale, href: { pathname: "/pilotos/[slug]", params: { slug: match.slug } } }));
+  }
+  const [driver, champ] = await Promise.all([getDriverProfile(match.id, match.slug), getDriverChampionshipStats(match.id)]);
   if (!driver) notFound();
-  const tPil = await getTranslations("pilotos.profile");
+  const t = await getTranslations("pilotos.profile");
 
-  const mainCar = driver.cars.find((c) => c.principal) ?? driver.cars[0] ?? null;
-
-  const social: Array<{ href: string; label: string; Icon: typeof InstagramIcon }> = [];
-  if (driver.social.instagram) social.push({ href: driver.social.instagram, label: "Instagram", Icon: InstagramIcon });
-  if (driver.social.youtube) social.push({ href: driver.social.youtube, label: "YouTube", Icon: YouTubeIcon });
-  if (driver.social.facebook) social.push({ href: driver.social.facebook, label: "Facebook", Icon: FacebookIcon });
-  if (driver.social.twitter) social.push({ href: driver.social.twitter, label: "Twitter", Icon: TikTokIcon });
+  const car = driver.mainCar;
+  const carName = car ? [car.marca, car.modelo].filter(Boolean).join(" ").toUpperCase() : "";
+  const age = ageFrom(driver.birthDate);
+  const nat = driver.nationality;
+  const flag = flagSrc(nat);
+  const hometown = [driver.city, driver.state, driver.country].filter(Boolean).join(", ");
+  const gallery = galleryOf(driver);
 
   const ld = personLd({
     name: driver.nome,
     alternateName: driver.apelido,
-    url: canonical("/pilotos/[slug]", locale, { slug }),
+    url: canonical("/pilotos/[slug]", locale, { slug: driver.slug }),
     image: driver.heroFotoUrl ?? driver.fotoUrl ?? null,
     description: driver.bio,
-    nationality: driver.country ?? "Brasil",
-    sameAs: [driver.social.instagram, driver.social.youtube, driver.social.facebook, driver.social.site].filter(
-      (s): s is string => !!s,
-    ),
+    nationality: nat ? countryName(nat, "en") : null,
+    sameAs: driver.social.map((s) => s.href),
   });
 
   return (
     <section className="driver">
       <div className="wrapper">
-        <Link href="/pilotos" className="ui__title" data-animate="slide-bottom">
-          <svg className="ui__icon" width="15" height="27" viewBox="0 0 15 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M13.5208 26.7703C13.8818 27.1025 14.4396 27.0692 14.7678 26.7039C15.096 26.3386 15.0632 25.774 14.7022 25.4419L2.00202 13.8182C1.67385 13.5193 1.67385 13.0875 2.00202 12.7886L14.7022 1.5634C15.0632 1.23129 15.096 0.666705 14.8006 0.301387C14.4725 -0.0639308 13.9146 -0.0971413 13.5536 0.201755L0.853422 11.4602C-0.262355 12.4565 -0.295172 14.1171 0.820606 15.1466L13.5208 26.7703Z"
-              fill="#54F251"
-            />
-          </svg>
-          <h1>{driver.apelido}</h1>
-        </Link>
+        <BackTitle href="/pilotos" title={driver.apelido} />
       </div>
 
       <div className="driver__top">
@@ -81,38 +126,28 @@ export default async function DriverPage({ params }: { params: PageParams }) {
           <div className="driver__top-container">
             <div className="driver__top-left" data-animate="slide-left">
               {driver.numero != null && <div className="driver__number">{driver.numero}</div>}
-              {mainCar && (
-                <>
-                  {(mainCar.marca || mainCar.modelo) && (
-                    <div className="driver__left-item">
-                      <strong>Carro: </strong>
-                      <span>{[mainCar.marca, mainCar.modelo].filter(Boolean).join(" ").toUpperCase()}</span>
-                    </div>
-                  )}
-                  {mainCar.motor && (
-                    <div className="driver__left-item">
-                      <strong>Motor: </strong>
-                      <span>{mainCar.motor}</span>
-                    </div>
-                  )}
-                  {mainCar.potencia != null && (
-                    <div className="driver__left-item">
-                      <strong>Potência: </strong>
-                      <span>{mainCar.potencia}CV</span>
-                    </div>
-                  )}
-                  {mainCar.preparador && (
-                    <div className="driver__left-item">
-                      <strong>Preparador: </strong>
-                      <span>{mainCar.preparador}</span>
-                    </div>
-                  )}
-                </>
+              {carName && (
+                <div className="driver__left-item">
+                  <strong>{t("car")}: </strong>
+                  <span>{carName}</span>
+                </div>
+              )}
+              {car?.motor && (
+                <div className="driver__left-item">
+                  <strong>{t("engine")}: </strong>
+                  <span>{car.motor}</span>
+                </div>
+              )}
+              {car?.potencia != null && (
+                <div className="driver__left-item">
+                  <strong>{t("power")}: </strong>
+                  <span>{car.potencia}CV</span>
+                </div>
               )}
               {driver.category && (
                 <div className="driver__left-item">
-                  <strong>Categoria: </strong>
-                  <span>{driver.category}</span>
+                  <strong>{t("category")}: </strong>
+                  <span>{driver.category.toUpperCase()}</span>
                 </div>
               )}
             </div>
@@ -120,7 +155,7 @@ export default async function DriverPage({ params }: { params: PageParams }) {
               <div className="driver__top-box-img">
                 <UDImage
                   src={driver.fotoPath}
-                  alt={`Imagem de ${driver.apelido}`}
+                  alt={t("photoAlt", { name: driver.apelido })}
                   baseVariant="medium"
                   srcsetPreset="responsive"
                   sizes="(max-width: 768px) 100vw, 500px"
@@ -143,134 +178,189 @@ export default async function DriverPage({ params }: { params: PageParams }) {
               <div className="driver__bottom-left">
                 {driver.bio && (
                   <div className="driver__bottom-item">
-                    <h2 className="driver__bottom-title">{tPil("bio")}</h2>
-                    <p className="driver__bottom-text" style={{ whiteSpace: "pre-line" }}>
-                      {driver.bio}
-                    </p>
+                    <h2 className="driver__bottom-title">{t("bio")}</h2>
+                    <p className="driver__bottom-text">{driver.bio.replace(/\s*\r?\n\s*/g, " ")}</p>
                   </div>
                 )}
 
-                {driver.cars.length > 0 && (
-                  <div className="driver__bottom-item">
-                    <h2 className="driver__bottom-title">{tPil("cars")}</h2>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
-                      {driver.cars.map((car, i) => (
-                        <article key={i} style={{ background: "#1f1f24", borderRadius: "16px 6px 16px 6px", overflow: "hidden" }}>
-                          {car.fotoPath && (
-                            <div style={{ position: "relative", aspectRatio: "16/9", background: "#0a0a0b" }}>
-                              <UDImage
-                                src={car.fotoPath}
-                                alt={[car.marca, car.modelo].filter(Boolean).join(" ") || "Carro"}
-                                baseVariant="small"
-                                srcsetPreset="responsive"
-                                sizes="(max-width: 576px) 100vw, 220px"
-                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                              />
-                            </div>
-                          )}
-                          <div style={{ padding: 12 }}>
-                            <p style={{ fontWeight: 700, color: "#fff", margin: 0 }}>
-                              {[car.marca, car.modelo].filter(Boolean).join(" ") || "—"}
-                            </p>
-                            <div style={{ marginTop: 6, fontSize: 12, color: "#c5c5c5", display: "grid", gap: 2 }}>
-                              {car.ano != null && <span>{car.ano}</span>}
-                              {car.potencia != null && <span>{car.potencia} HP</span>}
-                              {car.motor && <span>{car.motor}</span>}
-                              {car.preparador && <span>Prep: {car.preparador}</span>}
-                            </div>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {champ && <ChampionshipBlock champ={champ} locale={locale} t={t} />}
               </div>
 
               <div className="driver__bottom-right">
                 <div className="driver__bottom-item">
-                  <h2 className="driver__bottom-title">INFORMAÇÕES PESSOAIS</h2>
+                  <h2 className="driver__bottom-title">{t("personalInfo")}</h2>
                   <p className="driver__bottom-text">
-                    <strong>Nome: </strong> {driver.nome}
+                    <strong>{t("name")}: </strong> {driver.nome}
                   </p>
-                  {driver.apelido !== driver.nome && (
+                  {age != null && (
                     <p className="driver__bottom-text">
-                      <strong>Apelido: </strong> {driver.apelido}
+                      <strong>{t("age")}: </strong> {age}
+                    </p>
+                  )}
+                  {nat && (
+                    <p className="driver__bottom-text">
+                      <strong>{t("nationality")}: </strong>{" "}
+                      {flag && (
+                        // eslint-disable-next-line @next/next/no-img-element -- SVG estático em public/flags
+                        <img src={flag} alt="" width={24} height={18} className="mr-1 inline-block align-[-2px]" />
+                      )}
+                      {countryName(nat, locale)}
                     </p>
                   )}
                   {driver.naturalidade && (
                     <p className="driver__bottom-text">
-                      <strong>Naturalidade: </strong> {driver.naturalidade}
+                      <strong>{t("birthplace")}: </strong> {driver.naturalidade}
                     </p>
                   )}
-                  {(driver.city || driver.state) && (
+                  {hometown && (
                     <p className="driver__bottom-text">
-                      <strong>Localidade: </strong>
-                      {[driver.city, driver.state].filter(Boolean).join(" / ")}
+                      <strong>{t("hometown")}: </strong> {hometown}
                     </p>
                   )}
-                  {driver.country && (
+                  {driver.sponsors.length > 0 && (
                     <p className="driver__bottom-text">
-                      <strong>País: </strong> {driver.country}
+                      <strong>{t("sponsors")}: </strong>{" "}
+                      {driver.sponsors.map((s, i) => (
+                        <span key={`${s.id ?? s.nome}-${i}`}>
+                          {i > 0 && " / "}
+                          {s.site ? (
+                            <a
+                              href={/^https?:\/\//i.test(s.site) ? s.site : `https://${s.site}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:underline"
+                            >
+                              {s.nome}
+                            </a>
+                          ) : (
+                            s.nome
+                          )}
+                        </span>
+                      ))}
                     </p>
                   )}
                 </div>
 
-                {driver.sponsors.length > 0 && (
+                {driver.social.length > 0 && (
                   <div className="driver__bottom-item">
-                    <h2 className="driver__bottom-title">{tPil("sponsors").toUpperCase()}</h2>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))", gap: 12 }}>
-                      {driver.sponsors.map((s, i) => (
-                        <a
-                          key={i}
-                          href={s.site ?? "#"}
-                          target={s.site ? "_blank" : undefined}
-                          rel={s.site ? "noopener noreferrer" : undefined}
-                          style={{ background: "#1f1f24", borderRadius: 8, padding: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, color: "#fff" }}
-                        >
-                          {s.fotoPath && (
-                            <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
-                              <UDImage
-                                src={s.fotoPath}
-                                alt={s.nome}
-                                baseVariant="thumb"
-                                srcsetPreset="compact"
-                                sizes="110px"
-                                style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                              />
-                            </div>
-                          )}
-                          <span style={{ fontSize: 12, textAlign: "center" }}>{s.nome}</span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {social.length > 0 && (
-                  <div className="driver__bottom-item">
-                    <h2 className="driver__bottom-title">SOCIAL</h2>
-                    {social.map(({ href, label, Icon }) => (
-                      <a
-                        key={href}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="driver__social"
-                        style={{ display: "inline-flex", alignItems: "center", gap: 10, marginRight: 12 }}
-                      >
-                        <Icon />
-                        <span className="driver__social-text">{label}</span>
+                    <h2 className="driver__bottom-title">{t("social")}</h2>
+                    {driver.social.map((s) => (
+                      <a key={s.kind} href={s.href} target="_blank" rel="noopener noreferrer" className="driver__social">
+                        <DriverSocialIcon kind={s.kind} />
+                        <span className="driver__social-text">{t(`socialLabel.${s.kind}`)}</span>
                       </a>
                     ))}
                   </div>
                 )}
               </div>
             </div>
+
+            {gallery.length > 0 && (
+              <div className="col-12" data-animate="slide-bottom">
+                <h2 className="driver__bottom-title">{t("gallery")}</h2>
+                <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                  {gallery.map((g) => (
+                    <a
+                      key={g.path}
+                      href={imageHigh(g.path) ?? undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block aspect-[3/2] overflow-hidden"
+                    >
+                      <UDImage
+                        src={g.path}
+                        alt={g.alt}
+                        baseVariant="medium"
+                        srcsetPreset="responsive"
+                        sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 400px"
+                        className="swiper__img"
+                      />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       <JsonLd data={ld} />
     </section>
+  );
+}
+
+type T = Awaited<ReturnType<typeof getTranslations<"pilotos.profile">>>;
+
+/** Resultado no campeonato vigente — mesmos números do DriverDetailPage do app. */
+function ChampionshipBlock({ champ, locale, t }: { champ: DriverChampionshipStats; locale: string; t: T }) {
+  const fmtDate = (iso: string | null) =>
+    iso ? new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit", timeZone: "America/Sao_Paulo" }).format(new Date(iso)) : "";
+  const pos = (n: number) => (n > 0 ? `${n}º` : "–");
+  const h2h = champ.h2h;
+  const best = champ.best;
+  const stats: Array<{ label: string; value: string; extra?: string }> = [
+    { label: t("ranking"), value: champ.position ? `${champ.position}º` : "–" },
+    { label: t("points"), value: String(champ.totalScore) },
+    {
+      label: t("wins"),
+      value: h2h && h2h.total > 0 ? `${h2h.wins}/${h2h.total}` : "–",
+      extra: h2h && h2h.total > 0 ? `${Math.round((h2h.wins / h2h.total) * 100)}%` : undefined,
+    },
+  ];
+  return (
+    <div className="driver__bottom-item">
+      <h2 className="driver__bottom-title">
+        {t("championship")}
+        {champ.year ? ` ${champ.year}` : ""}
+      </h2>
+      <div className="mt-[15px] grid grid-cols-3 gap-2 sm:gap-3">
+        {stats.map((s) => (
+          <div key={s.label} className="min-w-0 rounded-[10px] bg-[#141417] px-2 py-3 text-white sm:px-3">
+            <div className="truncate text-[11px] font-bold tracking-wide text-[#9b9b9b] uppercase sm:text-[12px]">{s.label}</div>
+            <div className="mt-1 text-[18px] leading-none font-bold text-[#54f251] sm:text-[24px]">
+              {s.value}
+              {s.extra && <span className="mt-1 block text-[12px] text-white sm:mt-0 sm:ml-2 sm:inline sm:text-[14px]">{s.extra}</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+      {best && (
+        <p className="driver__bottom-text">
+          <strong>{t("bestResult")}: </strong>
+          {pos(best.battlePosition > 0 ? best.battlePosition : best.qualiPosition)}
+          {best.city ? ` · ${best.city}` : ""}
+          {best.date ? ` · ${fmtDate(best.date)}` : ""}
+        </p>
+      )}
+      {champ.stages.length > 0 && (
+        <div className="mt-[15px] max-w-full overflow-x-auto">
+          <table className="w-full text-left text-[14px] sm:text-[16px]">
+            <thead>
+              <tr className="border-b-2 border-[#141417] text-[13px] uppercase">
+                <th className="py-2 pr-2">{t("stage")}</th>
+                <th className="py-2 pr-2">{t("city")}</th>
+                <th className="py-2 pr-2 text-center">{t("qualy")}</th>
+                <th className="py-2 pr-2 text-center">{t("battles")}</th>
+                <th className="py-2 text-right">{t("stagePoints")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {champ.stages.map((s, i) => (
+                <tr key={`${s.stageId}-${i}`} className="border-b border-[#14141733]">
+                  <td className="py-2 pr-2 font-bold">{s.stageNumber ?? i + 1}ª</td>
+                  <td className="py-2 pr-2">
+                    {s.city ?? "–"}
+                    {s.date && <span className="ml-1 hidden text-[13px] text-[#555] sm:inline">{fmtDate(s.date)}</span>}
+                  </td>
+                  <td className="py-2 pr-2 text-center">{pos(s.qualiPosition)}</td>
+                  <td className="py-2 pr-2 text-center">{pos(s.battlePosition)}</td>
+                  <td className="py-2 text-right font-bold">{s.finalScore}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }
