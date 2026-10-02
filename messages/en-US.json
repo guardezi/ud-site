@@ -97,7 +97,18 @@
     "stage": "Stage",
     "empty": "Standings not computed yet.",
     "fantasyToggle": "Dorikin League",
-    "championshipToggle": "Championship"
+    "championshipToggle": "Championship",
+    "colPos": "Pos",
+    "colTotal": "Total",
+    "pts": "pts",
+    "categoryPro": "OVERALL",
+    "categoryRookie": "ROOKIE",
+    "categoryMaster": "MASTER",
+    "stageOrdinal": "R{n}",
+    "stageTitle": "Round {n} - {city}",
+    "stageTitleNoCity": "Round {n}",
+    "photoAlt": "Photo of {name}",
+    "viewDriver": "View {name}'s profile"
   },
   "categorias": {
     "title": "Categories",

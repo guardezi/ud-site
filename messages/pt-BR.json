@@ -97,7 +97,18 @@
     "stage": "Etapa",
     "empty": "Ranking ainda não computado.",
     "fantasyToggle": "Dorikin League",
-    "championshipToggle": "Campeonato"
+    "championshipToggle": "Campeonato",
+    "colPos": "Pos",
+    "colTotal": "Total",
+    "pts": "pts",
+    "categoryPro": "GERAL",
+    "categoryRookie": "ROOKIE",
+    "categoryMaster": "MASTER",
+    "stageOrdinal": "{n}ª",
+    "stageTitle": "{n}ª ETAPA - {city}",
+    "stageTitleNoCity": "{n}ª ETAPA",
+    "photoAlt": "Foto de {name}",
+    "viewDriver": "Ver perfil de {name}"
   },
   "categorias": {
     "title": "Categorias",

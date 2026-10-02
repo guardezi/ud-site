@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { WPPageSnapshot } from "@/components/home/WPPageSnapshot";
-import { StandingsTable } from "@/components/standings/StandingsTable";
-import { getCurrentChampionshipStandings } from "@/lib/championship/queries";
+import { ClassificationBoard } from "@/components/standings/ClassificationBoard";
+import { getClassificationSeasons } from "@/lib/championship/seasons";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
@@ -28,22 +27,27 @@ export default async function ClassificacaoPage({ params }: { params: Promise<{ 
   setRequestLocale(locale);
   const t = await getTranslations("classificacao");
 
-  const standings = await getCurrentChampionshipStandings();
+  const { seasons, activeChampionshipId } = await getClassificationSeasons();
 
-  // TODO: query exposes only the current championship (single ranking, no
-  // category/season split). When publicChampionshipHistory grows a season or
-  // category dimension, add a selector here and render one table per category.
-  if (!standings || standings.entries.length === 0) {
-    return <WPPageSnapshot slug="classificacao" />;
+  if (seasons.length === 0) {
+    return (
+      <section className="rank">
+        <div className="wrapper">
+          <div className="ui__title">
+            <h1>{t("title")}</h1>
+          </div>
+          <p className="text-mute" style={{ marginTop: 40 }}>
+            {t("empty")}
+          </p>
+        </div>
+      </section>
+    );
   }
 
-  return (
-    <section className="wrapper" style={{ padding: "60px 0" }}>
-      <div className="ui__title" data-animate="slide-bottom">
-        <h1>{t("title")}</h1>
-        <p className="text-mute">{t("subtitle")}</p>
-      </div>
-      <StandingsTable entries={standings.entries} />
-    </section>
-  );
+  // Abre na temporada do campeonato vigente (settings/publicRound), senão na mais recente.
+  const initial =
+    seasons.find((s) => s.championshipId === activeChampionshipId)?.championshipId ??
+    seasons[seasons.length - 1]!.championshipId;
+
+  return <ClassificationBoard seasons={seasons} initialChampionshipId={initial} />;
 }
