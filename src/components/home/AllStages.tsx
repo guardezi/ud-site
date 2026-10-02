@@ -1,11 +1,17 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import type { StaticPathname } from "@/lib/routes";
+import type { UpcomingStage } from "@/lib/stages/home-stages";
+import { stageDatesLabel } from "@/lib/stages/date-labels";
+import type { StageHref } from "./NextStageSchedule";
 
 /**
  * "Todas as etapas": cards em fundo claro com datas, cidade, autódromo,
  * "Comprar ingresso" e "+ Informações". Classes `etapas-futuras`/`etapa-*`
  * do tema legado + grid/card do Bootstrap (carregado no layout).
+ *
+ * Dados: etapas futuras de `stageHubs` + `circuits/{id}` (`toStageCards`).
+ * Sem link de ingresso por etapa nas fontes (pergunta no PR): botão
+ * "Comprar ingresso" só aparece quando `ticketUrl` vier preenchido.
  */
 export type StageCardData = {
   id: string;
@@ -15,8 +21,19 @@ export type StageCardData = {
   venue: string | null;
   /** Link externo de compra; sem link, o botão não aparece. */
   ticketUrl: string | null;
-  moreInfoHref: StaticPathname | null;
+  moreInfoHref: StageHref | null;
 };
+
+export function toStageCards(stages: UpcomingStage[], locale: string): StageCardData[] {
+  return stages.map((s) => ({
+    id: s.hub.id,
+    datesLabel: stageDatesLabel(s.startDate, s.endDate, locale),
+    city: s.circuit?.city ?? s.hub.name,
+    venue: s.circuit?.name || null,
+    ticketUrl: null,
+    moreInfoHref: { pathname: "/etapas/[slug]", params: { slug: s.hub.slug } },
+  }));
+}
 
 export function AllStages({ stages }: { stages: StageCardData[] }) {
   const t = useTranslations("homeSections");

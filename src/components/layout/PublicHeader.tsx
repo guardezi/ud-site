@@ -5,7 +5,7 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 import { MobileNavToggle } from "./MobileNavToggle";
 import { MAIN_NAV } from "./main-nav";
 
-const LIVE_URL = "http://portal.drift.siliconvillage.cafe";
+const LIVE_URL = "https://portal.drift.siliconvillage.app";
 
 export function PublicHeader() {
   const t = useTranslations("nav");

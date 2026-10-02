@@ -5,7 +5,7 @@
     "shortDescription": "Ultimate Drift é o principal campeonato brasileiro de drift profissional, com etapas em circuitos pelo país."
   },
   "nav": {
-    "home": "Início",
+    "home": "Home",
     "pilotos": "Pilotos",
     "etapas": "Etapas",
     "classificacao": "Classificação",
@@ -68,7 +68,11 @@
     "allNews": "Todas as notícias",
     "sponsors": "Patrocinadores",
     "supporters": "Apoiadores",
-    "visit": "Visitar {name}"
+    "visit": "Visitar {name}",
+    "newsCategory": {
+      "noticia": "Notícia",
+      "historia": "História"
+    }
   },
   "pilotos": {
     "title": "Pilotos",

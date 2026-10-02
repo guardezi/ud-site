@@ -12,6 +12,12 @@ export type SponsorCalloutData = {
   href: StaticPathname;
 };
 
+/** Conteúdo estático (arte institucional do site legado em public/theme). */
+export const SPONSOR_CALLOUT: SponsorCalloutData = {
+  imageSrc: "/theme/img/index-patrocinadores.png",
+  href: "/patrocinadores",
+};
+
 export function SponsorCallout({ data }: { data: SponsorCalloutData }) {
   const t = useTranslations("homeSections");
   return (

@@ -68,7 +68,11 @@
     "allNews": "All news",
     "sponsors": "Sponsors",
     "supporters": "Supporters",
-    "visit": "Visit {name}"
+    "visit": "Visit {name}",
+    "newsCategory": {
+      "noticia": "News",
+      "historia": "History"
+    }
   },
   "pilotos": {
     "title": "Drivers",

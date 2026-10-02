@@ -13,6 +13,15 @@ export type AppPromoData = {
   mockupSrc: string;
 };
 
+/** Conteúdo estático: URLs reais das lojas (as mesmas do footer) e imagens do tema legado. */
+export const APP_PROMO: AppPromoData = {
+  playStoreUrl: "https://play.google.com/store/apps/details?id=br.com.ultimatedrift.app",
+  appStoreUrl: "https://apps.apple.com/us/app/ultimate-drift-app/id6737285909",
+  playStoreBadgeSrc: "/theme/img/play-store.png",
+  appStoreBadgeSrc: "/theme/img/app-store.png",
+  mockupSrc: "/theme/img/index-app.png",
+};
+
 export function AppPromo({ data }: { data: AppPromoData }) {
   const t = useTranslations("homeSections");
   const features = t.raw("appFeatures") as string[];

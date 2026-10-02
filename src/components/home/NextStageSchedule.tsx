@@ -1,6 +1,8 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { StaticPathname } from "@/lib/routes";
+import type { StageScheduleEntry, UpcomingStage } from "@/lib/stages/home-stages";
+import { scheduleDayLabel, stageDatesLabel } from "@/lib/stages/date-labels";
 
 /**
  * Seção "Próxima etapa" da home: datas, cidade, autódromo, cronograma em 3
@@ -8,7 +10,9 @@ import type { StaticPathname } from "@/lib/routes";
  * legado (`index__circuit*`, `ui__title`, grid `row`/`col-*`) carregadas por
  * /theme/css/bundle.min.css — mesmo visual do site WordPress.
  *
- * Os dados vêm por props (hoje de `next-stage-schedule.mock.ts`).
+ * Dados: próxima etapa de `stageHubs` + `circuits/{id}` + cronograma público
+ * (`championships/{cid}/stages/{sid}/schedule`), montados por
+ * `toNextStageScheduleData` (ver src/lib/stages/home-stages.ts).
  */
 export type ScheduleBroadcaster = {
   name: string;
@@ -43,8 +47,37 @@ export type NextStageScheduleData = {
   /** Link externo de compra; sem link, o botão não aparece. */
   ticketUrl: string | null;
   /** Página interna de mais informações; sem valor, o botão não aparece. */
-  moreInfoHref: StaticPathname | null;
+  moreInfoHref: StageHref | null;
 };
+
+/** Destino interno do "+ Informações": página da etapa ou uma rota estática. */
+export type StageHref = StaticPathname | { pathname: "/etapas/[slug]"; params: { slug: string } };
+
+/**
+ * Próxima etapa + cronograma → props da seção. Sem dado de transmissão ao
+ * vivo nem link de ingresso por item/etapa nas fontes (perguntas no PR):
+ * `live` e `ticketUrl` ficam vazios.
+ */
+export function toNextStageScheduleData(
+  stage: UpcomingStage,
+  schedule: StageScheduleEntry[],
+  locale: string,
+): NextStageScheduleData {
+  const byDay = new Map<string, ScheduleItem[]>();
+  for (const e of schedule) {
+    const items = byDay.get(e.day) ?? [];
+    items.push({ startTime: e.time, endTime: e.endTime || undefined, title: e.description });
+    byDay.set(e.day, items);
+  }
+  return {
+    datesLabel: stageDatesLabel(stage.startDate, stage.endDate, locale),
+    city: stage.circuit?.city ?? stage.hub.name,
+    venue: stage.circuit?.name || null,
+    days: [...byDay.entries()].map(([day, items]) => ({ label: scheduleDayLabel(day, locale), items })),
+    ticketUrl: null,
+    moreInfoHref: { pathname: "/etapas/[slug]", params: { slug: stage.hub.slug } },
+  };
+}
 
 function PlayIcon() {
   return (

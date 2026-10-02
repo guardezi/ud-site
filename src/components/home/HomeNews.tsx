@@ -1,16 +1,21 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { UDImage } from "@/components/ui/UDImage";
 import type { StaticPathname } from "@/lib/routes";
+import type { HomeNewsSummary } from "@/lib/news/home-news";
 
 /**
  * "Notícias": destaque grande à esquerda + lista à direita, tag de categoria
  * e botão "Todas as notícias". Classes `index__news*` do tema legado.
+ * Dados: collection `news` (`listHomeNews`), mesma de /noticias.
  */
 export type HomeNewsItem = {
   slug: string;
   title: string;
-  category: string;
-  imageSrc: string;
+  /** Slug da categoria (`noticia`, `historia`…); rótulo via i18n. */
+  category: string | null;
+  /** Path do Storage da capa. */
+  imagePath: string | null;
 };
 
 export type HomeNewsData = {
@@ -18,6 +23,20 @@ export type HomeNewsData = {
   others: HomeNewsItem[];
   allNewsHref: StaticPathname;
 };
+
+/** Mais recente vira destaque; as 2 seguintes vão pra coluna da direita. */
+export function toHomeNewsData(news: HomeNewsSummary[]): HomeNewsData {
+  const items = news.map((n) => ({ slug: n.slug, title: n.title, category: n.category, imagePath: n.coverImagePath }));
+  return { highlight: items[0] ?? null, others: items.slice(1, 3), allNewsHref: "/noticias" };
+}
+
+function CategoryTag({ slug }: { slug: string | null }) {
+  const t = useTranslations("homeSections");
+  if (!slug) return null;
+  const key = `newsCategory.${slug}`;
+  const label = t.has(key) ? t(key) : slug.charAt(0).toUpperCase() + slug.slice(1);
+  return <span className="index__news-category">{label}</span>;
+}
 
 function NewsLink({ item, children }: { item: HomeNewsItem; children: React.ReactNode }) {
   return (
@@ -41,10 +60,14 @@ export function HomeNews({ data }: { data: HomeNewsData }) {
               <div className="index__news-left">
                 <NewsLink item={data.highlight}>
                   <div className="index__news-highlight-img">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={data.highlight.imageSrc} alt="" loading="lazy" />
+                    <UDImage
+                      src={data.highlight.imagePath}
+                      alt=""
+                      baseVariant="high"
+                      sizes="(min-width: 1080px) 780px, 100vw"
+                    />
                   </div>
-                  <span className="index__news-category">{data.highlight.category}</span>
+                  <CategoryTag slug={data.highlight.category} />
                   <h3 className="text-[32px] leading-tight">{data.highlight.title}</h3>
                 </NewsLink>
               </div>
@@ -56,10 +79,9 @@ export function HomeNews({ data }: { data: HomeNewsData }) {
                 <div key={item.slug} className="index__news-small mb-[30px]">
                   <NewsLink item={item}>
                     <div className="index__news-img-small">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={item.imageSrc} alt="" loading="lazy" />
+                      <UDImage src={item.imagePath} alt="" baseVariant="medium" sizes="(min-width: 1080px) 300px, 100vw" />
                     </div>
-                    <span className="index__news-category">{item.category}</span>
+                    <CategoryTag slug={item.category} />
                     <h3 className="text-[26px] leading-snug">{item.title}</h3>
                   </NewsLink>
                 </div>

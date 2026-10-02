@@ -7,7 +7,9 @@ import type { EventSponsor } from "@/lib/sponsors/queries";
  * Classes `index__sponsors*` do tema legado.
  *
  * Patrocinadores = patrocinadores do evento (`patrocinadores` com
- * `patrocinaEvento == true`, via `listEventSponsors`); Apoiadores = mock.
+ * `patrocinaEvento == true`, via `listEventSponsors`). Apoiadores: fonte
+ * ainda não definida (pergunta no PR) — a página passa lista vazia e o bloco
+ * não aparece.
  */
 export type SponsorLogo = {
   name: string;
