@@ -1,29 +1,26 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { Hero } from "@/components/home/Hero";
-import { TopDriversCard } from "@/components/home/TopDriversCard";
-import { WPHomeSnapshot } from "@/components/home/WPHomeSnapshot";
 import { NextStageBanner } from "@/components/home/NextStageBanner";
+import { SponsorCallout } from "@/components/home/SponsorCallout";
 import { NextStageSchedule } from "@/components/home/NextStageSchedule";
+import { AllStages } from "@/components/home/AllStages";
+import { ChampionshipStandings } from "@/components/home/ChampionshipStandings";
+import { AppPromo } from "@/components/home/AppPromo";
+import { HomeNews } from "@/components/home/HomeNews";
+import { HomeSponsors } from "@/components/home/HomeSponsors";
+// MOCK — dados fixos até a fonte de cada seção ser definida.
+import { SPONSOR_CALLOUT_MOCK } from "@/components/home/sponsor-callout.mock";
 import { NEXT_STAGE_SCHEDULE_MOCK } from "@/components/home/next-stage-schedule.mock";
-import { StagesList } from "@/components/stages/StagesList";
-import { UDImage } from "@/components/ui/UDImage";
-import {
-  getNextStageHub,
-  listStageHubs,
-  type PublicStageHubSummary,
-} from "@/lib/stages/queries";
-import { getCurrentChampionshipStandings } from "@/lib/championship/queries";
-import { listLatestNews } from "@/lib/news/queries";
+import { ALL_STAGES_MOCK } from "@/components/home/all-stages.mock";
+import { CHAMPIONSHIP_STANDINGS_MOCK } from "@/components/home/championship-standings.mock";
+import { APP_PROMO_MOCK } from "@/components/home/app-promo.mock";
+import { HOME_NEWS_MOCK } from "@/components/home/home-news.mock";
+import { HOME_SPONSORS_MOCK } from "@/components/home/home-sponsors.mock";
 import { getNextRaceEvent } from "@/lib/events/queries";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 300;
-
-const SECTION_LINK =
-  "text-xs uppercase font-bold tracking-[0.12em] text-mute hover:text-drift";
 
 export async function generateMetadata({
   params,
@@ -40,118 +37,28 @@ export async function generateMetadata({
   });
 }
 
-function startMs(h: PublicStageHubSummary): number {
-  return h.startDate ? new Date(h.startDate as unknown as string).getTime() : 0;
-}
-
+/**
+ * Home — mesma sequência de seções do site legado:
+ * banner da próxima etapa → seja um patrocinador → próxima etapa (cronograma)
+ * → todas as etapas → classificação geral → app → notícias → patrocinadores
+ * e apoiadores. Só o banner lê o Firestore (`events`); o resto é mock.
+ */
 export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [nextEvent, next, stages, standings, news] = await Promise.all([
-    getNextRaceEvent(),
-    getNextStageHub(),
-    listStageHubs(),
-    getCurrentChampionshipStandings(),
-    listLatestNews(locale, 3),
-  ]);
-
-  const now = Date.now();
-  const upcoming = stages
-    .filter((h) => startMs(h) >= now)
-    .sort((a, b) => startMs(a) - startMs(b))
-    .slice(0, 3);
-  const topEntries = standings?.entries ?? [];
-
-  // Everything empty (Firestore not seeded yet) → fall back to legacy WP snapshot.
-  const hasAny =
-    Boolean(next) || upcoming.length > 0 || topEntries.length > 0 || news.length > 0;
-  const banner = nextEvent ? (
-    <NextStageBanner event={nextEvent} locale={locale} />
-  ) : null;
-  if (!hasAny) {
-    return (
-      <>
-        {banner}
-        <WPHomeSnapshot />
-      </>
-    );
-  }
-
-  const [t, tEtapas] = await Promise.all([
-    getTranslations("home"),
-    getTranslations("etapas"),
-  ]);
+  const nextEvent = await getNextRaceEvent();
 
   return (
     <>
-      {banner}
-      {/* MOCK — dados fixos até a fonte do cronograma ser definida. */}
+      {nextEvent && <NextStageBanner event={nextEvent} locale={locale} />}
+      <SponsorCallout data={SPONSOR_CALLOUT_MOCK} />
       <NextStageSchedule data={NEXT_STAGE_SCHEDULE_MOCK} />
-      {next && <Hero nextStage={next} locale={locale} />}
-
-      <div className="mx-auto max-w-wide space-y-16 px-4 py-12 lg:px-8 lg:py-16">
-        {(upcoming.length > 0 || topEntries.length > 0) && (
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {upcoming.length > 0 && (
-              <section className="lg:col-span-2">
-                <div className="mb-4 flex items-end justify-between">
-                  <h2 className="display text-2xl text-signal">{tEtapas("future")}</h2>
-                  <Link href="/etapas" className={SECTION_LINK}>
-                    {t("viewAllStages")} →
-                  </Link>
-                </div>
-                <StagesList stages={upcoming} locale={locale} />
-              </section>
-            )}
-            {topEntries.length > 0 && (
-              <div className={upcoming.length > 0 ? "" : "lg:col-span-3"}>
-                <TopDriversCard entries={topEntries} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {news.length > 0 && (
-          <section>
-            <div className="mb-4 flex items-end justify-between">
-              <h2 className="display text-2xl text-signal">{t("latestNews")}</h2>
-              <Link href="/noticias" className={SECTION_LINK}>
-                {t("viewAllNews")} →
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {news.map((n) => (
-                <Link
-                  key={n.id}
-                  href={{ pathname: "/noticias/[slug]", params: { slug: n.slug } }}
-                  className="card-ud group block"
-                >
-                  <div className="relative aspect-[16/9] overflow-hidden bg-shade">
-                    <UDImage
-                      src={n.coverImagePath}
-                      alt={n.title}
-                      baseVariant="medium"
-                      srcsetPreset="responsive"
-                      sizes="(min-width: 768px) 33vw, 100vw"
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="space-y-2 p-5">
-                    {n.category && <p className="eyebrow">{n.category}</p>}
-                    <h3 className="display text-lg text-signal transition-colors group-hover:text-drift">
-                      {n.title}
-                    </h3>
-                    {n.excerpt && (
-                      <p className="line-clamp-2 text-sm text-mute">{n.excerpt}</p>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+      <AllStages stages={ALL_STAGES_MOCK} />
+      <ChampionshipStandings data={CHAMPIONSHIP_STANDINGS_MOCK} />
+      <AppPromo data={APP_PROMO_MOCK} />
+      <HomeNews data={HOME_NEWS_MOCK} />
+      <HomeSponsors data={HOME_SPONSORS_MOCK} />
     </>
   );
 }

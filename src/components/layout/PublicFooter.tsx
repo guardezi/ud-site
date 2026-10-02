@@ -4,15 +4,16 @@ import { SOCIAL_LINKS } from "@/components/wp-icons";
 import { TICKETS_URL, type MainNavItem } from "./main-nav";
 
 // Mesma ordem relativa do menu principal (main-nav.ts). Inscrição Curinga não
-// fazia parte do footer e continua de fora; "Regulamento" (/termos) é extra do
-// footer e fica no fim da coluna.
+// fazia parte do footer e continua de fora; /termos é extra do
+// footer e fica no fim da coluna, com o rótulo "Termos e Condições"
+// (footer.termos), como no site legado.
 const FOOTER_LEFT: MainNavItem[] = [
   { kind: "internal", href: "/", labelKey: "home" },
   { kind: "external", href: TICKETS_URL, labelKey: "ingressos" },
   { kind: "internal", href: "/pilotos", labelKey: "pilotos" },
   { kind: "internal", href: "/classificacao", labelKey: "classificacao" },
   { kind: "internal", href: "/etapas", labelKey: "etapas" },
-  { kind: "internal", href: "/termos", labelKey: "regulamento" },
+  { kind: "internal", href: "/termos", labelKey: "termos" },
 ];
 
 const FOOTER_RIGHT: Array<{
@@ -32,6 +33,8 @@ const APP_STORE = "https://apps.apple.com/us/app/ultimate-drift-app/id6737285909
 export function PublicFooter() {
   const tNav = useTranslations("nav");
   const tFooter = useTranslations("footer");
+  // `termos` mora no namespace footer; o resto vem de nav.
+  const leftLabel = (key: string) => (key === "termos" ? tFooter("termos") : tNav(key));
 
   return (
     <footer className="footer">
@@ -58,11 +61,11 @@ export function PublicFooter() {
                   <li key={item.labelKey} className="nav__item">
                     {item.kind === "internal" ? (
                       <Link href={item.href} className="nav__btn">
-                        {tNav(item.labelKey)}
+                        {leftLabel(item.labelKey)}
                       </Link>
                     ) : (
                       <a href={item.href} className="nav__btn" target="_blank" rel="noopener noreferrer">
-                        {tNav(item.labelKey)}
+                        {leftLabel(item.labelKey)}
                       </a>
                     )}
                   </li>
