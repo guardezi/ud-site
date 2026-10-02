@@ -47,7 +47,7 @@ export default async function NoticiasPage({ params, searchParams }: PageProps) 
   return (
     <section className="news">
       <div className="wrapper">
-        <Link href="/" className="ui__title" data-animate="slide-bottom">
+        <Link href="/" className="ui__title">
           <ChevronIcon className="ui__icon" width={15} height={27} />
           <h1 className="">{t("title")}</h1>
         </Link>
@@ -60,7 +60,7 @@ export default async function NoticiasPage({ params, searchParams }: PageProps) 
               {items.map((n) => {
                 const category = categoryLabel(n.category);
                 return (
-                  <div key={n.id} className="col-md-4" data-animate="slide-bottom">
+                  <div key={n.id} className="col-md-4">
                     <div className="news__small">
                       <Link
                         href={{ pathname: "/noticias/[slug]", params: { slug: n.slug } }}
@@ -115,7 +115,7 @@ function Pagination({
   labels: { prev: string; next: string };
 }) {
   return (
-    <div className="pagination" data-animate="slide-bottom">
+    <div className="pagination">
       {page > 1 && (
         <Link href={pageHref(page - 1)} className="prev page-numbers" aria-label={labels.prev}>
           <ChevronIcon className="pagination__prev" width={5} height={17} />

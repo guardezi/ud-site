@@ -76,14 +76,14 @@ export default async function NoticiaPage({ params }: { params: PageParams }) {
 
   return (
     <div className="wrapper">
-      <Link href="/noticias" className="ui__title" data-animate="slide-bottom">
+      <Link href="/noticias" className="ui__title">
         <ChevronIcon className="ui__icon" width={15} height={27} />
         <h1 className="">{article.title}</h1>
       </Link>
 
       <main className="single-post-container">
         <article className="post-content">
-          <header className="post-header" data-animate="slide-bottom">
+          <header className="post-header">
             {publishedLabel && (
               <div className="post-meta">
                 <span>{publishedLabel}</span>
@@ -108,11 +108,11 @@ export default async function NoticiaPage({ params }: { params: PageParams }) {
 
           <div
             className="post-body"
-            data-animate="slide-bottom"
+           
             dangerouslySetInnerHTML={{ __html: renderMarkdown(article.body) }}
           />
 
-          <footer className="post-footer" data-animate="slide-bottom">
+          <footer className="post-footer">
             {article.tags.length > 0 && (
               <div className="tags">
                 {article.tags.map((tag) => (
