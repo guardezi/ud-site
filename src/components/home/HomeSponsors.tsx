@@ -1,14 +1,51 @@
 import { useTranslations } from "next-intl";
+import { UDImage } from "@/components/ui/UDImage";
+import type { EventSponsor } from "@/lib/sponsors/queries";
 
 /**
  * "Patrocinadores" + "Apoiadores": grades de logos em fundo claro.
  * Classes `index__sponsors*` do tema legado.
+ *
+ * Patrocinadores = patrocinadores do evento (`patrocinadores` com
+ * `patrocinaEvento == true`, via `listEventSponsors`); Apoiadores = mock.
  */
 export type SponsorLogo = {
   name: string;
-  url: string;
-  logoSrc: string;
+  /** Site (nova aba); sem site, o logo não é link. */
+  url: string | null;
+  /**
+   * Logo: path do Storage (variante WebP via UDImage) ou caminho local de
+   * `public/` (começa com "/"). Sem logo, mostra o nome.
+   */
+  logoSrc: string | null;
 };
+
+/** Patrocinador do evento (Firestore) → item da grade. */
+export function eventSponsorToLogo(s: EventSponsor): SponsorLogo {
+  return { name: s.name, url: s.website, logoSrc: s.logoPath };
+}
+
+function Logo({ item }: { item: SponsorLogo }) {
+  if (!item.logoSrc) {
+    return <span className="block text-center text-lg font-bold text-[#343443]">{item.name}</span>;
+  }
+  if (item.logoSrc.startsWith("/")) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img width={200} height={200} src={item.logoSrc} alt={item.name} className="index__sponsors-img" loading="lazy" />;
+  }
+  return (
+    <UDImage
+      src={item.logoSrc}
+      alt={item.name}
+      baseVariant="small"
+      srcsetPreset="compact"
+      sizes="160px"
+      width={200}
+      height={200}
+      className="index__sponsors-img"
+    />
+  );
+}
 
 export type HomeSponsorsData = {
   sponsors: SponsorLogo[];
@@ -20,10 +57,15 @@ function LogoGrid({ items, label }: { items: SponsorLogo[]; label: (name: string
     <div className="index__sponsors-container">
       {items.map((s) => (
         <div key={s.name} className="index__sponsors-item">
-          <a href={s.url} title={label(s.name)} className="index__sponsors-link" target="_blank" rel="noopener noreferrer">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img width={200} height={200} src={s.logoSrc} alt={s.name} className="index__sponsors-img" loading="lazy" />
-          </a>
+          {s.url ? (
+            <a href={s.url} title={label(s.name)} className="index__sponsors-link" target="_blank" rel="noopener noreferrer">
+              <Logo item={s} />
+            </a>
+          ) : (
+            <div className="index__sponsors-link">
+              <Logo item={s} />
+            </div>
+          )}
         </div>
       ))}
     </div>
