@@ -113,7 +113,13 @@
     "publishedAt": "Publicado el {date}",
     "by": "Por {author}",
     "readMore": "Leer más",
-    "related": "Relacionados"
+    "related": "Relacionados",
+    "prev": "Página anterior",
+    "next": "Página siguiente",
+    "categories": {
+      "noticia": "Noticia",
+      "historia": "Historia"
+    }
   },
   "patrocinadores": {
     "title": "Patrocinadores",

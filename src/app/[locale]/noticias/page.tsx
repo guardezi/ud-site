@@ -4,11 +4,15 @@ import { Link } from "@/i18n/navigation";
 import { listNews } from "@/lib/news/queries";
 import { buildMetadata } from "@/lib/seo/meta";
 import { UDImage } from "@/components/ui/UDImage";
+import { ChevronIcon } from "@/components/noticias/ChevronIcon";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 60;
 
-const PAGE_SIZE = 12;
+/** Mesmo tamanho de página do arquivo do WP (6 cards, 3 por linha). */
+const PAGE_SIZE = 6;
+/** O WP corta o título do card em 47 caracteres + "...". */
+const TITLE_MAX = 47;
 
 type PageProps = {
   params: Promise<{ locale: Locale }>;
@@ -32,62 +36,62 @@ export default async function NoticiasPage({ params, searchParams }: PageProps) 
   setRequestLocale(locale);
 
   const t = await getTranslations("noticias");
-  const page = Math.max(1, Number(pageStr ?? "1") || 1);
-  const offset = (page - 1) * PAGE_SIZE;
-  const { items } = await listNews({ locale, limit: PAGE_SIZE, offset });
+  const requested = Math.max(1, Math.floor(Number(pageStr ?? "1")) || 1);
+  const { items, total } = await listNews({ locale, limit: PAGE_SIZE, offset: (requested - 1) * PAGE_SIZE });
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const page = Math.min(requested, totalPages);
 
-  // Total real pra paginação: fetch sem offset/limit baixo
-  const { total: estimated } = await listNews({ locale, limit: 100, offset: 0 });
-  const totalPages = Math.max(1, Math.ceil(estimated / PAGE_SIZE));
+  const categoryLabel = (slug: string | null) =>
+    slug ? (t.has(`categories.${slug}`) ? t(`categories.${slug}`) : slug) : null;
 
   return (
     <section className="news">
       <div className="wrapper">
-        <div className="ui__title" data-animate="slide-bottom">
+        <Link href="/" className="ui__title">
+          <ChevronIcon className="ui__icon" width={15} height={27} />
           <h1 className="">{t("title")}</h1>
-        </div>
+        </Link>
 
         {items.length === 0 ? (
           <p style={{ padding: "60px 0", textAlign: "center", color: "#9b9b9b" }}>{t("empty")}</p>
         ) : (
           <>
             <div className="news-content row">
-              {items.map((n) => (
-                <div key={n.id} className="col-md-4" data-animate="slide-bottom">
-                  <div className="news__small">
-                    <Link
-                      href={{ pathname: "/noticias/[slug]", params: { slug: n.slug } }}
-                      className="news__link"
-                    >
-                      <div className="news__img-small">
-                        {n.coverImagePath ? (
-                          <UDImage
-                            src={n.coverImagePath}
-                            alt={n.title}
-                            baseVariant="small"
-                            srcsetPreset="responsive"
-                            sizes="(max-width: 768px) 100vw, 300px"
-                            width={300}
-                            height={200}
-                          />
-                        ) : (
-                          <div style={{ width: "100%", aspectRatio: "3/2", background: "#1f1f24" }} />
-                        )}
-                      </div>
-                      {n.category && <span className="news__category">{n.category}</span>}
-                      <h3>{truncate(n.title, 60)}</h3>
-                    </Link>
+              {items.map((n) => {
+                const category = categoryLabel(n.category);
+                return (
+                  <div key={n.id} className="col-md-4">
+                    <div className="news__small">
+                      <Link
+                        href={{ pathname: "/noticias/[slug]", params: { slug: n.slug } }}
+                        className="news__link"
+                      >
+                        <div className="news__img-small">
+                          {n.coverImagePath ? (
+                            <UDImage
+                              src={n.coverImagePath}
+                              alt=""
+                              baseVariant="small"
+                              srcsetPreset="responsive"
+                              sizes="(max-width: 300px) 100vw, 300px"
+                              width={300}
+                              height={200}
+                            />
+                          ) : (
+                            <div style={{ width: "100%", aspectRatio: "3/2", background: "#1f1f24" }} />
+                          )}
+                        </div>
+                        {category && <span className="news__category">{category}</span>}
+                        <h3 title={n.title}>{truncate(n.title, TITLE_MAX)}</h3>
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {totalPages > 1 && (
-              <div className="pagination" data-animate="slide-bottom">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <PaginationLink key={p} page={p} currentPage={page} />
-                ))}
-              </div>
+              <Pagination page={page} totalPages={totalPages} labels={{ prev: t("prev"), next: t("next") }} />
             )}
           </>
         )}
@@ -96,25 +100,48 @@ export default async function NoticiasPage({ params, searchParams }: PageProps) 
   );
 }
 
-function PaginationLink({ page, currentPage }: { page: number; currentPage: number }) {
-  if (page === currentPage) {
-    return (
-      <span aria-current="page" className="page-numbers current">
-        {page}
-      </span>
-    );
-  }
+function pageHref(p: number) {
+  // Página 1 sem query (canônica), igual ao WP (/noticias/ vs /noticias/page/N/).
+  return (p === 1 ? { pathname: "/noticias" } : { pathname: "/noticias", query: { page: String(p) } }) as never;
+}
+
+function Pagination({
+  page,
+  totalPages,
+  labels,
+}: {
+  page: number;
+  totalPages: number;
+  labels: { prev: string; next: string };
+}) {
   return (
-    <Link
-      href={page === 1 ? { pathname: "/noticias" } : { pathname: "/noticias", query: { page: String(page) } } as never}
-      className="page-numbers"
-    >
-      {page}
-    </Link>
+    <div className="pagination">
+      {page > 1 && (
+        <Link href={pageHref(page - 1)} className="prev page-numbers" aria-label={labels.prev}>
+          <ChevronIcon className="pagination__prev" width={5} height={17} />
+        </Link>
+      )}
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) =>
+        p === page ? (
+          <span key={p} aria-current="page" className="page-numbers current">
+            {p}
+          </span>
+        ) : (
+          <Link key={p} href={pageHref(p)} className="page-numbers">
+            {p}
+          </Link>
+        ),
+      )}
+      {page < totalPages && (
+        <Link href={pageHref(page + 1)} className="next page-numbers" aria-label={labels.next}>
+          <ChevronIcon className="pagination__next" width={10} height={17} />
+        </Link>
+      )}
+    </div>
   );
 }
 
 function truncate(s: string, n: number): string {
   if (s.length <= n) return s;
-  return s.slice(0, n).trimEnd() + "...";
+  return s.slice(0, n) + "...";
 }

@@ -7,7 +7,7 @@
  * WebP automaticamente), popula:
  *   - news/{slugBase}-{locale}
  *   - content/{slug}-{locale} (sobre/termos/privacidade)
- *   - driftCategories/{auto-id}
+ *   (categorias de post do WP viram só o slug em news.category)
  * E gera src/lib/legacy-redirects.json com tabela de 301s pra preservar SEO.
  *
  * Idempotente: re-run só atualiza docs com modified_gmt > updatedAt.
@@ -251,36 +251,20 @@ async function htmlToMarkdownWithImages(html, { storagePrefix }) {
 
 const categorySlugById = new Map();
 
+/**
+ * As categorias do WP (Notícia, História) são categorias de POST, não
+ * categorias de pilotagem (PRO/Rookie/Master): só servem pra preencher
+ * `news.category` com o slug. Antes elas eram gravadas em `driftCategories`,
+ * o que poluía a coleção que /categorias lê (aconteceu no juiz-ud-stage).
+ * O rótulo exibido vem do i18n (noticias.categories.<slug>) no ud-site.
+ */
 async function importCategories() {
-  console.log("→ categorias");
+  console.log("→ categorias (só mapeamento id → slug pra news.category)");
   const cats = await fetchAllPages("categories?per_page=100");
   console.log(`  ${cats.length} categorias`);
   for (const cat of cats) {
     if (cat.slug === "uncategorized" || cat.slug === "sem-categoria") continue;
     categorySlugById.set(cat.id, cat.slug);
-
-    const existing = await db.collection("driftCategories").where("slug", "==", cat.slug).limit(1).get();
-    if (!existing.empty) {
-      console.log(`  ✓ skip ${cat.slug} (já existe)`);
-      continue;
-    }
-    if (flags.dry) {
-      console.log(`  [dry] would create driftCategories/${cat.slug}`);
-      continue;
-    }
-    await db.collection("driftCategories").add({
-      slug: cat.slug,
-      name: decode(cat.name),
-      description: stripHtml(cat.description ?? "").slice(0, 2000),
-      icon: null,
-      rules: "",
-      order: cat.count ?? 0,
-      source: "wp-import",
-      wpId: cat.id,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-    console.log(`  + driftCategories/${cat.slug}`);
   }
 }
 
@@ -446,9 +430,10 @@ async function importPages() {
 // ─── Redirects extras ──────────────────────────────────────────────────────
 
 async function writeRedirects() {
-  // /category/<slug>/ → /categorias/<slug>
+  // /category/<slug>/ (arquivo de categoria de post no WP) → /noticias.
+  // NÃO é /categorias/<slug>: essa rota é de categorias de pilotagem.
   for (const slug of categorySlugById.values()) {
-    redirects[`/category/${slug}`] = { to: `/categorias/${slug}`, code: 301 };
+    redirects[`/category/${slug}`] = { to: "/noticias", code: 301 };
   }
   if (flags.dry) {
     console.log(`[dry] would write ${Object.keys(redirects).length} redirects to ${REDIRECTS_OUT}`);
@@ -472,7 +457,7 @@ const t0 = Date.now();
 console.log(`[import-wp] base=${BASE} project=${PROJECT} bucket=${BUCKET}${flags.dry ? " (DRY-RUN)" : ""}`);
 
 try {
-  if (!ONLY || ONLY === "categories") await importCategories();
+  await importCategories(); // só leitura do WP; posts dependem do mapa id → slug
   if (!ONLY || ONLY === "posts") await importPosts();
   if (!ONLY || ONLY === "pages") await importPages();
   await writeRedirects();
