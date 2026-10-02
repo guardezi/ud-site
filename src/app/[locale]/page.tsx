@@ -14,7 +14,7 @@ import {
 } from "@/lib/stages/queries";
 import { getCurrentChampionshipStandings } from "@/lib/championship/queries";
 import { listLatestNews } from "@/lib/news/queries";
-import { getNextPublishedEvent } from "@/lib/ticketing/queries";
+import { getNextRaceEvent } from "@/lib/events/queries";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
@@ -46,8 +46,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [nextTicketEvent, next, stages, standings, news] = await Promise.all([
-    getNextPublishedEvent(),
+  const [nextEvent, next, stages, standings, news] = await Promise.all([
+    getNextRaceEvent(),
     getNextStageHub(),
     listStageHubs(),
     getCurrentChampionshipStandings(),
@@ -64,8 +64,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   // Everything empty (Firestore not seeded yet) → fall back to legacy WP snapshot.
   const hasAny =
     Boolean(next) || upcoming.length > 0 || topEntries.length > 0 || news.length > 0;
-  const banner = nextTicketEvent ? (
-    <NextStageBanner event={nextTicketEvent} locale={locale} />
+  const banner = nextEvent ? (
+    <NextStageBanner event={nextEvent} locale={locale} />
   ) : null;
   if (!hasAny) {
     return (
