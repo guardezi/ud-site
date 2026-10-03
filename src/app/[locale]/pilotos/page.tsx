@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { listPublicDrivers } from "@/lib/drivers/queries";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { itemListLd } from "@/lib/seo/jsonld";
 import { canonical } from "@/lib/seo/canonical";
 import { buildMetadata } from "@/lib/seo/meta";
-import { UDImage } from "@/components/ui/UDImage";
+import { BackTitle } from "@/components/drivers/BackTitle";
+import { DriversFilterList, type DriverListItem } from "@/components/drivers/DriversFilterList";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 3600;
@@ -26,7 +26,10 @@ export async function generateMetadata({
   });
 }
 
-const CATEGORY_LABEL = (s: string | null) => (s ?? "").toUpperCase();
+function badge(category: string | null): DriverListItem["badge"] {
+  const c = (category ?? "").toUpperCase();
+  return c === "MASTER" || c === "ROOKIE" ? c : null;
+}
 
 export default async function PilotosPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
@@ -47,62 +50,24 @@ export default async function PilotosPage({ params }: { params: Promise<{ locale
   return (
     <section className="drivers">
       <div className="wrapper">
-        <div className="ui__title" data-animate="slide-bottom">
-          <h1 className="">{t("title")}</h1>
-        </div>
-
-        <div className="drivers__container row">
-          {drivers.length === 0 ? (
-            <p style={{ padding: "60px 0", textAlign: "center", color: "#9b9b9b" }}>{t("noResults")}</p>
-          ) : (
-            drivers.map((d) => {
-              const cat = CATEGORY_LABEL(d.category);
-              return (
-                <div
-                  key={d.id}
-                  className="driver-col col-xl-3 col-lg-4 col-sm-6"
-                  data-apelido={d.apelido}
-                  data-numero={d.numero ?? ""}
-                  data-animate="slide-left"
-                >
-                  <Link
-                    href={{ pathname: "/pilotos/[slug]", params: { slug: d.slug } }}
-                    className="drivers__rank-driver"
-                    title={`Ver perfil de ${d.apelido}`}
-                  >
-                    <div className="drivers__driver">
-                      <div className="drivers__driver-box">
-                        {cat && (
-                          <div className="drivers__driver-category" data-category={cat}>
-                            {cat}
-                          </div>
-                        )}
-                        <div className="drivers__rank-img-box">
-                          <UDImage
-                            src={d.fotoPath}
-                            alt={`Imagem representativa de ${d.apelido}`}
-                            baseVariant="small"
-                            srcsetPreset="compact"
-                            sizes="(max-width: 576px) 50vw, (max-width: 992px) 33vw, 220px"
-                            width={220}
-                            height={220}
-                            className="drivers__rank-driver-img"
-                          />
-                        </div>
-                        <div className="drivers__rank-bottom">
-                          <div className="drivers__rank-number-box">
-                            <span className="drivers__rank-number">{d.numero ?? "—"}</span>
-                          </div>
-                          <div className="drivers__driver-name">{d.apelido}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              );
-            })
-          )}
-        </div>
+        <BackTitle href="/" title={t("title")} />
+        <DriversFilterList
+          drivers={drivers.map((d) => ({
+            id: d.id,
+            slug: d.slug,
+            apelido: d.apelido,
+            numero: d.numero,
+            fotoPath: d.fotoPath,
+            badge: badge(d.category),
+          }))}
+          labels={{
+            search: t("search"),
+            placeholder: t("searchPlaceholder"),
+            noResults: t("noResults"),
+            viewProfile: t("viewProfile", { name: "{name}" }),
+            photoAlt: t("photoAlt", { name: "{name}" }),
+          }}
+        />
       </div>
       <JsonLd data={ld} />
     </section>
