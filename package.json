@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test \"src/**/*.test.mjs\"",
     "postbuild": "node scripts/gen-llms-txt.mjs || true"
   },
   "dependencies": {

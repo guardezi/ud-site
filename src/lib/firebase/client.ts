@@ -28,6 +28,11 @@ function ensure() {
   }
 }
 
+export function getClientApp(): FirebaseApp {
+  ensure();
+  return clientApp;
+}
+
 export function getClientAuth(): Auth {
   ensure();
   return clientAuth;
