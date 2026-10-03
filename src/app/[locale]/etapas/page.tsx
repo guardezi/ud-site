@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { WPPageSnapshot } from "@/components/home/WPPageSnapshot";
-import { StagesList } from "@/components/stages/StagesList";
-import { listStageHubs, getNextStageHub, type PublicStageHubSummary } from "@/lib/stages/queries";
+import { BackTitle } from "@/components/stages/BackTitle";
+import { StageEventCard } from "@/components/stages/StageEventCard";
+import { listStageEvents } from "@/lib/stages/events";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
@@ -18,57 +18,54 @@ export async function generateMetadata({
   return buildMetadata({
     href: "/etapas",
     locale,
-    title: t("title"),
-    description: t("subtitle"),
+    title: t("allStages"),
+    description: t("listDescription"),
   });
 }
 
-function startMs(h: PublicStageHubSummary): number {
-  return h.startDate ? new Date(h.startDate as unknown as string).getTime() : 0;
-}
-
+/**
+ * /etapas — "Todas as etapas" do site legado: "Próximas Etapas" (verde, com
+ * "Comprar ingresso") e "Etapas Realizadas" (laranja, "Ver Detalhes"), em
+ * ordem cronológica. Fonte: campeonato vigente + stageHubs + events (ver
+ * `src/lib/stages/events.ts`).
+ */
 export default async function EtapasPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("etapas");
 
-  const [stages, next] = await Promise.all([listStageHubs(), getNextStageHub()]);
-
-  // Fallback to legacy WP snapshot until admin seeds Firestore stage hubs.
-  if (stages.length === 0) {
-    return <WPPageSnapshot slug="etapas" />;
-  }
-
-  const now = Date.now();
-  const upcoming = stages
-    .filter((h) => startMs(h) >= now)
-    .sort((a, b) => startMs(a) - startMs(b));
-  const upcomingIds = new Set(upcoming.map((h) => h.id));
-  // listStageHubs is already ordered startDate desc.
-  const past = stages.filter((h) => !upcomingIds.has(h.id));
+  const stages = await listStageEvents();
+  const upcoming = stages.filter((s) => s.isUpcoming);
+  const past = stages.filter((s) => !s.isUpcoming);
 
   return (
-    <div className="mx-auto max-w-wide px-4 py-12 lg:px-8 lg:py-16">
-      <header className="mb-10">
-        <p className="eyebrow">{t("title")}</p>
-        <h1 className="display mt-2 text-4xl text-signal lg:text-5xl">{t("title")}</h1>
-        <p className="mt-3 max-w-2xl text-mute">{t("subtitle")}</p>
-      </header>
+    <div className="wrapper">
+      <BackTitle fallbackHref="/" backLabel={t("back")}>
+        {t("allStages")}
+      </BackTitle>
+
+      {stages.length === 0 && <p className="steps__grid text-center">{t("emptyList")}</p>}
 
       {upcoming.length > 0 && (
-        <section className="mb-12">
-          <h2 className="display mb-4 text-2xl text-signal">
-            {next && next.id === upcoming[0].id ? t("next") : t("future")}
-          </h2>
-          <StagesList stages={upcoming} locale={locale} />
-        </section>
+        <div className="steps__grid">
+          <h2 className="steps__title">{t("upcomingStages")}</h2>
+          <div className="row g-4">
+            {upcoming.map((s) => (
+              <StageEventCard key={s.key} stage={s} />
+            ))}
+          </div>
+        </div>
       )}
 
       {past.length > 0 && (
-        <section>
-          <h2 className="display mb-4 text-2xl text-signal">{t("past")}</h2>
-          <StagesList stages={past} locale={locale} />
-        </section>
+        <div className="steps__grid">
+          <h2 className="steps__title carried-out">{t("pastStages")}</h2>
+          <div className="row g-4">
+            {past.map((s) => (
+              <StageEventCard key={s.key} stage={s} />
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

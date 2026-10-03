@@ -3,7 +3,7 @@ import { LOCALES, DEFAULT_LOCALE, type Locale } from "@/i18n/config";
 import { routing, type AppPathname } from "@/i18n/routing";
 import { canonical } from "@/lib/seo/canonical";
 import { listPublicDrivers } from "@/lib/drivers/queries";
-import { listStageHubs } from "@/lib/stages/queries";
+import { listStageEvents } from "@/lib/stages/events";
 import { listDriftCategories } from "@/lib/driftCategories/queries";
 import { listAllNewsSlugs } from "@/lib/news/queries";
 
@@ -49,14 +49,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   let drivers: Awaited<ReturnType<typeof listPublicDrivers>> = [];
-  let stages: Awaited<ReturnType<typeof listStageHubs>> = [];
+  let stages: Awaited<ReturnType<typeof listStageEvents>> = [];
   let categories: Awaited<ReturnType<typeof listDriftCategories>> = [];
   let news: Awaited<ReturnType<typeof listAllNewsSlugs>> = [];
 
   try {
     [drivers, stages, categories, news] = await Promise.all([
       listPublicDrivers(),
-      listStageHubs(),
+      listStageEvents(),
       listDriftCategories(),
       listAllNewsSlugs(),
     ]);
@@ -72,26 +72,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  const stageEntries = stages.flatMap((s) => [
-    ...entry("/etapas/[slug]", {
+  // Etapas (fim de semana) do campeonato vigente. As subpáginas
+  // /qualifying e /bracket ficam fora: ainda leem as collections raiz legadas
+  // (publicQualifyings/publicBattles), que o app não grava mais.
+  const stageEntries = stages.flatMap((s) =>
+    entry("/etapas/[slug]", {
       params: { slug: s.slug },
       changeFrequency: "daily",
       priority: 0.7,
-      lastModified: s.startDate ?? undefined,
+      lastModified: s.startDay ? new Date(`${s.startDay}T12:00:00Z`) : undefined,
     }),
-    ...entry("/etapas/[slug]/qualifying", {
-      params: { slug: s.slug },
-      changeFrequency: "weekly",
-      priority: 0.5,
-      lastModified: s.startDate ?? undefined,
-    }),
-    ...entry("/etapas/[slug]/bracket", {
-      params: { slug: s.slug },
-      changeFrequency: "weekly",
-      priority: 0.5,
-      lastModified: s.startDate ?? undefined,
-    }),
-  ]);
+  );
 
   const categoryEntries = categories.flatMap((c) =>
     entry("/categorias/[slug]", {
