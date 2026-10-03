@@ -2,6 +2,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
 import { asArray, asRecord, num, str, tsToDate } from "@/lib/firestore-utils";
+import type { StageScoreEntry } from "@/lib/championship/stage-score";
 
 export type StandingEntry = {
   position: number;
@@ -160,6 +161,11 @@ export type ChampionshipPilot = {
   totalScore: number;
   /** `stages[i].finalScore`, na ordem gravada pela Cloud Function. */
   stageScores: number[];
+  /**
+   * `stages[i]` com `finalScore`/`qualiPosition`/`battlePosition`, na mesma
+   * ordem — entrada do `formatStageScore` ("0" = correu e zerou, null = "—").
+   */
+  stageEntries: StageScoreEntry[];
 };
 
 export type ChampionshipClassification = {
@@ -189,6 +195,10 @@ function docToPilot(d: Record<string, unknown>): ChampionshipPilot {
     category: category ? (str(category.descricao) ?? "") : (str(d.driverCategory) ?? ""),
     totalScore: num(d.totalScore) ?? 0,
     stageScores: asArray<unknown>(d.stages).map((s) => num(asRecord(s)?.finalScore) ?? 0),
+    stageEntries: asArray<unknown>(d.stages).map((s) => {
+      const r = asRecord(s) ?? {};
+      return { finalScore: r.finalScore, qualiPosition: r.qualiPosition, battlePosition: r.battlePosition };
+    }),
   };
 }
 
