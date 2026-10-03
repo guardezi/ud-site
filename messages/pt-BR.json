@@ -101,10 +101,19 @@
   },
   "categorias": {
     "title": "Categorias",
-    "subtitle": "As categorias do campeonato.",
-    "empty": "Sem categorias cadastradas.",
+    "subtitle": "Rookie, Master e Pro: as categorias de piloto do Ultimate Drift.",
+    "classification": "Classificação",
     "viewDrivers": "Ver pilotos",
-    "rules": "Regulamento"
+    "detailTitle": "Categoria {name}",
+    "driversTitle": "Pilotos",
+    "viewProfile": "Ver perfil de {name}",
+    "photoAlt": "Imagem representativa de {name}",
+    "noDrivers": "Nenhum piloto nesta categoria no campeonato atual.",
+    "items": {
+      "rookie": "Destinada a pilotos iniciantes ou com pouca experiência no drift. Aqui, os participantes estão no processo de aprender e aprimorar suas habilidades, como controle do carro e a arte do drift. Essa categoria oferece um ambiente amigável e desafiador para quem está começando e busca evoluir dentro do esporte.",
+      "master": "Voltada para pilotos uma faixa etária superior, que já possuem uma longa trajetória no drift. Embora não seja uma competição exclusivamente para os mais experientes, ela valoriza a habilidade e a experiência acumulada ao longo dos anos, proporcionando um espaço para aqueles que continuam a competir com muita paixão, técnica e determinação, independentemente da idade.",
+      "pro": "Aberta a todos os pilotos, independentemente da idade ou do nível de experiência. É uma competição onde se destacam as habilidades de controle do carro, precisão e ousadia nas manobras de drift. Pilotos de diferentes faixas etárias e históricos têm a chance de competir entre si, proporcionando uma diversidade de estilos e técnicas. Essa categoria é ideal para quem busca desafios e quer se medir com pilotos de vários níveis, contribuindo para um ambiente dinâmico e emocionante."
+    }
   },
   "noticias": {
     "title": "Notícias",

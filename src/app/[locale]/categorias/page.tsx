@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { WPPageSnapshot } from "@/components/home/WPPageSnapshot";
-import { listDriftCategories } from "@/lib/driftCategories/queries";
+import { getPathname } from "@/i18n/navigation";
+import { BackTitle } from "@/components/categorias/BackTitle";
+import { CATEGORIES } from "@/components/categorias/categories";
+import { CategoryBlock, ClassificationLink, PilotsLink } from "@/components/categorias/CategoryBlock";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
+// Conteúdo institucional fixo (i18n + arte do tema) — não lê Firestore.
 export const revalidate = 86400;
 
 export async function generateMetadata({
@@ -27,40 +29,28 @@ export default async function CategoriasPage({ params }: { params: Promise<{ loc
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("categorias");
-  const categories = await listDriftCategories();
-
-  // Fallback to legacy WP snapshot until admin seeds Firestore categories.
-  if (categories.length === 0) {
-    return <WPPageSnapshot slug="categorias" />;
-  }
 
   return (
-    <div className="mx-auto max-w-wide px-4 py-12 lg:px-8 lg:py-16">
-      <header className="mb-10">
-        <p className="eyebrow">{t("title")}</p>
-        <h1 className="display mt-2 text-4xl text-signal lg:text-5xl">{t("title")}</h1>
-        <p className="mt-3 max-w-2xl text-mute">{t("subtitle")}</p>
-      </header>
+    <section className="category">
+      <div className="wrapper">
+        <BackTitle fallbackHref={getPathname({ href: "/", locale })}>{t("title")}</BackTitle>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {categories.map((c) => (
-          <Link
-            key={c.id}
-            href={{ pathname: "/categorias/[slug]", params: { slug: c.slug } }}
-            className="card-ud group block p-6"
-          >
-            {c.icon && (
-              <div className="mb-3 text-3xl" aria-hidden>
-                {c.icon}
+        {CATEGORIES.map((c, i) => (
+          // Zigue-zague do layout legado: a 2ª categoria (Master) com a imagem à direita.
+          <CategoryBlock
+            key={c.slug}
+            category={c}
+            text={t(`items.${c.slug}`)}
+            flipped={i % 2 === 1}
+            links={
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 40px" }}>
+                <ClassificationLink category={c} label={t("classification")} />
+                <PilotsLink category={c} label={t("viewDrivers")} />
               </div>
-            )}
-            <h2 className="display text-2xl text-signal group-hover:text-drift transition-colors">
-              {c.name}
-            </h2>
-            {c.description && <p className="mt-2 text-sm text-mute">{c.description}</p>}
-          </Link>
+            }
+          />
         ))}
       </div>
-    </div>
+    </section>
   );
 }
