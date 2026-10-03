@@ -1,4 +1,32 @@
 {
+  "/patrocinadores/monster-energy": {
+    "to": "/patrocinadores/monster",
+    "code": 301
+  },
+  "/patrocinadores/ngk": {
+    "to": "/patrocinadores",
+    "code": 301
+  },
+  "/patrocinadores/sky-group": {
+    "to": "/patrocinadores",
+    "code": 301
+  },
+  "/apoiadores": {
+    "to": "/patrocinadores",
+    "code": 301
+  },
+  "/apoiadores/sfi-chips": {
+    "to": "/patrocinadores",
+    "code": 301
+  },
+  "/apoiadores/silicon-village": {
+    "to": "/patrocinadores",
+    "code": 301
+  },
+  "/apoiadores/zanoello": {
+    "to": "/patrocinadores",
+    "code": 301
+  },
   "/noticia/ultimate-drift-2026-o-maior-campeonato-de-drift-da-america-latina-retorna-a-londrina": {
     "to": "/noticias/ultimate-drift-2026-o-maior-campeonato-de-drift-da-america-latina-retorna-a-londrina",
     "code": 301
