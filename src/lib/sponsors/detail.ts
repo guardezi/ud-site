@@ -69,14 +69,6 @@ function realValue(v: unknown): string | null {
   return s;
 }
 
-/** Espelha `SponsorEntityModel._parseBool` do app (bool, "true", 1). */
-function parseBool(v: unknown): boolean {
-  if (typeof v === "boolean") return v;
-  if (typeof v === "string") return v.trim().toLowerCase() === "true";
-  if (typeof v === "number") return v !== 0;
-  return false;
-}
-
 function httpUrl(v: unknown): string | null {
   const s = realValue(v);
   if (!s) return null;
@@ -106,6 +98,18 @@ function youtubeUrl(v: unknown): string | null {
   return `https://youtube.com/${s.startsWith("@") ? s : `@${s}`}`;
 }
 
+/**
+ * Selo do evento = mesma regra de `isEventSponsor` + `listEventSupporters`
+ * (src/lib/sponsors/queries.ts): com `tipoPatrocinioEvento`, só
+ * "patrocinador" ou "apoiador" ("outro" não); sem o campo (legado),
+ * `patrocinaEvento === true`.
+ */
+function hasEventBadge(d: Record<string, unknown>): boolean {
+  const tipo = str(d.tipoPatrocinioEvento)?.trim().toLowerCase();
+  if (tipo) return tipo === "patrocinador" || tipo === "apoiador";
+  return d.patrocinaEvento === true;
+}
+
 function docToProfile(id: string, d: Record<string, unknown>): Omit<SponsorProfile, "slug"> {
   return {
     id,
@@ -117,10 +121,7 @@ function docToProfile(id: string, d: Record<string, unknown>): Omit<SponsorProfi
     instagram: instagramUrl(d.instagram),
     youtube: youtubeUrl(d.youtube),
     history: str(d.historia)?.trim() || null,
-    // Apoiador (`tipoPatrocinioEvento == "apoiador"`) também ganha selo,
-    // como em listEventSupporters (src/lib/sponsors/queries.ts).
-    isEventSponsor:
-      parseBool(d.patrocinaEvento) || str(d.tipoPatrocinioEvento)?.trim().toLowerCase() === "apoiador",
+    isEventSponsor: hasEventBadge(d),
     eventLabel: str(d.rotuloPatrocinioEvento)?.trim() || null,
   };
 }

@@ -72,12 +72,16 @@ function httpUrl(v: unknown): string | null {
 }
 
 /**
- * Tipo do vínculo com o evento (ud-sistema PR #77: `tipoPatrocinioEvento` =
- * "patrocinador" | "apoiador" | "outro"). Ainda não gravado pela function do
- * ud-app; docs sem o campo seguem só pelo `patrocinaEvento`.
+ * Regra de quem é patrocinador do evento — IGUAL à de
+ * src/lib/stages/sponsors.ts (PR #18), manter as duas em sincronia:
+ * - Doc com `tipoPatrocinioEvento` (ud-sistema PR #77): só `== "patrocinador"`.
+ * - Doc sem o campo (legado): `patrocinaEvento === true`.
+ * Apoiadores (`tipoPatrocinioEvento == "apoiador"`) ficam em listEventSupporters.
  */
-function eventSponsorType(data: Record<string, unknown>): string | null {
-  return str(data.tipoPatrocinioEvento)?.trim().toLowerCase() || null;
+function isEventSponsor(d: Record<string, unknown>): boolean {
+  const tipo = str(d.tipoPatrocinioEvento);
+  if (tipo != null) return tipo.toLowerCase() === "patrocinador";
+  return d.patrocinaEvento === true;
 }
 
 function docToEventSponsor(id: string, data: Record<string, unknown>): EventSponsor {
@@ -97,23 +101,20 @@ function sortByName(list: EventSponsor[]): EventSponsor[] {
 // credencial) não fica cacheada como lista vazia.
 const loadEventSponsors = unstable_cache(
   async (): Promise<EventSponsor[]> => {
-    const snap = await adminDb
-      .collection("patrocinadores")
-      .where("patrocinaEvento", "==", true)
-      .limit(200)
-      .get();
+    // Duas queries de igualdade simples (sem índice composto) + filtro final
+    // em memória, como no PR #18.
+    const col = adminDb.collection("patrocinadores");
+    const [legacy, typed] = await Promise.all([
+      col.where("patrocinaEvento", "==", true).limit(200).get(),
+      col.where("tipoPatrocinioEvento", "==", "patrocinador").limit(200).get(),
+    ]);
+    const byId = new Map<string, Record<string, unknown>>();
+    for (const doc of [...legacy.docs, ...typed.docs]) byId.set(doc.id, doc.data() as Record<string, unknown>);
     return sortByName(
-      snap.docs
-        .filter((d) => {
-          // Com o tipo preenchido, só "patrocinador" entra aqui (um apoiador
-          // não aparece nos dois blocos).
-          const tipo = eventSponsorType(d.data() as Record<string, unknown>);
-          return tipo == null || tipo === "patrocinador";
-        })
-        .map((d) => docToEventSponsor(d.id, d.data() as Record<string, unknown>)),
+      [...byId.entries()].filter(([, d]) => isEventSponsor(d)).map(([id, d]) => docToEventSponsor(id, d)),
     );
   },
-  ["event-sponsors-v2"],
+  ["event-sponsors-v3"],
   { revalidate: 3600, tags: ["sponsors", "patrocinadores"] },
 );
 
@@ -130,10 +131,7 @@ const loadEventSupporters = unstable_cache(
   { revalidate: 3600, tags: ["sponsors", "patrocinadores"] },
 );
 
-/**
- * Patrocinadores do evento: `patrocinadores` com `patrocinaEvento == true` e,
- * quando houver `tipoPatrocinioEvento`, só os do tipo "patrocinador". Por nome.
- */
+/** Patrocinadores do evento (regra em `isEventSponsor`), por nome. */
 export async function listEventSponsors(): Promise<EventSponsor[]> {
   try {
     return await loadEventSponsors();
