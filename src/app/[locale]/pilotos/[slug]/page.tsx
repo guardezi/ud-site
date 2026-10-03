@@ -18,6 +18,8 @@ import { imageHigh } from "@/lib/firebase/image-variants";
 import { UDImage } from "@/components/ui/UDImage";
 import { BackTitle } from "@/components/drivers/BackTitle";
 import { DriverSocialIcon } from "@/components/drivers/DriverSocialIcon";
+import { DriverCover } from "@/components/drivers/DriverCover";
+import { driverCoverSources, getDefaultDriverCoverUrl } from "@/lib/drivers/cover";
 import type { Locale } from "@/i18n/config";
 
 export const revalidate = 3600;
@@ -93,7 +95,11 @@ export default async function DriverPage({ params }: { params: PageParams }) {
     // Formato antigo do ud-site (`{apelido}-{numero}`) → slug canônico (= URL do WordPress).
     permanentRedirect(getPathname({ locale, href: { pathname: "/pilotos/[slug]", params: { slug: match.slug } } }));
   }
-  const [driver, champ] = await Promise.all([getDriverProfile(match.id, match.slug), getDriverChampionshipStats(match.id)]);
+  const [driver, champ, defaultCover] = await Promise.all([
+    getDriverProfile(match.id, match.slug),
+    getDriverChampionshipStats(match.id),
+    getDefaultDriverCoverUrl(),
+  ]);
   if (!driver) notFound();
   const t = await getTranslations("pilotos.profile");
 
@@ -104,6 +110,7 @@ export default async function DriverPage({ params }: { params: PageParams }) {
   const flag = flagSrc(nat);
   const hometown = [driver.city, driver.state, driver.country].filter(Boolean).join(", ");
   const gallery = galleryOf(driver);
+  const coverSources = driverCoverSources(driver.capaPath, defaultCover);
 
   const ld = personLd({
     name: driver.nome,
@@ -117,12 +124,14 @@ export default async function DriverPage({ params }: { params: PageParams }) {
 
   return (
     <section className="driver">
-      <div className="wrapper">
+      {/* relative/z-2: o topo (com a capa) sobe -190px por baixo do título (tema antigo). */}
+      <div className="wrapper relative z-[2]">
         <BackTitle href="/pilotos" title={driver.apelido} />
       </div>
 
-      <div className="driver__top">
-        <div className="wrapper">
+      <div className="driver__top relative">
+        {coverSources.length > 0 && <DriverCover sources={coverSources} />}
+        <div className="wrapper relative z-[1]">
           <div className="driver__top-container">
             <div className="driver__top-left" data-animate="slide-left">
               {driver.numero != null && <div className="driver__number">{driver.numero}</div>}
