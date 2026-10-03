@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { UDImage } from "@/components/ui/UDImage";
 import { BackTitle } from "./BackTitle";
 import { formatEventDays } from "@/lib/ingressos/format-days";
 import type { ExternalTicketEvent } from "@/lib/ingressos/external-events";
@@ -10,10 +11,12 @@ import type { ExternalTicketEvent } from "@/lib/ingressos/external-events";
  * com os dados de `events` (mesma fonte da aba Ingressos do ud-app,
  * lib/pages/public/calendar/ticket_page.dart).
  *
- * Por card: datas, cidade (`place`) e "Comprar ingresso" abrindo `linkUrl` em
+ * Por card: arte do evento (`imageUrl`, como no app — o card legado não tinha
+ * imagem; incluída a pedido), datas, cidade (`place`) e "Comprar ingresso" abrindo `linkUrl` em
  * nova aba. Sem `isSelling`/`linkUrl` o botão vira "Venda em breve" (como o
  * app). "+ Informações" vai pra lista de etapas: `events` não tem vínculo com
- * `stageHubs` pra apontar a etapa específica.
+ * `stageHubs` pra apontar a etapa específica (vínculo explícito previsto em
+ * guardezi/ud-backoffice#297).
  */
 export async function ExternalTicketList({
   events,
@@ -43,6 +46,15 @@ export async function ExternalTicketList({
                 return (
                   <div key={ev.id} className="col-12 col-md-6 col-lg-4">
                     <div className="card etapa-card h-100 border-0 shadow-sm">
+                      {ev.imagePath && (
+                        <UDImage
+                          src={ev.imagePath}
+                          alt={[ev.place, formatEventDays(ev.startDate, ev.endDate, locale)].filter(Boolean).join(" · ")}
+                          sizes="(min-width: 992px) 400px, (min-width: 768px) 50vw, 100vw"
+                          className="d-block w-100 h-auto"
+                          style={{ borderRadius: "24px 6px 24px 6px" }}
+                        />
+                      )}
                       <div className="card-body d-flex flex-column">
                         <h5 className="fw-bold mb-2">{formatEventDays(ev.startDate, ev.endDate, locale)}</h5>
                         <p className="mb-4">{ev.place}</p>
