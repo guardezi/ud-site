@@ -4,6 +4,7 @@ import { UDImage } from "@/components/ui/UDImage";
 import type { StaticPathname } from "@/lib/routes";
 import type { ChampionshipClassification } from "@/lib/championship/queries";
 import { driverSlug } from "@/lib/utils/slug";
+import { formatStageScore } from "@/lib/championship/stage-score";
 
 /**
  * "Classificação Geral": pódio (2º/1º/3º, classes `index__rank-*` do tema
@@ -22,8 +23,8 @@ export type StandingsDriver = {
   photo: string | null;
   /** Slug do perfil em /pilotos/[slug]; sem slug, a linha não é link. */
   slug: string | null;
-  /** Pontos por etapa, na ordem; `null` = não correu (mostra "–"). */
-  stagePoints: (number | null)[];
+  /** Pontos por etapa, na ordem (`formatStageScore`): "31", "0" = correu e zerou; `null` = não correu ("—"). */
+  stagePoints: (string | null)[];
   total: number;
 };
 
@@ -80,7 +81,8 @@ const TOP = 10;
 
 /**
  * Classificação do campeonato → props da seção: top 10 do ranking geral;
- * pontos das 10 primeiras etapas (`finalScore` 0 ou etapa ausente → "–");
+ * pontos das 10 primeiras etapas via `formatStageScore` (PR #13): "0" quando
+ * correu e zerou, "—" quando não correu;
  * slug do perfil igual ao de /pilotos (`driverSlug`). `null` sem dados.
  */
 export function toStandingsData(c: ChampionshipClassification | null): ChampionshipStandingsData | null {
@@ -95,10 +97,7 @@ export function toStandingsData(c: ChampionshipClassification | null): Champions
       number: p.number,
       photo: p.photo,
       slug: p.name ? driverSlug({ apelido: p.name, numero: p.number }) : null,
-      stagePoints: Array.from({ length: STANDINGS_STAGE_COLUMNS }, (_, i) => {
-        const v = p.stageScores[i];
-        return v ? v : null;
-      }),
+      stagePoints: Array.from({ length: STANDINGS_STAGE_COLUMNS }, (_, i) => formatStageScore(p.stageEntries[i])),
       total: p.totalScore,
     })),
   };
@@ -171,7 +170,7 @@ export function ChampionshipStandings({ data }: { data: ChampionshipStandingsDat
                       const v = d.stagePoints[n - 1];
                       return (
                         <span key={n} className="text-center text-sm font-bold">
-                          {v == null ? <span className="text-[#9b9b9b]">–</span> : v}
+                          {v == null ? <span className="text-[#9b9b9b]">—</span> : v}
                         </span>
                       );
                     })}
