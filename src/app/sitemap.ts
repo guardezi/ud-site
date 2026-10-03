@@ -5,6 +5,7 @@ import { canonical } from "@/lib/seo/canonical";
 import { listPublicDrivers } from "@/lib/drivers/queries";
 import { listStageHubs } from "@/lib/stages/queries";
 import { listAllNewsSlugs } from "@/lib/news/queries";
+import { CATEGORIES } from "@/components/categorias/categories";
 
 type Entry = MetadataRoute.Sitemap[number];
 
@@ -90,6 +91,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   ]);
 
+  const categoryEntries = CATEGORIES.flatMap((c) =>
+    entry("/categorias/[slug]", {
+      params: { slug: c.slug },
+      changeFrequency: "weekly",
+      priority: 0.5,
+    }),
+  );
+
   const newsEntries: Entry[] = news.flatMap((n) => {
     // News é per-locale; emite apenas a URL no locale do doc.
     const locale = n.locale as Locale;
@@ -103,5 +112,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
   });
 
-  return [...staticEntries, ...driverEntries, ...stageEntries, ...newsEntries];
+  return [...staticEntries, ...driverEntries, ...stageEntries, ...categoryEntries, ...newsEntries];
 }

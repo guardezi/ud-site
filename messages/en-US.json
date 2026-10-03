@@ -103,6 +103,12 @@
     "title": "Categories",
     "subtitle": "Rookie, Master and Pro: the Ultimate Drift driver categories.",
     "classification": "Standings",
+    "viewDrivers": "View drivers",
+    "detailTitle": "{name} category",
+    "driversTitle": "Drivers",
+    "viewProfile": "View {name}'s profile",
+    "photoAlt": "Photo of {name}",
+    "noDrivers": "No drivers in this category in the current championship.",
     "items": {
       "rookie": "For beginner drivers or those with little drifting experience. Here, participants are learning and sharpening their skills, such as car control and the art of drifting. This category offers a friendly yet challenging environment for those who are starting out and want to grow in the sport.",
       "master": "For drivers in an older age group who already have a long track record in drifting. Although it is not a competition exclusively for the most experienced, it values the skill and experience built up over the years, giving a space to those who keep competing with passion, technique and determination, regardless of age.",
