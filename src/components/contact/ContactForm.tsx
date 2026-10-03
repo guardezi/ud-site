@@ -15,10 +15,8 @@ const FIELD_STYLE = { backgroundColor: "#fff", color: "#111" } as const;
 /**
  * Formulário de contato com o markup/classes do tema legado
  * (`.contact-form`, `.form-group`, `.form-input`, `.form-submit`).
- * `enabled=false` (flag do Remote Config desligada) mantém o visual mas
- * bloqueia o envio com aviso.
  */
-export function ContactForm({ enabled }: { enabled: boolean }) {
+export function ContactForm() {
   const t = useTranslations("contato.form");
   const locale = useLocale();
   const formRef = useRef<HTMLFormElement>(null);
@@ -27,7 +25,7 @@ export function ContactForm({ enabled }: { enabled: boolean }) {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!enabled || status === "sending") return;
+    if (status === "sending") return;
     const fd = new FormData(e.currentTarget);
     setStatus("sending");
     setFeedback(t("sending"));
@@ -56,11 +54,7 @@ export function ContactForm({ enabled }: { enabled: boolean }) {
       } else {
         setStatus("error");
         setFeedback(
-          res.error === "INVALID_INPUT"
-            ? t("errorInvalid")
-            : res.error === "DISABLED"
-              ? t("disabled")
-              : t("errorGeneric"),
+          res.error === "INVALID_INPUT" ? t("errorInvalid") : t("errorGeneric"),
         );
       }
     } catch {
@@ -142,10 +136,10 @@ export function ContactForm({ enabled }: { enabled: boolean }) {
           <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
         </div>
       </div>
-      <button className="form-submit" type="submit" disabled={!enabled || status === "sending"}>
+      <button className="form-submit" type="submit" disabled={status === "sending"}>
         {status === "sending" ? t("sendingButton") : t("submit")}
       </button>
-      {(feedback || !enabled) && (
+      {feedback && (
         <p
           role={status === "error" ? "alert" : "status"}
           aria-live="polite"
@@ -154,7 +148,7 @@ export function ContactForm({ enabled }: { enabled: boolean }) {
             color: status === "success" ? "#54F251" : status === "error" ? "#ff6b6b" : "#d6d6d6",
           }}
         >
-          {enabled ? feedback : t("disabled")}
+          {feedback}
         </p>
       )}
     </form>

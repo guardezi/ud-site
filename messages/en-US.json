@@ -129,7 +129,7 @@
     "press": "Press",
     "sponsorship": "Sponsorship",
     "introTitle": "Get in touch",
-    "introDescription": "Fill out the form below or contact us by email. We are here to answer your questions. Talk to our team for more information or partnerships.",
+    "introDescription": "Fill out the form below or contact us by email: <mail>{email}</mail>. We are here to answer your questions. Talk to our team for more information or partnerships.",
     "logoAlt": "Ultimate Drift logo",
     "form": {
       "name": "Name",
@@ -145,8 +145,7 @@
       "sending": "Sending your message...",
       "success": "Message sent! We will get back to you soon.",
       "errorInvalid": "Please check the fields: name, a valid email, phone and a message with at least 10 characters.",
-      "errorGeneric": "An unexpected error occurred. Please try again later.",
-      "disabled": "Sending messages through the website is temporarily unavailable."
+      "errorGeneric": "An unexpected error occurred. Please try again later."
     }
   },
   "sobre": {

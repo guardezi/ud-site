@@ -20,9 +20,6 @@ export const contactInputSchema = z.object({
 
 export type ContactInput = z.input<typeof contactInputSchema>;
 
-export type ContactErrorCode = "DISABLED" | "INVALID_INPUT" | "APP_CHECK" | "INTERNAL";
+export type ContactErrorCode = "INVALID_INPUT" | "APP_CHECK" | "INTERNAL";
 
 export type ContactResult = { ok: true } | { ok: false; error: ContactErrorCode };
-
-/** Remote Config (template server-side, defaultValue). Ausente = desligado. */
-export const CONTACT_FORM_FLAG = "isSiteContactFormEnabled";

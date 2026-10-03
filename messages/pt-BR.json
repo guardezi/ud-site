@@ -129,7 +129,7 @@
     "press": "Imprensa",
     "sponsorship": "Patrocínio",
     "introTitle": "Entre em contato",
-    "introDescription": "Preencha o formulário abaixo ou entre em contato por e-mail. Estamos à disposição para tirar dúvidas. Fale com a nossa equipe para mais informações ou parcerias.",
+    "introDescription": "Preencha o formulário abaixo ou entre em contato por e-mail: <mail>{email}</mail>. Estamos à disposição para tirar dúvidas. Fale com a nossa equipe para mais informações ou parcerias.",
     "logoAlt": "Logotipo da Ultimate Drift",
     "form": {
       "name": "Nome",
@@ -145,8 +145,7 @@
       "sending": "Enviando sua mensagem...",
       "success": "Mensagem enviada! Em breve entraremos em contato.",
       "errorInvalid": "Confira os campos: nome, e-mail válido, telefone e uma mensagem com pelo menos 10 caracteres.",
-      "errorGeneric": "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.",
-      "disabled": "O envio de mensagens pelo site está temporariamente indisponível."
+      "errorGeneric": "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde."
     }
   },
   "sobre": {

@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { BackTitle } from "@/components/contact/BackTitle";
 import { ContactForm } from "@/components/contact/ContactForm";
-import { isEnabled } from "@/lib/feature-flags/server";
-import { CONTACT_FORM_FLAG } from "@/lib/contact/schema";
+import { CONTACT_EMAIL_TO } from "@/lib/contact/email";
 import { buildMetadata } from "@/lib/seo/meta";
 import type { Locale } from "@/i18n/config";
 
-// A flag do Remote Config tem cache de 60s no server; revalida a página no mesmo ritmo.
-export const revalidate = 60;
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,
@@ -29,7 +27,6 @@ export default async function ContatoPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("contato");
-  const formEnabled = await isEnabled(CONTACT_FORM_FLAG);
 
   return (
     <section className="contato">
@@ -42,9 +39,14 @@ export default async function ContatoPage({ params }: { params: Promise<{ locale
             <div className="col-md-6" data-animate="slide-left">
               <div className="contact-intro">
                 <h2 className="contact-title">{t("introTitle")}</h2>
-                <p className="contact-description">{t("introDescription")}</p>
+                <p className="contact-description">
+                  {t.rich("introDescription", {
+                    email: CONTACT_EMAIL_TO,
+                    mail: (chunks) => <a href={`mailto:${CONTACT_EMAIL_TO}`}>{chunks}</a>,
+                  })}
+                </p>
               </div>
-              <ContactForm enabled={formEnabled} />
+              <ContactForm />
             </div>
             <div className="col-md-5" data-animate="slide-right">
               {/* eslint-disable-next-line @next/next/no-img-element -- SVG estático do tema */}
