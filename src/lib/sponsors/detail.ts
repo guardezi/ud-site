@@ -40,6 +40,11 @@ export type SponsorProfile = {
   youtube: string | null;
   history: string | null;
   isEventSponsor: boolean;
+  /**
+   * Rótulo do selo do evento (`rotuloPatrocinioEvento`, ud-sistema PR #77 —
+   * ex. "Apoiador oficial"); `null` = selo padrão.
+   */
+  eventLabel: string | null;
 };
 
 export type SponsoredPilot = {
@@ -112,7 +117,11 @@ function docToProfile(id: string, d: Record<string, unknown>): Omit<SponsorProfi
     instagram: instagramUrl(d.instagram),
     youtube: youtubeUrl(d.youtube),
     history: str(d.historia)?.trim() || null,
-    isEventSponsor: parseBool(d.patrocinaEvento),
+    // Apoiador (`tipoPatrocinioEvento == "apoiador"`) também ganha selo,
+    // como em listEventSupporters (src/lib/sponsors/queries.ts).
+    isEventSponsor:
+      parseBool(d.patrocinaEvento) || str(d.tipoPatrocinioEvento)?.trim().toLowerCase() === "apoiador",
+    eventLabel: str(d.rotuloPatrocinioEvento)?.trim() || null,
   };
 }
 

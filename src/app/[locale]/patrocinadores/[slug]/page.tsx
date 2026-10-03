@@ -123,7 +123,7 @@ export default async function SponsorPage({ params }: { params: PageParams }) {
               <div className="flex items-center gap-3 rounded-xl border border-[#54F251] bg-[#141417] px-4 py-3 text-white">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/theme/img/logo-light2.png" alt="" height={32} style={{ height: 32, width: "auto" }} />
-                <span className="font-bold">{t("officialEventSponsor")}</span>
+                <span className="font-bold">{sponsor.eventLabel ?? t("officialEventSponsor")}</span>
               </div>
             )}
           </div>
