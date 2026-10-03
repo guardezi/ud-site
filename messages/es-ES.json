@@ -37,7 +37,43 @@
     "viewAllDrivers": "Ver todos los pilotos",
     "latestNews": "Últimas noticias",
     "viewAllNews": "Ver todas las noticias",
-    "noNews": "Próximamente."
+    "noNews": "Próximamente.",
+    "buyTicket": "Comprar entrada",
+    "moreInfo": "+ Información",
+    "liveStream": "Transmisión en vivo"
+  },
+  "homeSections": {
+    "sponsorCallout": "Sé un patrocinador — más información",
+    "allStages": "Todas las etapas",
+    "standingsTitle": "Clasificación General {year}",
+    "podiumPlace": "{position}º lugar",
+    "colPos": "Pos",
+    "colDriver": "Piloto",
+    "colStage": "{n}ª",
+    "colTotal": "Total",
+    "pts": "pts",
+    "viewDriver": "Ver perfil de {name}",
+    "fullStandings": "Clasificación completa",
+    "appTitle": "¡ULTIMATE DRIFT APP!",
+    "appSubtitle": "Sigue todo en tiempo real, directo desde tu celular.",
+    "appFeatures": [
+      "Puntuación en tiempo real",
+      "Llave de batallas",
+      "Perfil de los pilotos",
+      "Ficha técnica de los autos",
+      "Clasificación actualizada"
+    ],
+    "appMockupAlt": "App Ultimate Drift en el celular",
+    "news": "Noticias",
+    "allNews": "Todas las noticias",
+    "sponsors": "Patrocinadores",
+    "supporters": "Apoyadores",
+    "monthTemplate": "{days} de {month}",
+    "visit": "Visitar {name}",
+    "newsCategory": {
+      "noticia": "Noticia",
+      "historia": "Historia"
+    }
   },
   "pilotos": {
     "title": "Pilotos",

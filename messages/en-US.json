@@ -37,7 +37,43 @@
     "viewAllDrivers": "View all drivers",
     "latestNews": "Latest news",
     "viewAllNews": "View all news",
-    "noNews": "Coming soon."
+    "noNews": "Coming soon.",
+    "buyTicket": "Buy ticket",
+    "moreInfo": "+ More info",
+    "liveStream": "Live stream"
+  },
+  "homeSections": {
+    "sponsorCallout": "Become a sponsor — learn more",
+    "allStages": "All stages",
+    "standingsTitle": "{year} Overall Standings",
+    "podiumPlace": "P{position}",
+    "colPos": "Pos",
+    "colDriver": "Driver",
+    "colStage": "R{n}",
+    "colTotal": "Total",
+    "pts": "pts",
+    "viewDriver": "View {name}'s profile",
+    "fullStandings": "Full standings",
+    "appTitle": "ULTIMATE DRIFT APP!",
+    "appSubtitle": "Follow everything in real time, right from your phone.",
+    "appFeatures": [
+      "Real-time scoring",
+      "Battle brackets",
+      "Driver profiles",
+      "Car specs",
+      "Up-to-date standings"
+    ],
+    "appMockupAlt": "Ultimate Drift app on a phone",
+    "news": "News",
+    "allNews": "All news",
+    "sponsors": "Sponsors",
+    "supporters": "Supporters",
+    "monthTemplate": "{month} {days}",
+    "visit": "Visit {name}",
+    "newsCategory": {
+      "noticia": "News",
+      "historia": "History"
+    }
   },
   "pilotos": {
     "title": "Drivers",

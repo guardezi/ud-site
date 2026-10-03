@@ -3,24 +3,9 @@ import { Link } from "@/i18n/navigation";
 import { LiveSignalIcon, SOCIAL_LINKS } from "@/components/wp-icons";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { MobileNavToggle } from "./MobileNavToggle";
+import { MAIN_NAV } from "./main-nav";
 
-const NAV: Array<{
-  href: "/" | "/pilotos" | "/etapas" | "/classificacao" | "/categorias" | "/noticias" | "/patrocinadores" | "/contato";
-  labelKey: string;
-}> = [
-  { href: "/", labelKey: "home" },
-  { href: "/pilotos", labelKey: "pilotos" },
-  { href: "/classificacao", labelKey: "classificacao" },
-  { href: "/etapas", labelKey: "etapas" },
-  { href: "/categorias", labelKey: "categorias" },
-  { href: "/noticias", labelKey: "noticias" },
-  { href: "/patrocinadores", labelKey: "patrocinadores" },
-  { href: "/contato", labelKey: "contato" },
-];
-
-const TICKETS_URL = "https://www.tycket.com.br/ultimate-drift-ribeir-o-preto-14-a-16-agosto.html";
-const WILDCARD_URL = "https://forms.gle/64JUaXQJJCBfiVV99";
-const LIVE_URL = "http://portal.drift.siliconvillage.cafe";
+const LIVE_URL = "https://portal.drift.siliconvillage.app";
 
 export function PublicHeader() {
   const t = useTranslations("nav");
@@ -73,23 +58,24 @@ export function PublicHeader() {
             <div className="col-2 col-lg-8">
               <nav className="nav__menu">
                 <ul className="nav__list">
-                  {NAV.map((item) => (
-                    <li key={item.href} className="nav__item">
-                      <Link href={item.href} className="nav__btn">
-                        {t(item.labelKey)}
-                      </Link>
+                  {MAIN_NAV.map((item) => (
+                    <li key={item.labelKey} className="nav__item">
+                      {item.kind === "internal" ? (
+                        <Link href={item.href} className={item.highlight ? "nav__btn nav__sponsor" : "nav__btn"}>
+                          {t(item.labelKey)}
+                        </Link>
+                      ) : (
+                        <a
+                          href={item.href}
+                          className={item.highlight ? "nav__btn nav__sponsor" : "nav__btn"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {t(item.labelKey)}
+                        </a>
+                      )}
                     </li>
                   ))}
-                  <li className="nav__item">
-                    <a href={TICKETS_URL} className="nav__btn nav__sponsor" target="_blank" rel="noopener noreferrer">
-                      {t("ingressos")}
-                    </a>
-                  </li>
-                  <li className="nav__item">
-                    <a href={WILDCARD_URL} className="nav__btn" target="_blank" rel="noopener noreferrer">
-                      {t("inscricaoCuringa")}
-                    </a>
-                  </li>
                 </ul>
                 <div className="header__social ui__display--none ui__display--lg-flex">
                   <span className="header__top-right-label">Nos siga</span>

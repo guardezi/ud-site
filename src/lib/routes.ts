@@ -30,11 +30,10 @@ export const FOOTER_LINKS: NavItem[] = [
 ];
 
 /**
- * Links externos do footer (não-localizados). Ingressos vai pra plataforma
- * externa de venda; regulamento aponta pro PDF da CBA.
+ * Links externos (não-localizados). Regulamento aponta pro PDF da CBA.
+ * Ingressos é a rota interna /ingressos; a Inscrição Curinga fica em
+ * components/layout/main-nav.ts.
  */
 export const EXTERNAL_LINKS = {
-  tickets: "https://www.tycket.com.br/eventos",
-  wildcard: "https://forms.gle/wildcard",
   regulation: "https://www.cba-automobilismo.org.br/regulamentos",
 } as const;

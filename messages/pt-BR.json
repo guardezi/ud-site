@@ -5,7 +5,7 @@
     "shortDescription": "Ultimate Drift é o principal campeonato brasileiro de drift profissional, com etapas em circuitos pelo país."
   },
   "nav": {
-    "home": "Início",
+    "home": "Home",
     "pilotos": "Pilotos",
     "etapas": "Etapas",
     "classificacao": "Classificação",
@@ -23,7 +23,7 @@
     "termos": "Termos e Condições",
     "privacidade": "Privacidade",
     "regulamento": "Regulamento",
-    "followUs": "Acompanhe a gente"
+    "followUs": "Nos siga"
   },
   "home": {
     "heroEyebrow": "Campeonato brasileiro de drift",
@@ -37,7 +37,43 @@
     "viewAllDrivers": "Ver todos os pilotos",
     "latestNews": "Últimas notícias",
     "viewAllNews": "Ver todas as notícias",
-    "noNews": "Em breve."
+    "noNews": "Em breve.",
+    "buyTicket": "Comprar ingresso",
+    "moreInfo": "+ Informações",
+    "liveStream": "Transmissão ao vivo"
+  },
+  "homeSections": {
+    "sponsorCallout": "Seja um patrocinador — saiba mais",
+    "allStages": "Todas as etapas",
+    "standingsTitle": "Classificação Geral {year}",
+    "podiumPlace": "{position}º Lugar",
+    "colPos": "Pos",
+    "colDriver": "Piloto",
+    "colStage": "{n}ª",
+    "colTotal": "Total",
+    "pts": "pts",
+    "viewDriver": "Ver perfil de {name}",
+    "fullStandings": "Classificação completa",
+    "appTitle": "ULTIMATE DRIFT APP!",
+    "appSubtitle": "Acompanhe tudo em tempo real, direto do seu celular.",
+    "appFeatures": [
+      "Pontuação em Tempo Real",
+      "Chave de Batalhas",
+      "Perfil dos Pilotos",
+      "Ficha Técnica dos Carros",
+      "Classificação Atualizada"
+    ],
+    "appMockupAlt": "App Ultimate Drift no celular",
+    "news": "Notícias",
+    "allNews": "Todas as notícias",
+    "sponsors": "Patrocinadores",
+    "supporters": "Apoiadores",
+    "monthTemplate": "{days} de {month}",
+    "visit": "Visitar {name}",
+    "newsCategory": {
+      "noticia": "Notícia",
+      "historia": "História"
+    }
   },
   "pilotos": {
     "title": "Pilotos",
