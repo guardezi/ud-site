@@ -4,15 +4,18 @@ import { adminDb } from "@/lib/firebase/admin";
 import { asArray, asRecord, num, str, tsToDate } from "@/lib/firestore-utils";
 import { driverSlug } from "@/lib/utils/slug";
 import { resolveActiveChampionshipId } from "@/lib/championship/queries";
+import { formatStageScore } from "@/lib/championship/stage-score";
 
 // ---------------------------------------------------------------------------
 // Classificação por temporada (/classificacao) — MESMA fonte e lógica do app
 // (ud-app: lib/services/championship_service.dart, championship_details_dto.dart,
 // components/wrappers/home_ranking_section.dart):
 //
-// - Temporadas = `championships` com championshipYear >= 2025, ano desc
-//   (`getAllChampionships`). Mais de um campeonato no mesmo ano → fica o de
-//   maior id numérico (`getChampionshipByYear`).
+// - Temporadas = todos os `championships` com classificação completa (algum
+//   piloto em `pilots` com `stages[]` e `totalScore` > 0), um por ano. Mais de
+//   um no mesmo ano → o vigente (publicRound), senão o de maior id numérico
+//   (`getChampionshipByYear`) que esteja completo. O app corta em 2025
+//   (`_minYear`); aqui o histórico todo entra, a pedido.
 // - Temporada aberta por padrão = `settings/publicRound.championshipId`
 //   (`resolveActiveChampionshipId`); sem ele, a mais recente.
 // - Classificação = subcoleção `championships/{cid}/pilots`. Geral ("Pro" no
@@ -23,9 +26,6 @@ import { resolveActiveChampionshipId } from "@/lib/championship/queries";
 //   stageNumber/data; `city`/`stageNumber` vêm denormalizados pela Cloud
 //   Function `writeChampionship`.
 // ---------------------------------------------------------------------------
-
-/** Primeiro ano listado — mesmo corte do app (`ChampionshipService._minYear`). */
-const MIN_YEAR = 2025;
 
 export type SeasonStage = {
   stageId: number;
@@ -44,8 +44,8 @@ export type SeasonPilot = {
   category: string;
   slug: string | null;
   totalScore: number;
-  /** `stages[].finalScore` por stageId; 0/ausente = não pontuou ("—"). */
-  scores: Record<number, number>;
+  /** Por stageId: `formatStageScore` ("31", "0" = correu e zerou, null = não correu → "—"). */
+  scores: Record<number, string | null>;
 };
 
 export type SeasonCategory = "Pro" | "Rookie" | "Master";
@@ -65,6 +65,7 @@ export type ClassificationSeasons = {
 };
 
 type RawPilot = SeasonPilot & {
+  hasStageData: boolean;
   stageMeta: { stageId: number; number: number | null; city: string | null; date: number | null }[];
 };
 
@@ -78,13 +79,13 @@ function docToPilot(d: Record<string, unknown>): RawPilot {
   const driver = asRecord(d.driver) ?? {};
   const name = str(driver.apelido)?.trim() || str(d.driverName)?.trim() || "";
   const number = num(driver.numero);
-  const scores: Record<number, number> = {};
+  const scores: Record<number, string | null> = {};
   const stageMeta: RawPilot["stageMeta"] = [];
   for (const raw of asArray<unknown>(d.stages)) {
     const s = asRecord(raw);
     const stageId = num(s?.stageId);
     if (!s || stageId == null) continue;
-    scores[stageId] = num(s.finalScore) ?? 0;
+    scores[stageId] = formatStageScore(s);
     stageMeta.push({
       stageId,
       number: num(s.stageNumber),
@@ -103,6 +104,7 @@ function docToPilot(d: Record<string, unknown>): RawPilot {
     totalScore: num(d.totalScore) ?? 0,
     scores,
     stageMeta,
+    hasStageData: stageMeta.length > 0,
   };
 }
 
@@ -149,13 +151,14 @@ function seasonStages(pilots: RawPilot[]): SeasonStage[] {
     .map((s, i) => ({ stageId: s.stageId, number: s.number ?? i + 1, city: s.city }));
 }
 
-async function loadSeason(championshipId: number, meta: Record<string, unknown>): Promise<ClassificationSeason> {
+/** Classificação completa: algum piloto com etapas e pontos. `null` se não. */
+async function loadSeason(championshipId: number, meta: Record<string, unknown>): Promise<ClassificationSeason | null> {
   const snap = await adminDb.collection("championships").doc(String(championshipId)).collection("pilots").get();
   const raw = snap.docs.map((d) => docToPilot(d.data() as Record<string, unknown>));
-  const pilots: SeasonPilot[] = raw.map(({ stageMeta: _ignored, ...p }) => p);
+  if (!raw.some((p) => p.hasStageData && p.totalScore > 0)) return null;
+  const pilots: SeasonPilot[] = raw.map(({ stageMeta: _m, hasStageData: _h, ...p }) => p);
   const present = new Set(pilots.map((p) => p.category));
-  const categories: ClassificationSeason["categories"] = [];
-  if (pilots.length > 0) categories.push({ key: "Pro", pilots: rankedForDisplay(pilots) });
+  const categories: ClassificationSeason["categories"] = [{ key: "Pro", pilots: rankedForDisplay(pilots) }];
   for (const key of ["Rookie", "Master"] as const) {
     if (present.has(key)) categories.push({ key, pilots: rankedInCategory(pilots, key) });
   }
@@ -171,36 +174,32 @@ async function loadSeason(championshipId: number, meta: Record<string, unknown>)
 async function fetchSeasons(): Promise<ClassificationSeasons> {
   const [activeChampionshipId, snap] = await Promise.all([
     resolveActiveChampionshipId().catch(() => null),
-    adminDb
-      .collection("championships")
-      .where("championshipYear", ">=", MIN_YEAR)
-      .orderBy("championshipYear", "desc")
-      .get(),
+    adminDb.collection("championships").get(),
   ]);
 
-  // Um campeonato por ano: o de maior id numérico (getChampionshipByYear).
-  const byYear = new Map<number, { id: number; meta: Record<string, unknown> }>();
+  // Candidatos por ano, em ordem de preferência: vigente, depois id desc.
+  const byYear = new Map<number, { id: number; meta: Record<string, unknown> }[]>();
   for (const doc of snap.docs) {
     const meta = doc.data() as Record<string, unknown>;
     const id = num(doc.id);
     const year = num(meta.championshipYear);
     if (id == null || year == null) continue;
-    const prev = byYear.get(year);
-    if (!prev || id > prev.id) byYear.set(year, { id, meta });
+    byYear.set(year, [...(byYear.get(year) ?? []), { id, meta }]);
   }
-  // O vigente sempre entra, mesmo se outro campeonato do mesmo ano tiver id maior.
-  if (activeChampionshipId != null) {
-    const doc = snap.docs.find((d) => num(d.id) === activeChampionshipId);
-    const year = doc ? num(doc.data().championshipYear) : null;
-    if (doc && year != null) byYear.set(year, { id: activeChampionshipId, meta: doc.data() });
-  }
+  const pref = (id: number) => (id === activeChampionshipId ? Number.MAX_SAFE_INTEGER : id);
 
   const seasons = await Promise.all(
-    [...byYear.values()].sort((a, b) => num(a.meta.championshipYear)! - num(b.meta.championshipYear)!).map((c) =>
-      loadSeason(c.id, c.meta),
-    ),
+    [...byYear.entries()]
+      .sort(([a], [b]) => a - b)
+      .map(async ([, list]) => {
+        for (const c of list.sort((a, b) => pref(b.id) - pref(a.id))) {
+          const season = await loadSeason(c.id, c.meta);
+          if (season) return season;
+        }
+        return null;
+      }),
   );
-  return { seasons: seasons.filter((s) => s.categories.length > 0), activeChampionshipId };
+  return { seasons: seasons.filter((s): s is ClassificationSeason => s != null), activeChampionshipId };
 }
 
 // Falha de leitura não entra no cache (senão a página ficaria vazia por 5 min).

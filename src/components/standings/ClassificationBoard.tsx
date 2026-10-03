@@ -192,11 +192,11 @@ function RankList({ stages, pilots }: { stages: SeasonStage[]; pilots: SeasonPil
                   return (
                     <span
                       key={s.stageId}
-                      className={`rank-card__etapa ${v ? "" : "rank-card__etapa--empty"}`}
+                      className={`rank-card__etapa ${v != null ? "" : "rank-card__etapa--empty"}`}
                       title={stageTitle(t, s)}
                     >
                       <small className="rank-card__etapa-label">{t("stageOrdinal", { n: s.number })}</small>
-                      {v ? v : "—"}
+                      {v ?? "—"}
                     </span>
                   );
                 })}
