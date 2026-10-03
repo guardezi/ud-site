@@ -10,7 +10,7 @@ import { HomeNews, toHomeNewsData } from "@/components/home/HomeNews";
 import { HomeSponsors, eventSponsorToLogo } from "@/components/home/HomeSponsors";
 import { getNextRaceEvent } from "@/lib/events/queries";
 import { getActiveChampionshipClassification } from "@/lib/championship/queries";
-import { listEventSponsors } from "@/lib/sponsors/queries";
+import { listEventSponsors, listEventSupporters } from "@/lib/sponsors/queries";
 import { getStageEventDetail, listStageEvents } from "@/lib/stages/events";
 import { listLatestNews } from "@/lib/news/queries";
 import { buildMetadata } from "@/lib/seo/meta";
@@ -43,17 +43,18 @@ export async function generateMetadata({
  * próxima etapa / todas as etapas = `listStageEvents` (championships/{cid}/stages
  * + stageHubs + circuits + events, mesma lógica de /etapas — PR #18); classificação =
  * `championships/{cid}/pilots`; notícias = `news`; patrocinadores =
- * `patrocinadores` (patrocinaEvento). "Seja um patrocinador" e App são
+ * `patrocinadores` (patrocinaEvento / tipoPatrocinioEvento). "Seja um patrocinador" e App são
  * estáticos. Seção sem dado não aparece.
  */
 export default async function HomePage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [nextEvent, classification, eventSponsors, stageEvents, news, t] = await Promise.all([
+  const [nextEvent, classification, eventSponsors, eventSupporters, stageEvents, news, t] = await Promise.all([
     getNextRaceEvent(),
     getActiveChampionshipClassification(),
     listEventSponsors(),
+    listEventSupporters(),
     listStageEvents(),
     listLatestNews(locale, 3),
     getTranslations("homeSections"),
@@ -72,7 +73,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       {standings && <ChampionshipStandings data={standings} />}
       <AppPromo data={APP_PROMO} />
       <HomeNews data={toHomeNewsData(news)} />
-      <HomeSponsors data={{ sponsors: eventSponsors.map(eventSponsorToLogo), supporters: [] }} />
+      <HomeSponsors
+        data={{
+          sponsors: eventSponsors.map(eventSponsorToLogo),
+          supporters: eventSupporters.map(eventSponsorToLogo),
+        }}
+      />
     </>
   );
 }

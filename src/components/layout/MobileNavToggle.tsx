@@ -55,7 +55,11 @@ export function MobileNavToggle() {
               {MAIN_NAV.map((item) => (
                 <li key={item.labelKey} style={{ borderBottom: "1px solid #3f3f3f" }}>
                   {item.kind === "internal" ? (
-                    <Link href={item.href} onClick={() => setOpen(false)} style={ITEM_STYLE}>
+                    <Link
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      style={item.highlight ? { ...ITEM_STYLE, color: "#54F251" } : ITEM_STYLE}
+                    >
                       {t(item.labelKey)}
                     </Link>
                   ) : (

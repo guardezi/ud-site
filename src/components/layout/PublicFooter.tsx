@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { SOCIAL_LINKS } from "@/components/wp-icons";
-import { TICKETS_URL, type MainNavItem } from "./main-nav";
+import type { MainNavItem } from "./main-nav";
 
 // Mesma ordem relativa do menu principal (main-nav.ts). Inscrição Curinga não
 // fazia parte do footer e continua de fora; /termos é extra do
@@ -9,7 +9,7 @@ import { TICKETS_URL, type MainNavItem } from "./main-nav";
 // (footer.termos), como no site legado.
 const FOOTER_LEFT: MainNavItem[] = [
   { kind: "internal", href: "/", labelKey: "home" },
-  { kind: "external", href: TICKETS_URL, labelKey: "ingressos" },
+  { kind: "internal", href: "/ingressos", labelKey: "ingressos" },
   { kind: "internal", href: "/pilotos", labelKey: "pilotos" },
   { kind: "internal", href: "/classificacao", labelKey: "classificacao" },
   { kind: "internal", href: "/etapas", labelKey: "etapas" },

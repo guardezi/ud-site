@@ -61,7 +61,7 @@ export function PublicHeader() {
                   {MAIN_NAV.map((item) => (
                     <li key={item.labelKey} className="nav__item">
                       {item.kind === "internal" ? (
-                        <Link href={item.href} className="nav__btn">
+                        <Link href={item.href} className={item.highlight ? "nav__btn nav__sponsor" : "nav__btn"}>
                           {t(item.labelKey)}
                         </Link>
                       ) : (

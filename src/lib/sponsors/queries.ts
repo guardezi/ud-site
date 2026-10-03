@@ -71,6 +71,28 @@ function httpUrl(v: unknown): string | null {
   }
 }
 
+/**
+ * Tipo do vínculo com o evento (ud-sistema PR #77: `tipoPatrocinioEvento` =
+ * "patrocinador" | "apoiador" | "outro"). Ainda não gravado pela function do
+ * ud-app; docs sem o campo seguem só pelo `patrocinaEvento`.
+ */
+function eventSponsorType(data: Record<string, unknown>): string | null {
+  return str(data.tipoPatrocinioEvento)?.trim().toLowerCase() || null;
+}
+
+function docToEventSponsor(id: string, data: Record<string, unknown>): EventSponsor {
+  return {
+    id,
+    name: str(data.nome)?.trim() ?? "",
+    logoPath: str(data.foto)?.trim() || null,
+    website: httpUrl(data.site),
+  };
+}
+
+function sortByName(list: EventSponsor[]): EventSponsor[] {
+  return list.filter((s) => s.name || s.logoPath).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+}
+
 // Erros propagam de dentro do cache de propósito: falha (ex. build sem
 // credencial) não fica cacheada como lista vazia.
 const loadEventSponsors = unstable_cache(
@@ -80,29 +102,53 @@ const loadEventSponsors = unstable_cache(
       .where("patrocinaEvento", "==", true)
       .limit(200)
       .get();
-    return snap.docs
-      .map((d) => {
-        const data = d.data() as Record<string, unknown>;
-        return {
-          id: d.id,
-          name: str(data.nome)?.trim() ?? "",
-          logoPath: str(data.foto)?.trim() || null,
-          website: httpUrl(data.site),
-        } satisfies EventSponsor;
-      })
-      .filter((s) => s.name || s.logoPath)
-      .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+    return sortByName(
+      snap.docs
+        .filter((d) => {
+          // Com o tipo preenchido, só "patrocinador" entra aqui (um apoiador
+          // não aparece nos dois blocos).
+          const tipo = eventSponsorType(d.data() as Record<string, unknown>);
+          return tipo == null || tipo === "patrocinador";
+        })
+        .map((d) => docToEventSponsor(d.id, d.data() as Record<string, unknown>)),
+    );
   },
-  ["event-sponsors"],
+  ["event-sponsors-v2"],
   { revalidate: 3600, tags: ["sponsors", "patrocinadores"] },
 );
 
-/** Patrocinadores do evento (`patrocinadores` com `patrocinaEvento == true`), por nome. */
+const loadEventSupporters = unstable_cache(
+  async (): Promise<EventSponsor[]> => {
+    const snap = await adminDb
+      .collection("patrocinadores")
+      .where("tipoPatrocinioEvento", "==", "apoiador")
+      .limit(200)
+      .get();
+    return sortByName(snap.docs.map((d) => docToEventSponsor(d.id, d.data() as Record<string, unknown>)));
+  },
+  ["event-supporters"],
+  { revalidate: 3600, tags: ["sponsors", "patrocinadores"] },
+);
+
+/**
+ * Patrocinadores do evento: `patrocinadores` com `patrocinaEvento == true` e,
+ * quando houver `tipoPatrocinioEvento`, só os do tipo "patrocinador". Por nome.
+ */
 export async function listEventSponsors(): Promise<EventSponsor[]> {
   try {
     return await loadEventSponsors();
   } catch (e) {
     console.error("[sponsors] listEventSponsors failed:", e);
+    return [];
+  }
+}
+
+/** Apoiadores do evento: `patrocinadores` com `tipoPatrocinioEvento == "apoiador"`. Por nome. */
+export async function listEventSupporters(): Promise<EventSponsor[]> {
+  try {
+    return await loadEventSupporters();
+  } catch (e) {
+    console.error("[sponsors] listEventSupporters failed:", e);
     return [];
   }
 }
