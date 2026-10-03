@@ -35,16 +35,6 @@ export const routing = defineRouting({
       "en-US": "/stages/[slug]",
       "es-ES": "/etapas/[slug]",
     },
-    "/etapas/[slug]/qualifying": {
-      "pt-BR": "/etapas/[slug]/qualifying",
-      "en-US": "/stages/[slug]/qualifying",
-      "es-ES": "/etapas/[slug]/qualifying",
-    },
-    "/etapas/[slug]/bracket": {
-      "pt-BR": "/etapas/[slug]/chaveamento",
-      "en-US": "/stages/[slug]/bracket",
-      "es-ES": "/etapas/[slug]/llave",
-    },
     "/classificacao": {
       "pt-BR": "/classificacao",
       "en-US": "/standings",

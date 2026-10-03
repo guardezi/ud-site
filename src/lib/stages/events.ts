@@ -23,9 +23,11 @@ import { slugify } from "@/lib/utils/slug";
  *    O app lê o hub do mesmo jeito (`EventHubService.getHubByStageId`).
  * 3. `events/{id}` — aba Ingressos do app (CreateTicketService): arte de venda
  *    (`imageUrl`), link de compra (`linkUrl`, `isSelling`), `place`, datas.
- *    NÃO há vínculo explícito com etapa/hub: o casamento é por sobreposição
- *    de datas (± 2 dias). Evento sem etapa casada (ex. etapa futura que o
- *    ud-sistema ainda não criou) vira um fim de semana próprio.
+ *    Vínculo explícito (`stageHubId` e/ou `stageIds`, a ser gravado pelo
+ *    editor de `events` do backoffice — guardezi/ud-backoffice#297) tem
+ *    prioridade; sem ele, o casamento é por sobreposição de datas (± 2 dias).
+ *    Evento sem etapa casada (ex. etapa futura que o ud-sistema ainda não
+ *    criou) vira um fim de semana próprio.
  *
  * O cronograma vem de `championships/{cid}/stages/{sid}/schedule` (fonte
  * nova do app/backoffice), só itens com `audience` contendo "publico". O
@@ -143,6 +145,9 @@ type RawEvent = {
   imagePath: string | null;
   linkUrl: string | null;
   isSelling: boolean;
+  /** Vínculo explícito (ud-backoffice#297); ausente nos docs atuais. */
+  stageHubId: string | null;
+  stageIds: number[];
 };
 
 async function readStages(championshipId: number): Promise<RawStage[]> {
@@ -191,6 +196,10 @@ async function readEvents(): Promise<RawEvent[]> {
       imagePath: str(d.imageUrl),
       linkUrl: str(d.linkUrl),
       isSelling: d.isSelling === true,
+      stageHubId: str(d.stageHubId),
+      stageIds: Array.isArray(d.stageIds)
+        ? d.stageIds.map((x) => num(x)).filter((x): x is number => x != null)
+        : [],
     };
   });
 }
@@ -271,7 +280,25 @@ async function buildSummaries(): Promise<StageEventSummary[]> {
   //    do mesmo ano do campeonato.
   const seasonYear = stages[0]?.day.slice(0, 4) ?? todayBrt().slice(0, 4);
   const sortedEvents = [...events].sort((a, b) => (a.startDay ?? "").localeCompare(b.startDay ?? ""));
+  const explicit = (ev: RawEvent): Group | undefined =>
+    groups.find(
+      (g) =>
+        (ev.stageHubId != null && g.hubs.some((h) => h.id === ev.stageHubId)) ||
+        (ev.stageIds.length > 0 && g.stages.some((s) => ev.stageIds.includes(s.stageId))),
+    );
+  // Primeiro os vínculos explícitos (não concorrem com a heurística).
+  const linked = new Set<string>();
   for (const ev of sortedEvents) {
+    const g = explicit(ev);
+    if (g && !g.event) {
+      g.event = ev;
+      linked.add(ev.id);
+    }
+  }
+  for (const ev of sortedEvents) {
+    if (linked.has(ev.id)) continue;
+    // Sem vínculo, ou vínculo pra etapa/hub que ainda não está na lista (ex.
+    // etapa futura não criada pelo ud-sistema): heurística de datas.
     if (!ev.startDay) continue;
     const candidates = groups.filter((g) => !g.event && overlaps(groupRange(g), ev.startDay, ev.endDay, 2));
     const sameCity = candidates.find((g) => groupCityKey(g) && groupCityKey(g) === cityKey(ev.place));

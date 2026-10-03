@@ -6,7 +6,7 @@ import { str } from "@/lib/firestore-utils";
 /**
  * Patrocinadores do EVENTO exibidos na página da etapa — collection
  * `patrocinadores` (entidade do ud-sistema, gravada pela function
- * `patrocinadorUpsertQueue` do ud-app), só `patrocinaEvento === true`.
+ * `patrocinadorUpsertQueue` do ud-app) — ver `isEventSponsor`.
  * Mesma fonte do selo/ranking de patrocinador do evento no app (#272).
  *
  * Não existe patrocinador POR etapa no Firestore (no WordPress era uma
@@ -28,18 +28,36 @@ function safeUrl(v: string | null): string | null {
   }
 }
 
+/**
+ * Regra de quem entra (decisão do produto): só PATROCINADORES do evento,
+ * apoiadores nunca aparecem nas etapas.
+ * - Doc com `tipoPatrocinioEvento` (ud-sistema PR #77): só `== "patrocinador"`.
+ * - Doc sem o campo (legado): `patrocinaEvento === true`.
+ * Duas queries de igualdade simples (sem índice composto) e o filtro final
+ * em memória.
+ */
+function isEventSponsor(d: Record<string, unknown>): boolean {
+  const tipo = str(d.tipoPatrocinioEvento);
+  if (tipo != null) return tipo.toLowerCase() === "patrocinador";
+  return d.patrocinaEvento === true;
+}
+
 const cached = unstable_cache(
   async (): Promise<StageSponsor[]> => {
-    const snap = await adminDb.collection("patrocinadores").where("patrocinaEvento", "==", true).get();
-    return snap.docs
-      .map((doc) => {
-        const d = doc.data() as Record<string, unknown>;
-        return { id: doc.id, name: str(d.nome) ?? "", logoPath: str(d.foto), site: safeUrl(str(d.site)) };
-      })
+    const col = adminDb.collection("patrocinadores");
+    const [legacy, typed] = await Promise.all([
+      col.where("patrocinaEvento", "==", true).get(),
+      col.where("tipoPatrocinioEvento", "==", "patrocinador").get(),
+    ]);
+    const byId = new Map<string, Record<string, unknown>>();
+    for (const doc of [...legacy.docs, ...typed.docs]) byId.set(doc.id, doc.data() as Record<string, unknown>);
+    return [...byId.entries()]
+      .filter(([, d]) => isEventSponsor(d))
+      .map(([id, d]) => ({ id, name: str(d.nome) ?? "", logoPath: str(d.foto), site: safeUrl(str(d.site)) }))
       .filter((s) => s.name || s.logoPath)
       .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
   },
-  ["stage-event-sponsors-v1"],
+  ["stage-event-sponsors-v2"],
   { revalidate: 3600, tags: ["sponsors"] },
 );
 
